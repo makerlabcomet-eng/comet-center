@@ -1,0 +1,2003 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Comet Center</title>
+<meta name="description" content="Comet Center, IIT Hyderabad. Find the right machine, learn it, get your pass, book a slot and estimate the cost of your job.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+/* Layout: workshop-floor dark canvas on a faint 34px grid; hazard yellow marks every action. */
+:root{
+  color-scheme:dark;
+  --ink:#0A1120; --ink2:#101A2E; --ink3:#17233C; --raise:#1D2C49;
+  --line:#243654; --line2:#31486C;
+  --tx:#E8EEF8; --dim:#8FA2C0; --faint:#6A7FA6;
+  --haz:#FFC61A; --haz2:#B98C00;
+  --ta:#3ED598; --tb:#FF8A3D; --tc:#FF4D4D; --sky:#66C8FF;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink); color:var(--tx);
+  font-family:var(--body); font-size:15px; line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:34px 34px;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:var(--display);font-variation-settings:"wdth" 118;line-height:1.08;letter-spacing:-.015em;font-weight:800;text-wrap:balance}
+.mono{font-family:var(--mono)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+button:disabled{cursor:not-allowed}
+:focus-visible{outline:2px solid var(--haz);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:22px}
+@media(max-width:560px){.wrap{padding-inline:16px}}
+
+.layers{height:16px;background:repeating-linear-gradient(180deg,var(--line) 0 1px,transparent 1px 4px);opacity:.55}
+
+/* ---------- top bar ---------- */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:rgba(10,17,32,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:18px;min-height:62px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:900;font-variation-settings:"wdth" 122;font-size:15px;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
+.logo i{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 70% 30%,#fff 0 8%,var(--haz) 9% 46%,transparent 47%);position:relative;flex:none}
+.logo i::after{content:"";position:absolute;left:-6px;top:11px;width:16px;height:2px;background:linear-gradient(90deg,transparent,var(--haz));transform:rotate(-28deg);border-radius:2px}
+nav{margin-left:auto;display:flex;gap:3px;align-items:center;flex-wrap:wrap}
+nav button{padding:8px 12px;border-radius:7px;color:var(--dim);font-size:13.5px;font-weight:500}
+nav button:hover{color:var(--tx);background:var(--ink3)}
+nav button.on{color:var(--ink);background:var(--haz);font-weight:600}
+.who{display:flex;align-items:center;gap:9px;padding:5px 12px 5px 6px;border:1px solid var(--line);border-radius:30px;background:var(--ink2);white-space:nowrap}
+.who:hover{border-color:var(--line2)}
+.av{width:26px;height:26px;border-radius:50%;background:var(--haz);color:#0A1120;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:11px;flex:none}
+.who small{font-family:var(--mono);font-size:11.5px;color:var(--dim);letter-spacing:.03em}
+.role{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:var(--ink3);color:var(--faint)}
+.role.student{color:var(--ta)} .role.external{color:var(--tb)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;display:grid;grid-template-columns:1fr 1.05fr;align-items:center;gap:30px;padding-block:52px 34px}
+.hstage{position:relative}
+#heroCanvas{width:100%;height:440px;display:block;border-radius:14px;cursor:grab}
+.hcap{position:absolute;left:14px;bottom:12px;right:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;pointer-events:none}
+.hcap .mono{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.hcap b{display:block;font-family:var(--display);font-variation-settings:"wdth" 116;font-size:19px;color:var(--tx);letter-spacing:0;transition:opacity .3s}
+.hdots{display:flex;gap:6px;pointer-events:auto}
+.hdots button{width:9px;height:9px;border-radius:50%;background:var(--line2)}
+.hdots button.on{background:var(--haz)}
+.hbox{position:relative;z-index:2}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--haz);display:flex;align-items:center;gap:9px;margin-bottom:18px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--haz)}
+h1{font-size:clamp(36px,5.2vw,60px);text-transform:uppercase}
+h1 em{font-style:normal;color:var(--haz);display:block}
+.lede{color:var(--dim);font-size:17px;max-width:46ch;margin-block:20px 30px}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:9px;background:var(--haz);color:#0A1120;font-weight:600;font-size:14.5px;transition:transform .12s,filter .12s}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--tx);border:1px solid var(--line2)}
+.btn.ghost:hover{background:var(--ink3)}
+.btn.sm{padding:9px 15px;font-size:13px}
+.btn:disabled{opacity:.45;transform:none;filter:none}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.stats{display:flex;gap:26px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line);flex-wrap:wrap}
+.stats div{font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.05em;text-transform:uppercase}
+.stats b{display:block;font-family:var(--display);font-variation-settings:"wdth" 118;font-size:24px;color:var(--tx);letter-spacing:0;margin-bottom:1px}
+
+/* ---------- facts ticker ---------- */
+.ticker{overflow:hidden;border-block:1px solid var(--line);background:var(--ink2);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.ttrack{display:flex;gap:44px;width:max-content;padding-block:13px;animation:tick 90s linear infinite}
+.ticker:hover .ttrack{animation-play-state:paused}
+.ttrack span{font-size:13.5px;color:var(--dim);white-space:nowrap;display:flex;align-items:center;gap:10px}
+.ttrack span b{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--haz);font-weight:500}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ---------- sections ---------- */
+section{padding-block:64px}
+.shead{margin-bottom:30px;max-width:64ch}
+.shead h2{font-size:30px;text-transform:uppercase;margin-bottom:10px}
+.shead p{color:var(--dim)}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:12px;display:block}
+.panel{background:var(--ink2);border:1px solid var(--line);border-radius:14px;padding:22px;min-width:0}
+.panel h4{font-size:12px;font-family:var(--mono);font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);margin-bottom:13px;font-variation-settings:normal}
+
+/* journey */
+.journey{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;counter-reset:j}
+.jstep{counter-increment:j;text-align:left;background:var(--ink2);border:1px solid var(--line);border-radius:13px;padding:18px;position:relative;transition:.15s;display:flex;flex-direction:column;gap:6px}
+.jstep:hover{border-color:var(--haz);transform:translateY(-3px)}
+.jstep::before{content:counter(j,decimal-leading-zero);font-family:var(--mono);font-size:11px;color:var(--haz);letter-spacing:.1em}
+.jstep b{font-family:var(--display);font-variation-settings:"wdth" 114;font-size:17px;font-weight:800}
+.jstep small{color:var(--faint);font-size:12.8px;line-height:1.5}
+.jstep:not(:last-child)::after{content:"";position:absolute;right:-9px;top:50%;width:6px;height:6px;border-top:1.5px solid var(--line2);border-right:1.5px solid var(--line2);transform:translateY(-50%) rotate(45deg)}
+@media(max-width:900px){.journey{grid-template-columns:1fr 1fr}.jstep::after{display:none}}
+@media(max-width:480px){.journey{grid-template-columns:1fr}}
+
+/* ---------- wizard ---------- */
+.wiz{background:var(--ink2);border:1px solid var(--line);border-radius:16px;padding:32px;position:relative;overflow:hidden}
+.wiz::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--haz)}
+.prog{display:flex;gap:6px;margin-bottom:26px}
+.prog span{height:3px;flex:1;background:var(--line);border-radius:2px;transition:background .3s}
+.prog span.on{background:var(--haz)}
+.qtext{font-family:var(--display);font-variation-settings:"wdth" 116;font-weight:800;font-size:24px;margin-bottom:6px}
+.qhint{color:var(--faint);font-size:13.5px;margin-bottom:22px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:11px}
+.opt{text-align:left;padding:17px 18px;background:var(--ink3);border:1px solid var(--line);border-radius:11px;transition:.14s}
+.opt:hover{border-color:var(--haz);background:var(--raise);transform:translateY(-2px)}
+.opt b{display:block;font-weight:600;margin-bottom:3px;font-size:14.5px}
+.opt small{color:var(--faint);font-size:12.5px;line-height:1.5;display:block}
+.res{display:grid;grid-template-columns:300px 1fr;gap:28px;align-items:start}
+.res canvas{width:100%;height:240px;background:var(--ink3);border:1px solid var(--line);border-radius:12px;cursor:grab;display:block}
+.why{background:var(--ink3);border-left:2px solid var(--haz);padding:13px 16px;margin-block:16px;font-size:13.5px;color:var(--dim);border-radius:0 8px 8px 0}
+@media(max-width:560px){.wiz{padding:22px 18px}}
+
+/* ---------- tiers ---------- */
+.tier{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid;white-space:nowrap}
+.tier::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.tA{color:var(--ta);border-color:color-mix(in srgb,var(--ta) 40%,transparent);background:color-mix(in srgb,var(--ta) 10%,transparent)}
+.tB{color:var(--tb);border-color:color-mix(in srgb,var(--tb) 40%,transparent);background:color-mix(in srgb,var(--tb) 10%,transparent)}
+.tC{color:var(--tc);border-color:color-mix(in srgb,var(--tc) 40%,transparent);background:color-mix(in srgb,var(--tc) 10%,transparent)}
+.tiers{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+
+/* ---------- machine bay ---------- */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.chip{padding:8px 14px;border-radius:30px;border:1px solid var(--line);color:var(--dim);font-size:13px;background:var(--ink2)}
+.chip:hover{border-color:var(--line2);color:var(--tx)}
+.chip.on{background:var(--haz);color:#0A1120;border-color:var(--haz);font-weight:600}
+.chip i{font-style:normal;font-family:var(--mono);font-size:11px;opacity:.7;margin-left:5px}
+.bay{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.card{background:var(--ink2);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-align:left;transition:.16s;display:flex;flex-direction:column}
+.card:hover{border-color:var(--line2);transform:translateY(-3px)}
+.card canvas{width:100%;height:158px;display:block;background:radial-gradient(circle at 50% 60%,#16223A,#0C1425);cursor:grab}
+.cbody{padding:15px 16px 17px;flex:1;display:flex;flex-direction:column}
+.code{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--faint);margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card h3{font-size:17px;margin-bottom:2px;font-variation-settings:"wdth" 112}
+.card .model{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:8px}
+.card p{color:var(--faint);font-size:12.8px;line-height:1.5;margin-bottom:13px;flex:1}
+.crow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.lock{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.04em}
+.lock.ok{color:var(--ta)}
+.status{width:8px;height:8px;border-radius:50%;flex:none;display:inline-block}
+.s-up{background:var(--ta)} .s-busy{background:var(--tb)} .s-down{background:var(--tc)}
+
+/* ---------- detail ---------- */
+.detail{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:30px;align-items:start}
+#viewer{width:100%;height:340px;background:radial-gradient(circle at 50% 60%,#16223A,#0B1322);border:1px solid var(--line);border-radius:14px;cursor:grab;display:block}
+#viewer:active,.card canvas:active,#heroCanvas:active,#estCv:active{cursor:grabbing}
+.klist{list-style:none;display:grid;gap:8px}
+.klist li{display:flex;gap:11px;font-size:13.8px;align-items:flex-start}
+.klist li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--haz);margin-top:8px;flex:none}
+.klist.bad li::before{background:var(--tc)}
+.klist.ok li::before{background:var(--ta)}
+.steps{counter-reset:s;list-style:none;display:grid;gap:10px}
+.steps li{counter-increment:s;display:flex;gap:13px;font-size:14px;align-items:flex-start}
+.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--mono);font-size:11.5px;color:var(--haz);background:var(--ink3);border:1px solid var(--line);width:26px;height:26px;border-radius:6px;display:grid;place-items:center;flex:none;margin-top:1px}
+.warn{background:color-mix(in srgb,var(--tc) 9%,transparent);border:1px solid color-mix(in srgb,var(--tc) 32%,transparent);border-radius:11px;padding:16px 18px;margin-top:16px}
+.warn strong{color:var(--tc);font-size:12px;font-family:var(--mono);letter-spacing:.11em;text-transform:uppercase;display:block;margin-bottom:7px}
+.warn p{font-size:13.5px;color:var(--dim)}
+.note{background:color-mix(in srgb,var(--sky) 8%,transparent);border:1px solid color-mix(in srgb,var(--sky) 28%,transparent);border-radius:11px;padding:13px 16px;font-size:13.3px;color:var(--dim)}
+.note strong{color:var(--sky);font-weight:600}
+.spec{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.spec:last-child{border:0}
+.spec span{color:var(--faint);flex:none}
+.spec b{font-family:var(--mono);font-weight:500;font-size:12.8px;text-align:right}
+.facts{display:grid;gap:10px}
+.facts p{font-size:13.5px;color:var(--dim);padding-left:12px;border-left:2px solid var(--line2)}
+.stack{display:grid;gap:16px}
+
+/* ---------- lessons + quiz ---------- */
+.trainGrid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start}
+.lesson{background:var(--ink2);border:1px solid var(--line);border-radius:12px;margin-bottom:11px;overflow:hidden}
+.lhead{display:flex;align-items:center;gap:15px;padding:16px 18px;width:100%;text-align:left}
+.lnum{width:34px;height:34px;border-radius:8px;background:var(--ink3);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--mono);font-size:12px;color:var(--dim);flex:none}
+.lesson.done .lnum{background:var(--ta);color:#08281C;border-color:var(--ta);font-weight:600}
+.lhead b{display:block;font-weight:600;font-size:14.5px}
+.lhead small{color:var(--faint);font-family:var(--mono);font-size:11.5px}
+.lbody{padding:0 18px 18px 67px;display:none}
+.lesson.open .lbody{display:block}
+.screen{aspect-ratio:16/7;max-width:100%;background:repeating-linear-gradient(135deg,#101A2E 0 9px,#131E34 9px 18px);border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;margin-bottom:14px}
+.screen div{text-align:center;color:var(--faint);font-family:var(--mono);font-size:11.5px;letter-spacing:.06em}
+.play{width:44px;height:44px;border-radius:50%;background:var(--haz);margin:0 auto 10px;display:grid;place-items:center;color:#0A1120;font-size:15px}
+.q{background:var(--ink2);border:1px solid var(--line);border-radius:13px;padding:22px;margin-bottom:13px}
+.q>b{display:block;font-size:15.5px;margin-bottom:14px;font-weight:600}
+.q>b i{font-family:var(--mono);font-style:normal;color:var(--haz);font-size:12px;margin-right:9px}
+.ans{display:flex;gap:12px;align-items:center;padding:12px 15px;border:1px solid var(--line);border-radius:9px;margin-bottom:8px;width:100%;text-align:left;font-size:14px;transition:.13s}
+.ans:hover{border-color:var(--line2);background:var(--ink3)}
+.ans.pick{border-color:var(--haz);background:color-mix(in srgb,var(--haz) 9%,transparent)}
+.ans.right{border-color:var(--ta);background:color-mix(in srgb,var(--ta) 11%,transparent)}
+.ans.wrong{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 11%,transparent)}
+.ans em{width:22px;height:22px;border-radius:5px;border:1px solid var(--line2);display:grid;place-items:center;font-family:var(--mono);font-size:11px;font-style:normal;color:var(--dim);flex:none}
+.feedback{font-size:13px;color:var(--dim);margin-top:10px;padding-left:2px;display:none}
+.q.marked .feedback{display:block}
+@media(max-width:560px){.lbody{padding:0 16px 16px}}
+
+/* ---------- certificate ---------- */
+.cert{background:linear-gradient(160deg,#13203A,#0C1526);border:1px solid var(--line2);border-radius:16px;padding:34px;position:relative;overflow:hidden;max-width:620px}
+.cert::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--haz) 0 33%,var(--ta) 33% 66%,var(--haz) 66%)}
+.cert::after{content:"";position:absolute;right:-40px;bottom:-40px;width:190px;height:190px;border:26px solid rgba(255,198,26,.05);border-radius:50%}
+.cert .ct{font-family:var(--mono);font-size:11px;letter-spacing:.19em;text-transform:uppercase;color:var(--haz)}
+.cert h2{font-size:29px;text-transform:uppercase;margin-block:12px 3px}
+.cert .sub{color:var(--dim);font-size:14px;margin-bottom:26px}
+.cfield{display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:14px;position:relative;z-index:2}
+.cfield span{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding-top:3px}
+.cfield b{font-weight:600;overflow-wrap:anywhere}
+.seal{display:flex;align-items:center;gap:14px;margin-top:24px;padding-top:20px;border-top:1px solid var(--line);position:relative;z-index:2}
+.qrblock{width:56px;height:56px;flex:none;border-radius:7px;background:conic-gradient(from 0deg,#E8EEF8 25%,#0A1120 0 50%,#E8EEF8 0 75%,#0A1120 0);background-size:14px 14px;border:3px solid #E8EEF8}
+@media(max-width:560px){.cert{padding:24px 18px}.cfield{grid-template-columns:96px minmax(0,1fr)}}
+
+/* ---------- dashboard ---------- */
+.dash{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.bcard{background:var(--ink2);border:1px solid var(--line);border-radius:13px;padding:18px}
+.bcard.locked{opacity:.6}
+.ring{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:600;margin-bottom:13px}
+.empty{text-align:center;padding:50px 20px;border:1px dashed var(--line);border-radius:14px;color:var(--faint)}
+.blist{display:grid;gap:10px}
+.brow{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--ink2);border:1px solid var(--line);border-radius:11px;flex-wrap:wrap}
+.brow .mono{font-size:12px;color:var(--faint)}
+
+/* ---------- cost estimator ---------- */
+.est{display:grid;grid-template-columns:360px minmax(0,1fr);gap:22px;align-items:start}
+.field{display:grid;gap:6px;margin-bottom:14px}
+label,.flabel{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--faint)}
+input,select{width:100%;padding:11px 13px;background:var(--ink);border:1px solid var(--line);border-radius:9px;color:var(--tx);font-family:inherit;font-size:14.5px}
+input:focus,select:focus{border-color:var(--haz);outline:none}
+input[type=range]{padding:0;height:28px;accent-color:var(--haz);background:transparent;border:0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.seg button{padding:9px 6px;border-radius:7px;font-size:13px;color:var(--dim);font-weight:500}
+.seg button.on{background:var(--haz);color:#0A1120;font-weight:600}
+.drop{border:1.5px dashed var(--line2);border-radius:12px;padding:20px 16px;text-align:center;transition:.15s;cursor:pointer;background:var(--ink)}
+.drop:hover,.drop.over{border-color:var(--haz);background:color-mix(in srgb,var(--haz) 5%,var(--ink))}
+.drop b{display:block;font-size:14.5px;margin-bottom:3px}
+.drop small{color:var(--faint);font-size:12.5px}
+.drop .ico{width:38px;height:38px;margin:0 auto 10px;border-radius:9px;border:1.5px solid var(--haz);position:relative}
+.drop .ico::before{content:"";position:absolute;left:50%;top:8px;width:2px;height:16px;background:var(--haz);transform:translateX(-50%)}
+.drop .ico::after{content:"";position:absolute;left:50%;top:8px;width:9px;height:9px;border-left:2px solid var(--haz);border-top:2px solid var(--haz);transform:translateX(-50%) rotate(45deg)}
+.fileline{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px;font-size:12.5px;color:var(--dim);flex-wrap:wrap}
+.fileline .mono{font-size:11.5px;color:var(--faint);overflow-wrap:anywhere}
+.linkbtn{color:var(--haz);font-size:12.5px;text-decoration:underline;text-underline-offset:3px}
+#estCv{width:100%;height:360px;display:block;background:radial-gradient(circle at 50% 55%,#16223A,#0B1322);border:1px solid var(--line);border-radius:14px;cursor:grab;touch-action:none}
+.vwrap{position:relative}
+.vtag{position:absolute;left:12px;top:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);pointer-events:none;display:flex;gap:12px;flex-wrap:wrap;right:12px}
+.vtag i{font-style:normal;display:inline-flex;align-items:center;gap:5px}
+.vtag i::before{content:"";width:10px;height:2px;background:currentColor}
+.total{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:22px;background:linear-gradient(150deg,#15233F,#0E182C);border:1px solid var(--line2);border-radius:14px;position:relative;overflow:hidden}
+.total::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--haz)}
+.total .big{font-family:var(--display);font-variation-settings:"wdth" 120;font-size:clamp(40px,6vw,58px);font-weight:900;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+.total .why2{color:var(--dim);font-size:13.5px;margin-top:8px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{background:var(--ink2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.tile span{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:4px}
+.tile b{font-family:var(--display);font-variation-settings:"wdth" 112;font-size:22px;font-variant-numeric:tabular-nums;display:block;line-height:1.15}
+.tile small{color:var(--faint);font-size:12px;display:block;margin-top:3px;overflow-wrap:anywhere}
+.tile.bad{border-color:color-mix(in srgb,var(--tc) 45%,transparent)} .tile.bad b{color:var(--tc)}
+.tile.good b{color:var(--ta)}
+@media(max-width:560px){.tiles{grid-template-columns:1fr 1fr}.tiles .tile:last-child{grid-column:1/-1}}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+.tbl th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:500;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl td.r,.tbl th.r{text-align:right}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td small{display:block;color:var(--faint);font-size:12px}
+.tscroll{overflow-x:auto}
+.ladder td.cell{text-align:center;font-family:var(--mono);font-size:13.5px;transition:.25s;border-radius:6px}
+.ladder td.cell.on{background:var(--haz);color:#0A1120;font-weight:600}
+.ladder tr.onrow td:first-child{color:var(--haz)}
+.errbox{padding:18px;border-radius:12px;border:1px solid color-mix(in srgb,var(--tb) 40%,transparent);background:color-mix(in srgb,var(--tb) 8%,transparent);color:var(--dim);font-size:14px}
+.errbox b{color:var(--tb);display:block;margin-bottom:4px}
+details.rates summary{cursor:pointer;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding-block:4px}
+details.rates[open] summary{margin-bottom:10px}
+
+/* ---------- booking ---------- */
+.bookGrid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px;align-items:start}
+.days{display:grid;grid-template-columns:repeat(7,minmax(64px,1fr));gap:8px;overflow-x:auto;padding-bottom:4px}
+.day{padding:10px 6px;border:1px solid var(--line);border-radius:10px;background:var(--ink2);text-align:center}
+.day small{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase}
+.day b{font-family:var(--display);font-size:20px}
+.day.on{border-color:var(--haz);background:color-mix(in srgb,var(--haz) 10%,var(--ink2))}
+.day.on b{color:var(--haz)}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin-top:16px}
+.slot{padding:12px 10px;border:1px solid var(--line);border-radius:10px;background:var(--ink2);text-align:left;font-variant-numeric:tabular-nums}
+.slot b{display:block;font-family:var(--mono);font-size:13px;font-weight:500}
+.slot small{font-size:11.5px;color:var(--faint)}
+.slot:hover:not(:disabled){border-color:var(--line2)}
+.slot.sel{border-color:var(--haz);background:color-mix(in srgb,var(--haz) 13%,var(--ink2))}
+.slot.sel small{color:var(--haz)}
+.slot.taken{opacity:.5;background:repeating-linear-gradient(135deg,var(--ink2) 0 7px,var(--ink3) 7px 14px)}
+.slot.mine{border-color:var(--ta)} .slot.mine small{color:var(--ta)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--faint);margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;border:1px solid var(--line2);display:inline-block}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(5,9,18,.82);backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.on{display:flex}
+.mbox{background:var(--ink2);border:1px solid var(--line2);border-radius:16px;padding:30px;max-width:460px;width:100%;max-height:calc(100vh - 40px);overflow:auto}
+.mbox h3{font-size:24px;text-transform:uppercase;margin-bottom:8px}
+.mbox>p{color:var(--dim);font-size:14px;margin-bottom:20px}
+.lopts{display:grid;gap:10px}
+.lopt{display:flex;gap:14px;align-items:center;text-align:left;padding:15px 16px;border:1px solid var(--line);border-radius:12px;background:var(--ink3);transition:.14s}
+.lopt:hover{border-color:var(--haz);transform:translateY(-1px)}
+.lopt b{display:block;font-size:14.5px;font-weight:600}
+.lopt small{color:var(--faint);font-size:12.5px}
+.lopt .gl{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none;font-family:var(--display);font-weight:900;color:#4285F4;font-size:16px}
+.lopt .gl.g2{background:var(--ink);color:var(--dim);border:1px solid var(--line2)}
+.formerr{color:var(--tc);font-size:13px;margin-block:-6px 12px;min-height:1px}
+.mbox form input{margin-bottom:14px}
+.hide{display:none!important}
+footer{border-top:1px solid var(--line);padding-block:30px 46px;color:var(--faint);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);opacity:0;background:var(--ta);color:#06261A;padding:11px 18px;border-radius:10px;font-weight:600;font-size:14px;z-index:120;transition:.25s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:980px){
+  .est,.bookGrid,.trainGrid,.detail{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:30px}#heroCanvas{height:300px}.hstage{order:-1}
+  .res{grid-template-columns:1fr}
+  .bar{flex-wrap:wrap;padding-block:10px;gap:10px}
+  nav{margin-left:0;order:3;width:100%;flex-wrap:nowrap;overflow-x:auto}nav button{flex:1;padding:8px 8px;font-size:12.5px;white-space:nowrap}
+  .who{margin-left:auto}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.ttrack{flex-wrap:wrap;width:auto;gap:12px 30px;padding-inline:20px}}
+</style>
+
+<header>
+ <div class="wrap bar">
+  <button class="logo" data-go="home"><i></i>Comet Center</button>
+  <nav>
+   <button data-go="home" class="on">Start here</button>
+   <button data-go="bay">Machines</button>
+   <button data-go="cost">Cost estimator</button>
+   <button data-go="book">Book a slot</button>
+   <button data-go="dash">My passes</button>
+  </nav>
+  <button class="who" id="who"><div class="av" id="av">?</div><small id="whoTxt">Sign in</small><span class="role" id="whoRole">Guest</span></button>
+ </div>
+</header>
+
+<main>
+<!-- ============ HOME ============ -->
+<div id="v-home">
+ <div class="wrap hero">
+  <div class="hbox">
+   <div class="eyebrow">Comet Center · IIT Hyderabad</div>
+   <h1>Don't know<br>which machine?<em>Neither did we.</em></h1>
+   <p class="lede">Tell us what you're trying to build. Comet Center points you at the right machine, teaches you to run it, prices the job and issues the pass that unlocks it. No queueing to ask a senior.</p>
+   <div class="cta-row">
+    <button class="btn" id="goWiz">Find my machine</button>
+    <button class="btn ghost" data-go="cost">Price my part</button>
+   </div>
+   <div class="stats">
+    <div><b>15</b>Machines</div>
+    <div><b>3</b>Access levels</div>
+    <div><b>~25 min</b>To first pass</div>
+   </div>
+  </div>
+  <div class="hstage">
+   <canvas id="heroCanvas" aria-label="Rotating 3D model of a Comet Center machine"></canvas>
+   <div class="hcap"><div><span class="mono" id="hcCode">P-01</span><b id="hcName">Bambu Lab A1</b></div><div class="hdots" id="hdots"></div></div>
+  </div>
+ </div>
+
+ <div class="ticker" aria-label="Facts about the machines"><div class="ttrack" id="ticker"></div></div>
+
+ <section class="wrap">
+  <div class="shead">
+   <span class="tag">How Comet Center works</span>
+   <h2>Idea to part in five moves</h2>
+   <p>Every student follows the same path, whether it's your first Benchy or a 24-hour print on the Giga.</p>
+  </div>
+  <div class="journey">
+   <button class="jstep" id="jFind"><b>Find the machine</b><small>Answer four questions about your part.</small></button>
+   <button class="jstep" data-go="bay"><b>Learn it</b><small>Short lessons, then a safety check.</small></button>
+   <button class="jstep" data-go="dash"><b>Get your pass</b><small>Tied to your institute email.</small></button>
+   <button class="jstep" data-go="cost"><b>Price the job</b><small>Upload your STL or DXF for cost and time.</small></button>
+   <button class="jstep" data-go="book"><b>Book and make</b><small>Pick a slot and run it, or hand it to staff.</small></button>
+  </div>
+ </section>
+
+ <div class="layers"></div>
+
+ <section class="wrap" id="wizSec">
+  <div class="shead">
+   <span class="tag">Step 01 · Triage</span>
+   <h2>What are you making?</h2>
+   <p>Four questions. You never need to know machine names. Describe the object and we'll do the translation.</p>
+  </div>
+  <div class="wiz" id="wiz"></div>
+ </section>
+
+ <div class="layers"></div>
+
+ <section class="wrap">
+  <div class="shead">
+   <span class="tag">The rules, in three colours</span>
+   <h2>Access levels</h2>
+   <p>Every machine at Comet Center wears a coloured band, the same one printed on its poster. Your passes have to match before the machine is yours.</p>
+  </div>
+  <div class="tiers">
+   <div class="panel"><span class="tier tA">Self run</span><p style="margin-top:14px;color:var(--dim);font-size:14px">Watch, quiz, done. Run it alone whenever the lab is open. Failures cost plastic, not fingers.</p></div>
+   <div class="panel"><span class="tier tB">Induction first</span><p style="margin-top:14px;color:var(--dim);font-size:14px">Pass the module, then a staff member signs you off on the machine. No solo runs until then.</p></div>
+   <div class="panel"><span class="tier tC">Staff run only</span><p style="margin-top:14px;color:var(--dim);font-size:14px">You learn to prepare the job. Staff set up and start it. Submit your file at the front desk.</p></div>
+  </div>
+ </section>
+</div>
+
+<!-- ============ BAY ============ -->
+<div id="v-bay" class="hide">
+ <section class="wrap">
+  <div class="shead">
+   <span class="tag">Step 02 · Machine bay</span>
+   <h2>Every machine at Comet Center</h2>
+   <p>Drag any model to spin it. Open a machine for its station card, the rules, and its training module.</p>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="bay" id="bay"></div>
+ </section>
+</div>
+
+<div id="v-detail" class="hide"><section class="wrap" id="detail"></section></div>
+<div id="v-train" class="hide"><section class="wrap" id="train"></section></div>
+
+<!-- ============ COST ============ -->
+<div id="v-cost" class="hide">
+ <section class="wrap">
+  <div class="shead">
+   <span class="tag">Cost estimator</span>
+   <h2>What will my part cost?</h2>
+   <p>Pick a machine and drop in your file. 3D jobs take STL or OBJ. Flat cutting jobs (waterjet, router, wire EDM) take a DXF outline. You get the price, the job time and the material straight away.</p>
+  </div>
+  <div class="est">
+   <div class="panel" id="estForm"></div>
+   <div class="stack" id="estOut">
+    <div class="vwrap"><canvas id="estCv" aria-label="3D preview of your part inside the machine"></canvas><div class="vtag" id="vtag"></div></div>
+    <div id="estRes" class="stack"></div>
+   </div>
+  </div>
+ </section>
+</div>
+
+<!-- ============ BOOK ============ -->
+<div id="v-book" class="hide"><section class="wrap" id="book"></section></div>
+
+<!-- ============ DASHBOARD ============ -->
+<div id="v-dash" class="hide"><section class="wrap" id="dash"></section></div>
+</main>
+
+<footer><div class="wrap"><span>Comet Center · IIT Hyderabad · Learn. Build. Scale.</span><span>Preview build. Machine status, slot availability and sign-in are examples until the booking backend is connected.</span></div></footer>
+
+<div class="modal" id="login" role="dialog" aria-modal="true" aria-labelledby="lgTitle"><div class="mbox">
+ <h3 id="lgTitle">Sign in</h3>
+ <p>Pick how you're joining Comet Center. Guests can explore machines and price parts. Training and booking need a sign-in.</p>
+ <div class="lopts" id="lopts">
+  <button class="lopt" data-role="student"><span class="gl">G</span><span><b>IIT Hyderabad student or staff</b><small>Continue with your @iith.ac.in Google account</small></span></button>
+  <button class="lopt" data-role="external"><span class="gl">G</span><span><b>From outside IITH</b><small>Continue with any Google account to book and get quotes</small></span></button>
+  <button class="lopt" data-role="guest"><span class="gl g2">→</span><span><b>Just exploring</b><small>Browse as a guest, no sign-in</small></span></button>
+ </div>
+ <form id="lform" class="hide" novalidate>
+  <div class="note" style="margin-bottom:16px"><strong>Preview:</strong> Google sign-in switches on when the site goes live. Type your details for now.</div>
+  <label for="lname">Full name</label><input id="lname" autocomplete="name" placeholder="Ananya Rao">
+  <label for="lemail" id="lemailLbl">Institute email</label><input id="lemail" type="email" autocomplete="email" placeholder="cs22btech11001@iith.ac.in">
+  <div id="lrollWrap"><label for="lroll">Roll number</label><input id="lroll" placeholder="CS22BTECH11001"></div>
+  <div class="formerr" id="lerr"></div>
+  <div class="cta-row"><button class="btn" type="submit">Continue</button><button class="btn ghost" type="button" id="lback">Back</button></div>
+ </form>
+ <button class="linkbtn" id="lclose" style="margin-top:18px">Close</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ============================================================
+   MACHINES  (content from the Comet Center posters and cards)
+============================================================ */
+const FAM={print:"3D printing",machine:"Machining",cut:"Cutting",robot:"Robotics & joining"};
+const MACHINES={
+a1:{name:"Bambu Lab A1",model:"Bambu Lab A1 · open-frame FDM",code:"P-01",fam:"print",tier:"A",status:"up",
+ blurb:"Melts filament and draws your part one 0.2 mm layer at a time. Where almost everyone starts.",
+ makes:"Brackets, phone stands, enclosures, nuts and bolts, first prototypes",
+ specs:{"Build volume":"256 × 256 × 256 mm","Nozzle":"0.4 mm, up to 300 °C","Bed":"Textured PEI, up to 100 °C","Top speed":"500 mm/s","Slicer":"Bambu Studio"},
+ ok:["PLA, the default. Cheap and forgiving","PETG, tougher with a little flex","TPU, for flexible parts","PVA, as dissolvable support"],
+ no:["ABS and ASA. They warp on an open frame, so use the Core One+","Any spool from outside until staff check it","Nails, knives or anything but the scraper on the plate"],
+ steps:["Slice in Bambu Studio with the Comet Center A1 profile.","Wipe the plate with IPA, edge to edge. No fingerprints after that.","Clear the bed: old print, blobs and the scraper all come off.","Check the filament: enough left, dry, not tangled on the spool.","Send the job and let the auto mesh run. It takes a minute.","Watch layer one go down. Loose or stringy means stop.","Leave it alone while it moves. Never reach in.","When it's done, lift the whole plate off and flex it. The part pops free.","Log the job, put the plate back and leave the bed clear."],
+ stop:"The first layer isn't sticking, plastic is balling up on the nozzle, or the part breaks loose. Stop from the screen and tell the lab staff.",
+ facts:["10,000 mm/s² of acceleration, about 1 g, the same shove as a launching coaster.","One 1 kg spool is about 330 m of plastic. Your print is a single continuous line of it.","The ISS has been printing its own spare parts since 2014. You're on the same tech."],
+ lessons:[
+  {t:"How FDM works",d:"4 min",p:["Model, slice, print, clean up: the four moves","Why layers bond, and why parts are weakest across them","Reading the slice preview before you commit four hours"]},
+  {t:"The plate and the first layer",d:"5 min",p:["IPA wipe and why skin oil ruins adhesion","What the auto mesh is measuring","Too high, too low, just right: reading layer one"]},
+  {t:"Getting the part off and leaving it clean",d:"3 min",p:["Scraper only, and flexing the plate","Removing supports without snapping detail","What the next person should find"]}],
+ quiz:[
+  {q:"Why shouldn't you touch the build plate with your fingers?",a:["It's always hot enough to burn you","Skin oil stops the next print from sticking","It knocks the bed out of level","It voids the warranty"],c:1,x:"Palm oil on PEI is the most common reason a first layer won't stick. Wipe with IPA and hold the plate by its edges."},
+  {q:"Your first layer looks like loose spaghetti. What do you do?",a:["Let it run, it usually recovers","Stop the print, clean the plate and start again","Speed the print up","Open a window to cool it"],c:1,x:"A bad first layer never recovers. Stopping costs five minutes. Not stopping costs the job and often a blob on the nozzle."},
+  {q:"A finished part is stuck hard to the plate. What's the right move?",a:["Pry it off with a knife","Lift the whole plate off and flex it","Heat the bed back up to 100 °C","Leave it for the next person"],c:1,x:"The flexible plate is designed for this. Flex it and the part pops off with no tools and no scratched PEI."},
+  {q:"You need an ABS part. Which machine do you book?",a:["The A1, at a higher temperature","The Core One+ with its enclosure","The Giga","Any of them"],c:1,x:"ABS and ASA curl and crack as they cool on an open frame. The Core One+ keeps warm air around the part so the layers stay bonded."}]},
+
+core:{name:"Prusa Core One+",model:"Original Prusa CORE One+ · enclosed CoreXY",code:"P-02",fam:"print",tier:"B",status:"up",
+ blurb:"The box is the point. A warm chamber lets it print the ABS, ASA, PC and nylon that crack on open machines.",
+ makes:"Heat-resistant housings, snap fits in ASA, nylon gears, carbon-fibre brackets",
+ specs:{"Build volume":"250 × 220 × 270 mm","Chamber":"Actively held, up to 55 °C","Nozzle":"0.4 mm, up to 290 °C","Bed":"Smooth PEI, up to 120 °C","Layers":"0.05 – 0.30 mm","Slicer":"PrusaSlicer"},
+ ok:["PLA and PETG. Door can stay shut, vents handle it","ASA and ABS. This is the machine for them","PC and PA nylon. Slow down, keep the chamber hot","Carbon-fibre composites, with the hardened nozzle"],
+ no:["Opening the door mid-print. It cracks the part","CF filament on a brass nozzle. It wears through fast","Skipping the chamber warm-up for ASA or PC"],
+ steps:["Slice in PrusaSlicer with the Comet Center Core One+ profile.","Check the sheet is clean and seated on the magnets.","Load filament from the right-side spool bay and watch it purge.","For ASA or PC, preheat until the chamber reaches temperature.","Shut the door and start. It stays shut for the whole job.","Watch the first layer through the glass.","Never reach in. The head moves without warning.","Let the part cool in the chamber, then lift the sheet out and flex it once.","Log the material on the sheet, especially nylon and PC runs."],
+ stop:"Cracking sounds, layers splitting, or the head hitting the part. Pause from the screen and call staff. Don't open the door on a hot ABS part.",
+ facts:["There's no chamber heater. Two fans push the bed's own heat around the box and vents open by themselves for PLA.","Every panel is screwed, not glued, and the CAD is public. The printer can print its own upgrades.","CoreXY means the bed never moves sideways, so tall prints stay steady."],
+ lessons:[
+  {t:"Why the box matters",d:"4 min",p:["How cooling layers pull a part into a curl","What 55 °C of chamber air does for ABS and ASA","Fumes and noise stay inside too"]},
+  {t:"Materials by chamber temperature",d:"5 min",p:["PLA and PETG: door shut, vents open","ASA and ABS: enclosure only","PC, nylon and CF: slow, hot and a hardened nozzle"]},
+  {t:"Door discipline and taking parts off",d:"3 min",p:["Why opening the door mid-print cracks the part","Letting it cool in the chamber","Flexing the sheet, and logging the material"]}],
+ quiz:[
+  {q:"Why does ABS crack on an open-frame printer?",a:["The nozzle is too hot","Layers cool unevenly and pull apart","ABS is too heavy","The bed is too small"],c:1,x:"Warm air around the part lets layers cool slowly and stay bonded. Cold draughts make them shrink at different rates and split."},
+  {q:"Your ASA part is halfway done. Can you open the door to check it?",a:["Yes, quickly","Yes, if the bed is hot","No, opening it mid-print cracks the part","Only for PLA"],c:2,x:"The sudden cold air is exactly what the enclosure exists to prevent. Watch through the glass."},
+  {q:"You want to print carbon-fibre nylon. What has to be fitted?",a:["A 0.2 mm nozzle","A hardened nozzle","A glass bed","Nothing special"],c:1,x:"Carbon fibre is abrasive and wears a brass nozzle out within a print or two."}]},
+
+xl:{name:"Prusa XL",model:"Original Prusa XL · 5-tool toolchanger",code:"P-03",fam:"print",tier:"B",status:"up",
+ blurb:"Five heads, five materials, one plate. It parks the head it's holding, picks up the next one and keeps printing.",
+ makes:"Multi-colour models, parts with dissolvable supports, full-size helmets",
+ specs:{"Toolheads":"Up to 5 × Nextruder","Build volume":"360 × 360 × 360 mm","Nozzle":"0.4 mm, up to 290 °C","Bed":"Segmented PEI, 16 tiles, up to 120 °C","Motion":"CoreXY","Slicer":"PrusaSlicer"},
+ ok:["PLA, PETG, ASA, PC and PA","PVA for supports that dissolve in water","Mixed nozzle sizes on different heads"],
+ no:["Reaching past a parked head. It's still hot","Pulling a tool out of its dock by hand","Resting anything on the dock row","Cancelling someone else's multi-day job"],
+ steps:["Assign each colour or material to a tool in PrusaSlicer.","Confirm the slicer's tool for each colour matches the reel on that bay.","Check the dock row is clear. A blocked pickup ends the print.","Check every feed tube is untangled and every spool turns freely.","Leave the purge tower in the job. Every swap wipes and purges on it.","Start and watch the first two tool changes.","Never touch a nozzle or a parked head. 290 °C.","Let it finish, then remove the part and peel away the purge tower.","Drop PVA supports in water and log the job."],
+ stop:"A failed pickup, a head knocked out of its dock, or a tangled feed line. Pause from the front console and call staff.",
+ facts:["A five-colour print can trigger thousands of tool changes. Each swap takes seconds and the print never stops.","Every head finds the bed by feel. A load cell senses contact instead of guessing a height.","The bed is 16 tiles. Print one small part and only the tiles under it heat up."],
+ lessons:[
+  {t:"How a toolchanger works",d:"4 min",p:["Docks, the carriage and the pickup","Why idle heads stay hot","What the purge tower is for"]},
+  {t:"Assigning tools in PrusaSlicer",d:"5 min",p:["Colour and material per tool","Soluble supports in PVA","Mixed nozzles: wide for bulk, fine for detail"]},
+  {t:"Five heads, five checks",d:"3 min",p:["Right tool, right reel","Docks clear and tubes free","Leaving the purge alone"]}],
+ quiz:[
+  {q:"What is the little tower printed next to your part for?",a:["Decoration","Every tool swap wipes and purges onto it","It holds the part down","It measures temperature"],c:1,x:"Each new head pushes out a bit of filament first so the colour is clean on your part. That tower is meant to be there."},
+  {q:"Someone left a scraper on the dock row. What happens?",a:["Nothing","A blocked pickup can end the print","The heads move around it","It speeds up tool changes"],c:1,x:"The carriage needs a clear path to each dock. A blocked pickup stops the job."},
+  {q:"How do you remove supports printed in PVA?",a:["Sand them off","Drop the part in water","Heat them with a gun","Cut them with a knife"],c:1,x:"PVA dissolves in water. Print the scaffolding in PVA, soak the part and walk away."}]},
+
+giga:{name:"ELEGOO OrangeStorm Giga",model:"ELEGOO OrangeStorm Giga · large-format FDM",code:"P-04",fam:"print",tier:"B",status:"busy",
+ blurb:"Four heads, four plates, 640 litres. The machine you book when the part will not fit anywhere else.",
+ makes:"Furniture-scale shells, metre-tall parts, four copies at once",
+ specs:{"Volume":"800 × 800 × 1000 mm (640 L)","Platform":"820 × 820 mm, 4 × 410 mm PEI tiles","Bed":"Up to 100 °C, all four in 17 min","Nozzle":"0.6 mm, up to 300 °C","Heads":"1 fitted, up to 4 on one X rail","Speed":"300 mm/s max, 150 mm/s in practice","Power":"1,530 W, +100 W per extra head","Slicer":"ELEGOO Cura"},
+ ok:["PLA","PETG","TPU"],
+ no:["ABS, ASA, PC and nylon. They curl off the open plate long before a tall part finishes","Leaning on the gantry","Reaching in. Four nozzles at 300 °C"],
+ steps:["Book the bed on the calendar. Big jobs run for a day or more.","Model to fit one 410 mm tile, or fill all four.","Slice in ELEGOO Cura with the 0.6 mm profile. One copy per head, per tile.","Check every reel. Each head needs enough for the whole job.","Two people to a tile when placing or lifting plates.","Watch layer one on every tile. A tall failure costs a spool.","Never lean on the gantry while it moves.","Take a tile: lift one plate off the magnet and leave the other three alone.","Log the job and the reel weights."],
+ stop:"A part lifting at a corner, a head dragging through a print, or one reel running dry. Pause and call staff. If power cuts, it resumes from the layer it stopped on.",
+ facts:["The bed is 0.67 m² of PEI, about the size of a small desk.","One Giga build volume holds 27 A1 build volumes.","Filling the volume solid would take about 800 kg of plastic."],
+ lessons:[
+  {t:"Thinking in metres",d:"4 min",p:["What fits on a tile and what needs all four","Why open-frame limits you to PLA, PETG and TPU","Planning a 24-hour job around the calendar"]},
+  {t:"Four heads, one clock",d:"5 min",p:["Every head runs the same G-code","Four copies in the time of one","Four colours by loading a different reel per head"]},
+  {t:"Rules for the big one",d:"3 min",p:["Two people to a tile","Watching layer one everywhere","Reel checks and power-cut resume"]}],
+ quiz:[
+  {q:"Can the four heads print four different models at once?",a:["Yes, any four models","No, every head runs the same G-code, so all four are the same model","Only on PLA","Only two at a time"],c:1,x:"The heads share one X rail and move together. Same model, but each head can carry a different colour."},
+  {q:"You want a 900 mm tall ABS part. Is the Giga right?",a:["Yes, it's the tallest","No, ABS curls off an open frame long before a tall part finishes","Yes, at 300 °C","Only with glue"],c:1,x:"The Giga is PLA, PETG and TPU only. Large ABS parts need an enclosed machine or the pellet printer's heated chamber."},
+  {q:"Before a four-head job, what do you check on each reel?",a:["Its colour only","That it holds enough for the whole job","Its brand","Nothing"],c:1,x:"Each head prints its own copy end to end. One reel running dry ruins that tile."}]},
+
+garuda:{name:"Garuda3D GF500",model:"Garuda3D GF500 · FGF pellet extrusion",code:"P-05",fam:"print",tier:"B",status:"up",
+ blurb:"Eats raw plastic granules and pushes them through a heated screw. Half a metre cubed at a time, for a fraction of filament cost.",
+ makes:"Casting patterns, vacuum-forming moulds, helmet bucks, jigs and fixtures",
+ specs:{"Volume":"500 × 500 × 500 mm (125 L)","Feedstock":"Dry pellets, 2 – 4 mm","Nozzle":"1.0 mm brass, 2.0 mm optional, 300 °C","Chamber":"50 °C, HEPA + carbon filter","Bed":"Aluminium, up to 110 °C, PEI / glass / PP plates","Speed":"10 – 50 mm/s","Slicer":"OrcaSlicer"},
+ ok:["PLA, HSPLA, PETG","ABS, HIPS, GPPS","PPGF and PPCF (glass and carbon filled)","Flexibles"],
+ no:["Wet pellets. They steam in the barrel and print as foam","Opening the door mid-print. Hot chamber, hot melt","Running a big job with the inverter off"],
+ steps:["Dry the pellets. Straight from the bag is not dry; check the drying chart.","Fit the plate that matches your pellet: PEI, glass or PP.","Clean the plate with IPA, edge to edge.","Estimate the part mass and fill the hopper. Five kilos goes fast at a 1 mm bead.","New bag or new supplier? Print a small test block first.","Slice in OrcaSlicer and send over Wi-Fi or USB.","Let the probe map all 500 mm of bed.","Keep the door shut. Watch the job over LAN from your desk.","Grind failed prints, dry them and pour them back in."],
+ stop:"Foamy or sputtering extrusion, the hopper running empty, or the screw stalling. Pause from the console and call staff.",
+ facts:["Filament is just pellets that went through an extra factory. Skipping that step takes about 80% off the material bill.","The same resin grades used in injection moulding go straight in. Prototype in the exact production plastic.","A failed print is feedstock. Grind it, dry it, pour it straight back in."],
+ lessons:[
+  {t:"Granule to part",d:"4 min",p:["Load, convey, melt, build","Heated zones at 180, 240 and 300 °C","Why thick beads mean strong walls and rough surfaces"]},
+  {t:"Pellet rules",d:"4 min",p:["Drying, and what wet pellets do","Matching the plate to the pellet","Testing a new bag before a long job"]},
+  {t:"Good candidates",d:"3 min",p:["Parts too big or too cheap for filament","Casting patterns and layup tools","Finishing with sandpaper afterwards"]}],
+ quiz:[
+  {q:"You pour pellets straight from a new bag. What's the risk?",a:["None","They've absorbed moisture, steam in the barrel and print as foam","They melt too fast","The hopper jams"],c:1,x:"Granules drink moisture from the air. Dry them first using the chart for that grade."},
+  {q:"Why do you match the plate to the pellet?",a:["For colour","The wrong sheet either won't hold the part or won't let it go","It changes the print speed","It doesn't matter"],c:1,x:"PEI, glass and PP each bond differently with different plastics."},
+  {q:"You switch to pellets from a new supplier. What first?",a:["Start the full job","Print a small test block","Raise the temperature 50 °C","Use the 2 mm nozzle"],c:1,x:"Different supplier, different melt. A small block shows problems before you lose a day."}]},
+
+saturn:{name:"ELEGOO Saturn 4 Ultra 16K",model:"ELEGOO Saturn 4 Ultra 16K · MSLA resin",code:"P-06",fam:"print",tier:"B",status:"up",
+ blurb:"Light instead of heat, liquid instead of filament, and the print hangs upside down. 14-micron pixels.",
+ makes:"Miniatures, character busts, fine mechanisms, smooth master patterns",
+ specs:{"Build volume":"211.68 × 118.37 × 220 mm","Screen":"16K mono LCD, 15,120 × 6,230 px, 14 µm pixel","Layers":"0.02 – 0.05 mm","Tank":"Heated, held at 30 °C","Speed":"Up to 150 mm/h of height","Light":"405 nm COB lamp + Fresnel lens"},
+ ok:["Standard 405 nm resin","ABS-like resin","Water-washable resin"],
+ no:["Resin or IPA down the drain","Touching a wet print bare-handed","Leaving the hood open under light","Scraping the film with anything metal"],
+ steps:["Gear up: nitrile gloves on both hands, extraction on.","Stir and sweep the vat with the spatula. No cured lumps.","Check the resin level: above the model, below the MAX line.","Lock the plate: ears down, clamp tight, lid closed.","Slice with supports and start the job. The AI camera watches for failures.","When it's done, park the wet plate on the drip stand to drain.","Carry it over the tray to the wash station. A wet plate never travels.","Wash in IPA, then cure under UV.","Waste resin and used IPA go in the marked jar."],
+ stop:"Resin on skin, a torn vat film or resin outside the vat. Wash skin with soap and water and tell staff straight away.",
+ facts:["94 million pixels on a 10-inch panel, about eleven 4K TVs, redrawn every few seconds.","Only height costs time. One miniature or forty of them, each layer takes exactly as long.","Resin came first: stereolithography was patented in 1986, three years ahead of filament printing."],
+ lessons:[
+  {t:"How one layer happens",d:"4 min",p:["Dip, flash, peel, lift","Why the tilting vat peels sideways","Gravity and why supports matter"]},
+  {t:"Three wet-bench rules",d:"5 min",p:["Nitrile on, both hands, and why resin sensitises skin","Nothing goes down the sink","A wet plate never travels"]},
+  {t:"Wash and cure",d:"4 min",p:["IPA wash timing","UV cure","Handling green parts without bending them"]}],
+ quiz:[
+  {q:"One miniature takes 3 hours. How long do forty of the same height take?",a:["120 hours","About 3 hours","40 minutes","Twice as long"],c:1,x:"The whole layer is flashed at once. Only height costs time, so a full plate takes as long as one part."},
+  {q:"Uncured resin gets on your hand. What do you do?",a:["Wipe it on a towel","Wash with soap and water, then tell staff","Rinse it with IPA","Let it dry"],c:1,x:"Resin is a skin sensitiser. IPA drives it further into skin. Soap and water, then report it."},
+  {q:"Where does used IPA go?",a:["The sink","The marked waste jar","The normal bin","Back in the bottle"],c:1,x:"Nothing goes down the sink. Waste resin and IPA are collected separately."}]},
+
+b9:{name:"B9 Elite Micro",model:"B9Creations Elite Micro · micro resin",code:"P-07",fam:"print",tier:"B",status:"up",
+ blurb:"No nozzle, no filament. UV light hardens liquid resin one 10 µm layer at a time, for parts that are small and have to be right.",
+ makes:"Microfluidic chips, medical device parts, tiny connectors, micro filters",
+ specs:{"Build size":"38.4 × 21.6 × 127 mm","Detail":"Down to 10 µm features","Accuracy":"± 10 µm","Job time":"Minutes to hours","Resins":"Six from B9, plus your own","Software":"B9Create"},
+ ok:["Onyx, black and rigid, 20 µm wall","Transparent, for fluid channels, 20 µm wall","HD Slate, everyday precise parts, 40 µm wall","HD Clear, polishable, 30 µm wall","Robust ABS/PC, tough, 80 µm wall"],
+ no:["Opening the hood while it prints. Daylight also hardens resin","Scraping the tank bottom","Resin or IPA down the drain"],
+ steps:["Load your model in B9Create and pick the resin. It sets exposure and supports.","Check your thinnest wall against the resin's minimum.","Gloves on. Check the tank is clean and filled.","Close the tinted hood and start.","When it finishes, drip-drain the part over the tank.","Rinse it briefly and gently in IPA.","Harden it in the UV chamber.","Inspect it under the microscope.","Waste resin and IPA go in the marked jar."],
+ stop:"Resin on skin, a cloudy or damaged tank floor, or the build table not lifting. Stop and call staff.",
+ facts:["A pattern pressed 10 µm deep is shallower than a red blood cell is wide.","One printed channel measured 300 µm across and a foot long, in one piece.","B9Creations printers appear in 220+ research papers, and one has printed in orbit on the ISS."],
+ lessons:[
+  {t:"How small is 10 µm?",d:"3 min",p:["Microns against hair, paper and blood cells","Build size and why it's 38 × 22 mm","Where the machine is used"]},
+  {t:"Pick your resin",d:"4 min",p:["Minimum wall thickness per resin","Transparent for channels, Onyx for detail","Bringing your own resin"]},
+  {t:"When it finishes, you're not finished",d:"4 min",p:["Drip, rinse, cure","Inspecting under a microscope","Waste handling"]}],
+ quiz:[
+  {q:"Your design has 50 µm walls. Which resin can't hold them?",a:["Onyx","HD Clear","Robust ABS/PC","Transparent"],c:2,x:"Robust ABS/PC needs 80 µm walls minimum. The others go down to 20 – 40 µm."},
+  {q:"Why keep the hood shut while it prints?",a:["To keep it quiet","Daylight also hardens resin","To keep it warm","It isn't needed"],c:1,x:"Stray light cures resin in the tank where you don't want it."},
+  {q:"What's the last step after UV curing?",a:["Sanding","Inspect it under a microscope","Painting","Freezing"],c:1,x:"At this scale, the microscope is the only way to know the features came out."}]},
+
+mill:{name:"CNC milling machine",model:"BFW XTRON-433 · vertical machining centre",code:"W-01",fam:"machine",tier:"B",status:"up",
+ blurb:"Mills, drills, slots and pockets metal parts, moulds and fixtures from solid stock, to a hundredth of a millimetre.",
+ makes:"Aluminium brackets, moulds, jigs, precision fixtures",
+ specs:{"Travel X-Y-Z":"400 × 300 × 300 mm","Spindle":"8000 rpm · 5.5 kW","Taper · tool changer":"BT-40 · 12 tools","Positioning accuracy":"0.010 mm"},
+ ok:["Aluminium 6061, the standard teaching material","Brass and mild steel","Delrin and tooling board for practice"],
+ no:["Solo runs before you're signed off","Gloves, rings, loose sleeves or lanyards near the spindle","Opening the doors while the spindle turns"],
+ steps:["Dry-run your program on the CNC simulator (W-02) first.","Bring your CAM file for staff review a day before your slot.","Check the stock size matches what the CAM file expects.","Clamp in the vice on parallels and tighten to the marked value.","Safety glasses on. Tie back hair, remove rings and sleeves.","Set tool lengths and work offsets with staff watching.","Run single-block with feed override at 10%.","Doors closed while the spindle turns.","Clear chips with the brush and hook, never with hands."],
+ stop:"Chatter, a change in the cutting sound, coolant loss, or the part moving in the vice. Feed hold and call staff.",
+ facts:["0.010 mm positioning accuracy is about a seventh of a human hair.","The 12-tool changer swaps cutters by itself, mid-program.","A teaching rule of thumb: simulate it, then cut air, then cut metal."],
+ lessons:[
+  {t:"What the mill does and why it's induction first",d:"5 min",p:["Forces and speeds in plain numbers","Where every emergency stop is","What a loose part does at 8000 rpm"]},
+  {t:"Workholding and offsets",d:"7 min",p:["Vice, parallels and clamping order","Work offsets and tool lengths","How a wrong zero crashes the machine"]},
+  {t:"From CAM file to first cut",d:"6 min",p:["Simulating first on W-02","Single-block and feed override","Chips, coolant and cleanup"]}],
+ quiz:[
+  {q:"When can you run the mill on your own?",a:["After you pass this module","After staff sign you off","Any time in your slot","Never"],c:1,x:"The module is step one. Staff induction on the real machine comes before any solo run."},
+  {q:"Why no gloves near the spindle?",a:["They reduce grip","They can catch and pull your hand in","Coolant ruins them","They're fine"],c:1,x:"Anything that can wrap around a rotating tool is a hazard."},
+  {q:"The tool rapids toward the vice on your first run. What do you do?",a:["Wait and see","Hit the emergency stop","Open the door","Lower the spindle speed"],c:1,x:"Stop first, diagnose second. That's why the first run is single-block at 10% feed."}]},
+
+sim:{name:"CNC simulator",model:"Ace Micromatic CNC Simulator · Fanuc / Sinumerik",code:"W-02",fam:"machine",tier:"A",status:"up",
+ blurb:"A training console for learning and dry-running CNC programs before you take them to a real machine.",
+ makes:"Practice programs for the mill and lathe, with zero risk",
+ specs:{"Controls":"Switchable Fanuc / Sinumerik","Modes":"Turning and milling","Displays":"Machine view + control screen","Operator inputs":"Handwheel, overrides, E-stop, foot pedal"},
+ ok:["Your own G-code programs","Lab exercise programs","Any time the lab is open"],
+ no:["Moving it with the castor brakes off","Taking an unsimulated program to the mill or lathe"],
+ steps:["Put the brakes on the castors before you start.","Pick the controller: Fanuc or Sinumerik.","Pick the mode: turning or milling.","Load your program and set the virtual stock.","Run it in single-block and watch the machine view.","Try the overrides and the handwheel.","Fix anything that crashes, then run it again end to end.","Note the cycle time. It feeds your cost estimate."],
+ stop:"Nothing on this console can hurt you. If the screen freezes, tell staff rather than unplugging it.",
+ facts:["Crashing the simulator costs nothing. Crashing the mill can cost a spindle.","The same console switches between the two most common CNC controllers in Indian industry.","Cycle time from a dry run is the best input for the cost estimator."],
+ lessons:[
+  {t:"Fanuc and Sinumerik basics",d:"6 min",p:["The control panel, mode by mode","G-code you'll actually use","Switching controllers"]},
+  {t:"Dry-running a program",d:"5 min",p:["Single-block","Reading the machine view","Spotting rapids through stock"]},
+  {t:"Overrides, handwheel and E-stop",d:"4 min",p:["Feed and spindle overrides","Jogging with the handwheel","Practising the E-stop"]}],
+ quiz:[
+  {q:"What do you do before using the simulator?",a:["Nothing","Put the castor brakes on","Switch the mill on","Wear gloves"],c:1,x:"It's on wheels. Brakes on first."},
+  {q:"Why simulate before cutting metal?",a:["It's faster","Mistakes cost nothing here","The mill needs it","It isn't needed"],c:1,x:"A crash on the console is free. A crash on the mill is expensive and dangerous."},
+  {q:"What does feed override at 10% do?",a:["Runs at 10% of programmed feed","Uses 10% of the tools","Stops after 10%","Adds 10% coolant"],c:0,x:"It slows every feed move so you can stop before trouble."}]},
+
+waterjet:{name:"Waterjet cutter",model:"OMAX ProtoMAX · abrasive waterjet, 30,000 psi",code:"W-03",fam:"cut",tier:"B",status:"up",
+ blurb:"Cuts flat profiles in metal, glass, stone, composite and plastic with sand and water, so there's no heat-affected zone.",
+ makes:"Metal plates, brackets, gaskets, glass and stone shapes, composite panels",
+ specs:{"Cutting travel":"304 × 304 mm · 25 mm Z","Pump":"3.7 kW at 2068 bar","Speed":"Up to 2540 mm/min","Accuracy":"0.127 mm","Supply":"230 – 240 V AC · 1 ph · 30 A"},
+ ok:["Aluminium, mild and stainless steel, brass","Glass and stone","Carbon fibre and composites","Acrylic and other plastics"],
+ no:["Opening the lid while it cuts","Hands anywhere near the nozzle","Starting without checking abrasive and water","Tempered glass. It shatters"],
+ steps:["Export your outline as a DXF, 1:1 in millimetres.","Check the abrasive hopper and the water level.","Place and weight the sheet on the slats.","Set material and thickness in the software.","Close the lid.","Start the cut. Keep hands clear of the nozzle.","Wait for the jet to stop fully before opening the lid.","Lift parts out, rinse them and dry them.","Clear offcuts and log the job."],
+ stop:"Water spraying outside the tank, a sudden change in sound, or the part shifting. Stop the cut and call staff.",
+ facts:["30,000 psi is about 2,000 times the air pressure around you.","Cutting with water means no heat-affected zone. The metal next to the cut stays the way it was.","The jet goes through 25 mm of steel and glass with the same nozzle."],
+ lessons:[
+  {t:"Cutting with water and sand",d:"4 min",p:["Why there's no heat-affected zone","What the abrasive does","Speed versus edge quality"]},
+  {t:"Preparing a DXF",d:"5 min",p:["Closed outlines, 1:1, millimetres","Pierce points and lead-ins","Tabs so parts don't drop"]},
+  {t:"Abrasive, water and the lid",d:"3 min",p:["Pre-start checks","Lid closed, hands clear","Rinsing parts afterwards"]}],
+ quiz:[
+  {q:"Why can the waterjet cut heat-sensitive materials?",a:["The water is chilled","There's no heat-affected zone","It cuts slowly","It uses a laser"],c:1,x:"It erodes the material with abrasive and water, so nothing next to the cut gets hot."},
+  {q:"What do you check before every cut?",a:["Abrasive and water","Only the file","The weather","Nothing"],c:0,x:"No abrasive means no cut. No water means no jet."},
+  {q:"When can you open the lid?",a:["Any time","Once the jet has fully stopped","Halfway through","When it gets loud"],c:1,x:"Ultra-high pressure. Lid closed and hands clear while it runs."}]},
+
+router:{name:"CNC router",model:"Enclosed gantry CNC router · dust extraction",code:"W-04",fam:"cut",tier:"B",status:"up",
+ blurb:"Profiles and engraves sheet material: wood, acrylic, composites and soft metals, inside a full glass enclosure.",
+ makes:"Acrylic panels, plywood furniture parts, engraved signs, composite plates",
+ specs:{"Configuration":"Gantry with vertical Z axis","Guarding":"Full glass enclosure","Extraction":"Dust hose, run it always","Workholding":"Clamp or screw stock down"},
+ ok:["Cast acrylic","Plywood and MDF","Composites","Soft metals like aluminium, at low feed"],
+ no:["Unclamped stock. It becomes a projectile","Running without extraction","Reaching in while the spindle turns"],
+ steps:["Export your outline as a DXF and set cut depth per pass.","Check the sheet is flat. A bowed sheet lifts into the cutter.","Clamp or screw the stock down.","Add tabs so cut-out parts stay attached.","Zero X and Y at the sheet corner, Z on the surface.","Dry-run with the spindle off and Z raised.","Close the guard and start extraction, then the spindle.","Never reach in while the spindle turns.","Cut tabs at the bench with a hand tool."],
+ stop:"A squeal, melting or stringing behind the cutter, or the sheet moving. Feed hold, then spindle stop, then call staff.",
+ facts:["Cast acrylic chips cleanly. Extruded acrylic melts and welds back together behind the cutter.","Tabs keep every cut-out part captive until the spindle stops.","The dust hose isn't optional. MDF dust is the reason."],
+ lessons:[
+  {t:"Workholding",d:"5 min",p:["Clamping and screwing down","Tabs: how many and where","Checking a sheet for bow"]},
+  {t:"Feeds, speeds and melting acrylic",d:"5 min",p:["Cast versus extruded","Depth per pass","Recognising melting early"]},
+  {t:"Guard, extraction, start",d:"3 min",p:["Order of operations","Dry run","Never reaching in"]}],
+ quiz:[
+  {q:"Why do cut-out parts need tabs?",a:["To make them stronger","So the loose part isn't thrown by the cutter","To save material","For the extraction"],c:1,x:"A freed part under a spinning cutter gets launched."},
+  {q:"What starts first?",a:["The spindle","Extraction, then the spindle","The job, then extraction","Nothing in particular"],c:1,x:"Clamp the stock, close the guard, start extraction, then the spindle."},
+  {q:"Mid-cut, the sheet moves. What do you do?",a:["Hold it down by hand","Feed hold, then stop the spindle","Speed up","Ignore it"],c:1,x:"Never put hands near a running spindle. Stop motion, then the spindle."}]},
+
+lathe:{name:"CNC lathe",model:"BFW CNC Turning Centre · FANUC 0i-TF Plus",code:"W-05",fam:"machine",tier:"B",status:"up",
+ blurb:"Turns round parts: shafts, bushes, threads, bores and faces from bar and billet.",
+ makes:"Shafts, bushes, spacers, threaded parts, pulleys",
+ specs:{"Control":"FANUC 0i-TF Plus","Workholding":"3-jaw chuck + tailstock","Tooling":"Turret with coolant","Paths · guarding":"Up to 2 · full enclosure"},
+ ok:["Aluminium bar","Mild steel and brass bar","Delrin and nylon rod"],
+ no:["Leaving the chuck key in the chuck","Gloves or loose sleeves near the spindle","Bar sticking out of the chuck without support"],
+ steps:["Simulate the program on W-02 first.","Check the bar diameter and length against the program.","Chuck the bar with the right stick-out. Use the tailstock on long parts.","Chuck key out before you start. Every time.","No gloves, no loose sleeves.","Set tool offsets with staff.","Run single-block with the guard closed.","Wait for the spindle to stop before opening the door.","Clear chips with the hook and brush."],
+ stop:"Chatter, the part slipping in the jaws, or smoke from the cut. Feed hold and call staff.",
+ facts:["A chuck key left in the chuck becomes a projectile at the first spin.","Two paths means two tools can cut at once.","Long thin parts need the tailstock or they whip and chatter."],
+ lessons:[
+  {t:"Turning basics",d:"5 min",p:["Facing, turning, boring, threading","Stock sizes and stick-out","Why round parts go on a lathe"]},
+  {t:"Chuck, tailstock and turret",d:"5 min",p:["Chucking safely","When to use the tailstock","Turret tools and offsets"]},
+  {t:"Running a program",d:"4 min",p:["Single-block","Guard and coolant","Chip handling"]}],
+ quiz:[
+  {q:"What do you check before pressing cycle start?",a:["Chuck key is out","The lights are on","Coolant colour","Nothing"],c:0,x:"Chuck key out before you start. It's the oldest lathe rule there is."},
+  {q:"Why no gloves near the spindle?",a:["They get dirty","They can wrap around the work and pull you in","They're too warm","They're fine"],c:1,x:"No gloves, no loose sleeves near the spindle."},
+  {q:"A 200 mm long, 15 mm thin shaft. What else do you use?",a:["Nothing","The tailstock","A bigger chuck","Faster speed"],c:1,x:"Long, thin parts deflect and chatter without support at the free end."}]},
+
+edm:{name:"Wire EDM",model:"Electronica SPRINTCUT · ELPULS 40",code:"W-06",fam:"machine",tier:"C",status:"up",
+ blurb:"Cuts hardened conductive metal to fine tolerance with sparks along a 0.25 mm wire. Dies, punches, inserts and tapered profiles.",
+ makes:"Dies, punches, inserts, tapered profiles, hardened parts",
+ specs:{"Travel":"300 × 400 mm · aux 80 × 80 mm","Job height · taper":"200 mm · ±30° over 50 mm","Wire · finish":"0.25 mm · 0.8 µm Ra","Dielectric · supply":"Deionised water · 10 kVA"},
+ ok:["Hardened tool steel","Mild and stainless steel","Aluminium, copper and brass","Any electrically conductive material"],
+ no:["Non-conductive materials. It can't cut them","Running it yourself. Staff set up and start every job"],
+ steps:["Design the profile and export a DXF, 1:1 in millimetres.","Mark any internal profile that needs a start hole.","Note the job height and any taper angle.","Submit the job through the front desk.","Staff thread the wire, set up and start.","Collect your part when staff tell you it's done."],
+ stop:"This is a staff-run machine. If anything looks wrong, tell staff. Don't touch the controls.",
+ facts:["Nothing touches the metal. Thousands of sparks a second erode it away.","A 0.8 µm Ra finish is smoother than most ground surfaces.","The wire can tilt to cut ±30° tapers, which is how dies get their draft."],
+ lessons:[
+  {t:"What wire EDM does",d:"4 min",p:["Sparks, wire and deionised water","Why only conductive metal","Tolerances and finish"]},
+  {t:"Designing for EDM",d:"5 min",p:["Start holes for internal profiles","Corner radius and wire size","Taper and job height"]},
+  {t:"Submitting a job",d:"3 min",p:["What staff need from you","Lead times","Collecting the part"]}],
+ quiz:[
+  {q:"Can wire EDM cut acrylic?",a:["Yes","No, it only cuts conductive material","Only thin acrylic","Only with taper"],c:1,x:"EDM needs the spark to jump between the wire and the work, so the work must conduct."},
+  {q:"Who starts the machine?",a:["You, after the module","Staff only","Anyone","Your supervisor"],c:1,x:"High voltage and water. Staff set-up and start only."},
+  {q:"Your part has an internal window. What does it need?",a:["Nothing","A start hole for the wire","A thicker wire","A taper"],c:1,x:"The wire has to be threaded through the material before it can cut an internal profile."}]},
+
+robot:{name:"Robot arm cell",model:"FANUC ER-4iA · R-30iB Mate Plus",code:"W-07",fam:"robot",tier:"B",status:"up",
+ blurb:"A six-axis educational robot cell for learning programming, pick-and-place, machine tending and vision-guided handling.",
+ makes:"Pick-and-place routines, vision sorting, machine-tending demos",
+ specs:{"Axes · payload":"6 axes · 4 kg","Reach":"550 mm","Repeatability":"±0.01 mm · 20 kg arm","Included":"iRVision · touchscreen iPendant"},
+ ok:["Teaching at reduced speed","Vision-guided pick-and-place","Programs reviewed by staff"],
+ no:["Standing inside the cell while the arm moves","Teaching at full speed","Letting go of the enable switch without stopping"],
+ steps:["Check the cell gate and the emergency stops.","Pick up the iPendant and hold the enable switch.","Set speed to reduced for teaching.","Jog joint by joint, then in world frame.","Teach points and record them.","Step through the program with the pendant in hand.","Leave the cell and close the gate before running at speed.","Watch from outside the cell.","Save your program and log the session."],
+ stop:"The arm moves unexpectedly or the gate opens during a run. Let go of the enable switch or hit E-stop.",
+ facts:["±0.01 mm repeatability means it returns to the same point within a hundredth of a millimetre.","iRVision lets the robot find a part by camera instead of by fixed position.","The arm weighs 20 kg and carries 4 kg."],
+ lessons:[
+  {t:"Six axes and frames",d:"5 min",p:["Joint versus world jogging","Tool frames","Reach and payload"]},
+  {t:"The pendant and the enable switch",d:"5 min",p:["Deadman behaviour","Reduced speed","Recording points"]},
+  {t:"Vision-guided picks",d:"5 min",p:["Calibrating iRVision","Finding a part","Pick and place"]}],
+ quiz:[
+  {q:"Where do you stand when the program runs at speed?",a:["Next to the arm","Outside the cell, gate closed","Wherever","Under the arm"],c:1,x:"Stay outside the cell while the arm moves."},
+  {q:"How do you teach new points?",a:["At full speed","At reduced speed, pendant in hand","Without the pendant","By pushing the arm"],c:1,x:"Teach at reduced speed with the pendant and enable switch."},
+  {q:"The arm moves unexpectedly. What do you do?",a:["Grab it","Release the enable switch or hit E-stop","Shout","Wait"],c:1,x:"Letting go of the enable switch stops motion immediately."}]},
+
+weld:{name:"Laser welder",model:"Handheld fiber laser · 2 units, CW 1080 nm",code:"W-08",fam:"robot",tier:"C",status:"down",
+ blurb:"Handheld fiber laser for welding sheet metal, thin cutting, and stripping rust, paint or oxide from surfaces.",
+ makes:"Sheet metal enclosures, stainless frames, rust and paint removal",
+ specs:{"Power":"1500 / 2000 / 3000 W","Weld capacity (SS)":"3.5 / 4 / 6 mm","Cleaning · wire":"1 – 20 mm width · up to 1.6 mm","Gas · cooling":"Nitrogen or argon · water chiller"},
+ ok:["Stainless and mild steel sheet","Aluminium, with staff settings","Rust and paint stripping"],
+ no:["Entering the bay without rated eyewear","Running without fume extraction","Welding with the screens open"],
+ steps:["Bring your parts and drawing to the front desk.","Staff check the joint design and material.","Rated eyewear on before entering the bay.","Screens in place, fume extraction on.","Staff run the weld.","Parts cool in the bay before collection."],
+ stop:"Staff-run machine. If you're in the bay and something looks wrong, step back and tell staff.",
+ facts:["Class 4 laser: even a reflection can damage eyes.","The same gun welds, cuts thin sheet and cleans rust.","A fiber laser weld is narrow, so parts distort far less than with an arc."],
+ lessons:[
+  {t:"What a fiber laser welder does",d:"4 min",p:["Welding, cutting and cleaning","Why the weld is narrow","Material limits"]},
+  {t:"Laser safety",d:"5 min",p:["Class 4 hazards","Eyewear, screens and the bay","Fume extraction"]},
+  {t:"Preparing parts for staff",d:"3 min",p:["Clean, fitted joints","Drawings and weld symbols","Collection"]}],
+ quiz:[
+  {q:"What do you need before entering the bay?",a:["Nothing","Rated laser eyewear","Sunglasses","Gloves only"],c:1,x:"Class 4 laser. Rated eyewear inside the bay, always."},
+  {q:"Who operates the laser welder?",a:["Anyone with the module","Staff only","Your lab partner","No one"],c:1,x:"It's staff run only. You prepare parts and drawings."},
+  {q:"Why must the screens be in place?",a:["For privacy","Reflections can injure people outside the bay","To keep heat in","They aren't needed"],c:1,x:"Stray beams and reflections are a hazard to everyone nearby."}]}
+};
+
+/* ============================================================
+   WIZARD
+============================================================ */
+const WIZ=[
+ {q:"What shape is the thing in your head?",h:"Ignore materials for now. Just the geometry.",o:[
+   {t:"Flat, like a panel or a profile",s:"Cut from a sheet",v:"flat"},
+   {t:"Fully three-dimensional",s:"Has depth and internal shape",v:"3d"},
+   {t:"Round, like a shaft or a bush",s:"Turned around one axis",v:"round"},
+   {t:"Metal pieces joined together",s:"A frame, box or seam",v:"join"}]},
+ {q:"What should it be made of?",h:"Pick the closest. You can change this later.",o:[
+   {t:"Plastic",s:"Any strong-enough plastic is fine",v:"plastic"},
+   {t:"Metal",s:"Aluminium, steel, brass",v:"metal"},
+   {t:"Wood or acrylic sheet",s:"Plywood, MDF, acrylic",v:"wood"},
+   {t:"Glass, stone or composite",s:"Hard, brittle or fibrous",v:"hard"}]},
+ {q:"How big is it, longest side?",h:"Roughly is fine.",o:[
+   {t:"Tiny, under 3 cm",s:"Fits on a fingertip",v:"tiny"},
+   {t:"Hand-sized, up to 25 cm",s:"Most prototypes",v:"hand"},
+   {t:"Large, 25 – 50 cm",s:"A helmet, a panel",v:"large"},
+   {t:"Huge, over 50 cm",s:"Furniture scale",v:"huge"}]},
+ {q:"What matters most?",h:"This picks between machines that could all make it.",o:[
+   {t:"Fine detail",s:"Text, teeth, thin walls",v:"fine"},
+   {t:"Several colours or materials",s:"Or supports that dissolve",v:"multi"},
+   {t:"Strength or heat resistance",s:"Takes load or gets warm",v:"strong"},
+   {t:"Just get it made",s:"Fast and cheap",v:"any"}]}
+];
+function decide(a){
+  const [shape,mat,size,need]=a;
+  if(shape==="join") return {m:"weld",why:"Joining metal pieces into a seam or frame is a welding job. The laser welder is staff run, so bring your parts and drawing to the front desk."};
+  if(shape==="round"){
+    if(mat==="metal"||need==="strong") return {m:"lathe",why:"Round parts in metal come off the CNC lathe. Dry-run your program on the CNC simulator first; it's self run, so you can start today."};
+    return {m:"a1",why:"A round plastic part prints fine standing on its end. The A1 is self run, so it's the fastest way to hold it in your hand."};
+  }
+  if(shape==="flat"){
+    if(mat==="metal") return need==="fine"
+      ? {m:"edm",why:"Fine-tolerance profiles in hard metal are wire EDM work. Staff run it, so you prepare a DXF and submit it at the desk."}
+      : {m:"waterjet",why:"Flat metal profiles cut cleanly on the waterjet, with no heat-affected zone. Bring a DXF of the outline."};
+    if(mat==="hard") return {m:"waterjet",why:"Glass, stone and composites are what the waterjet is best at. Sand and water cut them without heat damage."};
+    return {m:"router",why:"Sheet wood and acrylic profiles go on the CNC router. Clamp it, close the guard, run extraction."};
+  }
+  if(mat==="metal") return need==="fine"&&size==="tiny"
+    ? {m:"edm",why:"Tiny, precise metal parts suit wire EDM. Staff run it, so prepare your DXF and submit it at the desk."}
+    : {m:"mill",why:"A three-dimensional metal part means milling. Simulate on W-02 first, then staff induction on the mill."};
+  if(mat==="hard") return {m:"waterjet",why:"Hard and brittle materials are cut on the waterjet. If you need a 3D shape, print it on the A1 first as a check."};
+  if(size==="huge") return {m:"giga",why:"Over half a metre needs the OrangeStorm Giga, with 800 × 800 × 1000 mm of room. Book the bed early."};
+  if(size==="large") return need==="multi"
+    ? {m:"xl",why:"Large and multi-colour points at the Prusa XL: 360 mm cube and five heads."}
+    : {m:"garuda",why:"Large plastic parts are cheapest on the Garuda3D pellet printer: 500 mm cube for a fraction of filament cost."};
+  if(size==="tiny"&&need==="fine") return {m:"b9",why:"Tiny parts with fine detail are B9 Elite Micro territory, down to 10 µm features."};
+  if(need==="fine") return {m:"saturn",why:"Fine detail is past what a 0.4 mm nozzle can draw. The Saturn's resin prints 14 µm pixels."};
+  if(need==="multi") return {m:"xl",why:"Several colours, or supports that dissolve in water, is what the Prusa XL's five heads are for."};
+  if(need==="strong") return {m:"core",why:"Heat-resistant or tough plastics like ASA, PC and nylon need the Core One+'s warm chamber."};
+  return {m:"a1",why:"A hand-sized plastic prototype is the A1's home ground. It's self run, so you can be printing today."};
+}
+
+/* ============================================================
+   STATE
+============================================================ */
+let S={user:null,progress:{},bookings:[]};
+const KEY="cometcenter:student:v2";
+function load(){try{const v=localStorage.getItem(KEY);if(v)S=Object.assign(S,JSON.parse(v));}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const tierName={A:"Self run",B:"Induction first",C:"Staff run only"};
+function prog(k){return S.progress[k]||{lessons:[],passed:false,cert:null}}
+function passed(k){return prog(k).passed}
+function signedIn(){return S.user&&S.user.role!=="guest"}
+function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),2400)}
+
+/* ============================================================
+   3D MODELS
+============================================================ */
+const C={frame:0x2C3E60,metal:0x93A6C4,dark:0x18243C,haz:0xFFC61A,glass:0x66C8FF,red:0xFF4D4D,green:0x3ED598,orange:0xFF7A1A,white:0xDDE3EC,black:0x1A1D24};
+const mk=(g,c,o={})=>new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:c,roughness:o.r??.55,metalness:o.m??.3,transparent:o.op!==undefined,opacity:o.op??1,emissive:o.e??0x000000,emissiveIntensity:o.ei??1,depthWrite:o.op===undefined}));
+function box(w,h,d,c,x,y,z,o){const m=mk(new THREE.BoxGeometry(w,h,d),c,o);m.position.set(x,y,z);return m}
+function cyl(rt,rb,h,c,x,y,z,o,seg){const m=mk(new THREE.CylinderGeometry(rt,rb,h,seg||22),c,o);m.position.set(x,y,z);return m}
+function frameRig(w,h,d,c,t=.09){const g=new THREE.Group();
+  [[-w/2,d/2],[w/2,d/2],[-w/2,-d/2],[w/2,-d/2]].forEach(([x,z])=>g.add(box(t,h,t,c,x,h/2,z)));
+  [-d/2,d/2].forEach(z=>{g.add(box(w,t,t,c,0,h,z));g.add(box(w,t,t,c,0,.04,z))});
+  [-w/2,w/2].forEach(x=>{g.add(box(t,t,d,c,x,h,0));g.add(box(t,t,d,c,x,.04,0))});
+  return g}
+/* a part that grows layer by layer, then resets */
+function grower(parent,{n=22,h=.055,r=i=>.42*(1-i/32),cols=[C.haz,0xFFD24D],seg=7,period=9,sq=false}={}){
+  const g=new THREE.Group();parent.add(g);
+  return {g,top:0,update(t){const k=Math.min(n,Math.floor((t%period)/period*(n+2)));
+    if(g.children.length>k)g.clear();
+    while(g.children.length<k){const i=g.children.length,rr=r(i);
+      const geo=sq?new THREE.BoxGeometry(rr*2,h,rr*1.4):new THREE.CylinderGeometry(rr,rr,h,seg);
+      const l=mk(geo,cols[i%cols.length],{r:.7,m:.05});l.position.y=i*h+h/2;g.add(l)}
+    this.top=k*h;return this.top}}}
+
+const BUILD={
+ a1(){const g=new THREE.Group();
+  g.add(box(2.5,.24,1.7,0xD5DBE5,0,.12,.25,{m:.15,r:.5}));
+  g.add(box(.55,.32,.05,C.dark,.8,.3,1.12,{e:0x1F4FFF,ei:.35}));
+  const bed=new THREE.Group();bed.add(box(1.7,.06,1.7,0x2E323C,0,.3,0,{r:.7}));g.add(bed);
+  [-1.1,1.1].forEach(x=>g.add(box(.17,2.15,.24,0xC7CEDA,x,1.3,0,{m:.45})));
+  g.add(box(2.4,.13,.26,0xC7CEDA,0,2.42,0));
+  const gan=box(2.1,.12,.12,0xAAB4C4,0,1.4,.05,{m:.6});g.add(gan);
+  const head=new THREE.Group();head.add(box(.32,.38,.3,0xE8ECF2,0,0,0));head.add(box(.12,.12,.02,C.haz,0,.06,.16,{e:C.haz,ei:.5}));head.add(cyl(.02,.06,.12,C.metal,0,-.25,0));g.add(head);
+  const sp=cyl(.34,.34,.16,C.green,0,2.85,0,{r:.7});sp.rotation.z=Math.PI/2;g.add(sp);
+  const part=grower(bed,{});part.g.position.y=.33;
+  g.userData.tick=t=>{bed.position.z=Math.sin(t*1.7)*.35;const top=part.update(t);
+    gan.position.y=.62+top+.25;head.position.set(Math.sin(t*2.6)*.55,gan.position.y-.12,.2);sp.rotation.x=t*1.5};
+  return g},
+ core(){const g=new THREE.Group();const W=1.9,H=2.4,D=1.7;
+  g.add(box(W,.12,D,0x2A2E36,0,.06,0));
+  g.add(box(W,H,.05,0x2A2E36,0,H/2,-D/2,{r:.6}));g.add(box(.05,H,D,0x2A2E36,-W/2,H/2,0));g.add(box(.05,H,D,0x2A2E36,W/2,H/2,0));
+  g.add(box(W,.08,D,0x2A2E36,0,H,0));
+  [[-W/2,D/2],[W/2,D/2]].forEach(([x,z])=>g.add(box(.08,H,.08,C.orange,x,H/2,z,{e:C.orange,ei:.15})));
+  g.add(box(W-.1,H-.15,.02,C.glass,0,H/2,D/2,{op:.14,r:.05}));
+  g.add(box(.6,.2,.08,C.dark,0,.35,D/2+.06,{e:0x2A5CFF,ei:.3}));
+  const sp=cyl(.36,.36,.16,C.orange,W/2+.12,1.5,0,{r:.6});sp.rotation.z=Math.PI/2;g.add(sp);
+  const bed=new THREE.Group();bed.add(box(1.4,.06,1.2,0x3A3F4A,0,0,0,{m:.6}));g.add(bed);
+  const head=new THREE.Group();head.add(box(.3,.34,.3,C.orange,0,0,0));head.add(cyl(.02,.05,.1,C.metal,0,-.22,0));g.add(head);
+  g.add(box(W-.1,.07,.07,0x555B66,0,2.1,-.3));
+  const part=grower(bed,{cols:[0xEDEFF3,0xC9CED6],r:i=>.36*(1-i/40)});part.g.position.y=.03;
+  g.userData.tick=t=>{const top=part.update(t);bed.position.y=1.70-top;head.position.set(Math.sin(t*2.3)*.45,2.0,Math.cos(t*1.6)*.35);sp.rotation.x=t};
+  return g},
+ xl(){const g=new THREE.Group();const W=2.4,H=2.5,D=2;
+  g.add(frameRig(W,H,D,C.black,.11));g.add(box(W,.14,D,C.black,0,.07,0));
+  [[-W/2,D/2],[W/2,D/2]].forEach(([x,z])=>g.add(box(.05,H,.05,C.orange,x+(x<0?.06:-.06),H/2,z+.02,{e:C.orange,ei:.2})));
+  const cols=[0xFF4D4D,0x3ED598,0x66C8FF,0xFFC61A,0xEDEFF3];
+  const docks=cols.map((c,i)=>{const d=box(.26,.3,.24,0x2A2E36,-.9+i*.45,H-.35,-D/2+.25);d.add(box(.12,.08,.02,c,0,.05,.13,{e:c,ei:.6}));g.add(d);return d});
+  cols.forEach((c,i)=>{const s=cyl(.3,.3,.14,c,(i%2?1:-1)*(W/2+.1),.8+Math.floor(i/2)*.75,0,{r:.7});s.rotation.z=Math.PI/2;g.add(s);
+    const tube=new THREE.Mesh(new THREE.TorusGeometry(.5,.025,6,20,Math.PI),new THREE.MeshStandardMaterial({color:C.orange}));tube.position.set(-.9+i*.45,H+.02,-D/2+.25);tube.rotation.y=Math.PI/2;g.add(tube)});
+  g.add(box(1.9,.04,1.7,0x2E323C,0,.5,.1));
+  const carr=new THREE.Group();const held=box(.26,.3,.24,0x2A2E36,0,0,0);const dot=box(.12,.08,.02,cols[0],0,.05,.13,{e:cols[0],ei:.6});held.add(dot);carr.add(held);carr.add(cyl(.02,.05,.1,C.metal,0,-.2,0));g.add(carr);
+  g.add(box(W,.08,.08,0x3A3F4A,0,1.75,0));
+  const part=grower(g,{cols,r:i=>.4*(1-i/36),n:24});part.g.position.set(0,.52,.1);
+  g.userData.tick=t=>{const top=part.update(t);const tool=Math.floor(t/1.6)%5;dot.material.color.setHex(cols[tool]);dot.material.emissive.setHex(cols[tool]);
+    docks.forEach((d,i)=>d.visible=i!==tool);
+    const ph=(t%1.6)/1.6;
+    if(ph<.2){const k=ph/.2;carr.position.set(-.9+tool*.45,H-.35-k*.3,-D/2+.25+k*.9)}
+    else carr.position.set(Math.sin(t*3)*.5,.52+top+.3,.1+Math.cos(t*2.2)*.35)};
+  return g},
+ giga(){const g=new THREE.Group();const W=3,H=3.3,D=3;
+  g.add(frameRig(W,H,D,0xC9CED6,.12));
+  [[-W/2,D/2],[W/2,D/2],[-W/2,-D/2],[W/2,-D/2]].forEach(([x,z])=>g.add(box(.2,.12,.2,0x9AA3B2,x,-.02,z)));
+  const tiles=[[-.65,-.65],[.65,-.65],[-.65,.65],[.65,.65]];
+  tiles.forEach(([x,z])=>g.add(box(1.25,.05,1.25,0x2E323C,x,.32,z,{r:.7})));
+  g.add(box(.7,.45,.05,C.dark,W/2-.3,H+.32,D/2,{e:0x1F4FFF,ei:.35}));
+  const rail=box(W,.12,.14,0xAAB4C4,0,1.4,0,{m:.6});g.add(rail);
+  const cols=[C.orange,C.green,C.red,0xEDEFF3];
+  const heads=[0,1,2,3].map(i=>{const h=new THREE.Group();h.add(box(.26,.34,.26,C.orange,0,0,0,{e:C.orange,ei:.15}));h.add(cyl(.02,.06,.12,C.metal,0,-.22,0));g.add(h);return h});
+  const parts=tiles.map(([x,z],i)=>{const p=grower(g,{cols:[cols[i]],r:j=>.4*(.75+.25*Math.sin(j*.45)),seg:10,n:26});p.g.position.set(x,.35,z);return p});
+  g.userData.tick=t=>{let top=0;parts.forEach(p=>top=p.update(t));const ox=Math.sin(t*2.2)*.3,oz=Math.cos(t*1.5)*.3;
+    rail.position.set(0,.35+top+.33,oz);heads.forEach((h,i)=>{h.position.set(tiles[i][0]+ox,.35+top+.3,tiles[i][1]+oz)})};
+  return g},
+ garuda(){const g=new THREE.Group();const W=2.2,H=2.8,D=1.9;
+  g.add(box(W,.2,D,C.black,0,.1,0));
+  g.add(box(W,H,.06,C.black,0,H/2,-D/2));g.add(box(.06,H,D,C.black,-W/2,H/2,0));g.add(box(.06,H,D,C.black,W/2,H/2,0));g.add(box(W,.35,D,C.black,0,H-.17,0));
+  g.add(box(W-.3,H-.7,.02,C.glass,0,H/2-.05,D/2,{op:.12}));
+  [[-W/2,D/2],[W/2,D/2]].forEach(([x,z])=>g.add(box(.12,H,.08,0xF3F0E8,x,H/2,z)));
+  g.add(box(W,.14,.08,0xF3F0E8,0,H-.4,D/2));g.add(box(W,.14,.08,0xF3F0E8,0,.28,D/2));
+  g.add(cyl(.18,.18,.12,0xE03030,-W/2+.35,H-.1,D/2-.1));
+  g.add(box(.5,.32,.06,C.dark,W/2-.4,H-.17,D/2+.02,{e:0x1F9FFF,ei:.5}));
+  const hop=cyl(.35,.12,.6,0x8E99A9,0,H+.3,-D/2+.35,{m:.6});g.add(hop);
+  g.add(box(1.6,.06,1.4,0x8E99A9,0,.45,0,{m:.7}));
+  const head=new THREE.Group();head.add(cyl(.11,.11,.9,0x6D7888,0,.15,0,{m:.7}));
+  [.35,.1,-.15].forEach((y,i)=>head.add(cyl(.14,.14,.08,0xFF7A1A,0,y,0,{e:0xFF5A00,ei:.3+i*.3})));
+  head.add(cyl(.03,.08,.14,0xC9A35A,0,-.36,0));g.add(head);
+  const part=grower(g,{cols:[0xEFE6C8,0xE3D9B6],r:i=>.48*(1-i/28)+.05*Math.sin(i*.6),n:14,h:.1,seg:9});part.g.position.set(0,.48,0);
+  g.userData.tick=t=>{const top=part.update(t);head.position.set(Math.sin(t*1.7)*.45,.48+top+.55,Math.cos(t*1.2)*.35);
+    head.children.slice(1,4).forEach((b,i)=>b.material.emissiveIntensity=.4+.3*Math.sin(t*4+i))};
+  return g},
+ saturn(){const g=new THREE.Group();
+  g.add(box(1.7,.9,1.5,0x2A2F3C,0,.45,0));
+  g.add(box(.5,.25,.05,C.dark,.4,.5,.76,{e:0x8B6BFF,ei:.5}));
+  const vat=new THREE.Group();vat.add(box(1.25,.16,1.05,0x3C4458,0,0,0,{op:.6}));vat.add(box(1.2,.1,1,0xC9A6FF,0,.01,0,{op:.45,r:.2}));vat.position.y=.98;g.add(vat);
+  const led=box(1.1,.02,.9,0x9B7BFF,0,.91,0,{e:0x9B7BFF,ei:2});g.add(led);
+  g.add(box(.12,1.7,.12,0x8E99A9,-.65,1.75,-.55,{m:.7}));
+  const plate=new THREE.Group();plate.add(box(.9,.05,.78,C.metal,0,0,0,{m:.9,r:.2}));plate.add(box(.12,.1,.1,0x8E99A9,-.6,0,-.5));g.add(plate);
+  const p=box(.44,.5,.36,0x8A98B2,0,0,0,{r:.35});g.add(p);
+  g.add(box(1.6,1.6,1.4,0xFFA030,0,1.72,0,{op:.26,r:.1}));
+  g.userData.tick=t=>{const k=Math.sin(t*.8)*.5+.5;plate.position.y=1.15+k*.75;p.position.y=plate.position.y-.03-.25*(.4+k*.9);p.scale.y=.4+k*.9;
+    vat.rotation.z=Math.max(0,Math.sin(t*3))*.07;led.material.emissiveIntensity=1.2+Math.sin(t*9)*.9};
+  return g},
+ b9(){const g=new THREE.Group();
+  g.add(box(1.3,1.6,1.2,0xEDEFF2,0,.8,0,{r:.4,m:.05}));
+  const top=mk(new THREE.CylinderGeometry(.62,.92,1.6,4,1),0xEDEFF2,{r:.4,m:.05});top.rotation.y=Math.PI/4;top.position.y=2.4;g.add(top);
+  g.add(box(.7,.7,.03,0xFF9A2E,0,2.55,.42,{op:.55,e:0xFF8A1E,ei:.3}));
+  g.add(box(.42,.22,.03,C.dark,-.15,1.15,.61,{e:0x6AA9FF,ei:.5}));
+  g.add(cyl(.07,.07,.03,0x333,.25,1.15,.62));
+  const plate=box(.3,.03,.22,C.metal,0,2.3,.15,{m:.9});g.add(plate);
+  const micro=box(.12,.08,.1,0x2A2E36,0,2.25,.15);g.add(micro);
+  g.userData.tick=t=>{const k=Math.sin(t*.9)*.5+.5;plate.position.y=2.1+k*.45;micro.position.y=plate.position.y-.05;micro.scale.y=.4+k};
+  return g},
+ mill(){const g=new THREE.Group();g.add(box(2.4,1.1,2,0x2F3B52,0,.55,0));
+  g.add(box(2,.12,1.6,C.metal,0,1.16,0,{m:.85,r:.3}));
+  g.add(box(2.6,2.2,.14,0x3A4A66,0,2.2,-.95));
+  g.add(box(2.6,2.2,.03,C.glass,0,2.2,1.05,{op:.08}));
+  g.add(box(.5,.9,.3,0x2A3550,1.55,1.7,.6,{e:0x1F4FFF,ei:.2}));
+  const head=new THREE.Group();head.add(box(.55,.75,.55,0x4A5E80,0,1.95,-.5));head.add(cyl(.14,.14,.4,C.metal,0,1.45,-.5,{m:.9}));const tool=cyl(.05,.08,.32,C.haz,0,1.15,-.5);head.add(tool);g.add(head);
+  g.add(box(.7,.3,.5,0x51689A,0,1.37,0));
+  g.add(box(.55,.28,.4,0xB9C6DE,0,1.6,0,{m:.75,r:.25}));
+  const spark=new THREE.PointLight(0xFFC61A,0,1.5);g.add(spark);
+  g.userData.tick=t=>{head.position.x=Math.sin(t*1.6)*.25;head.position.z=.5+Math.sin(t*.8)*.12;head.position.y=-.02-Math.abs(Math.sin(t*3))*.05;tool.rotation.y=t*30;
+    spark.position.set(head.position.x,1.72,head.position.z);spark.intensity=.6+Math.random()*.6};
+  return g},
+ sim(){const g=new THREE.Group();
+  g.add(box(1.8,1.2,.9,0x2F3B52,0,.75,0));
+  [[-.8,-.35],[.8,-.35],[-.8,.35],[.8,.35]].forEach(([x,z])=>g.add(cyl(.08,.08,.08,0x111,x,.08,z)));
+  g.add(box(1.8,1.3,.15,0x26324A,0,2.0,-.3));
+  const scr=box(1.1,.75,.02,0x0F2A44,-.2,2.1,-.21,{e:0x1F6FFF,ei:.35});g.add(scr);
+  const dot=box(.08,.08,.03,C.haz,-.2,2.1,-.19,{e:C.haz,ei:1.5});g.add(dot);
+  for(let i=0;i<4;i++)g.add(box(.6,.012,.025,0x66C8FF,-.2,1.85+i*.16,-.195,{e:0x66C8FF,ei:.6}));
+  for(let i=0;i<6;i++)g.add(box(.1,.1,.04,i===5?C.red:0x55617A,.55+(i%2)*.15,1.85+Math.floor(i/2)*.18,-.2));
+  const panel=box(1.6,.06,.6,0x3A4A66,0,1.38,.15);panel.rotation.x=-.35;g.add(panel);
+  const wheel=cyl(.16,.16,.06,C.red,.55,1.47,.25);wheel.rotation.x=Math.PI/2-.35;g.add(wheel);
+  g.add(cyl(.09,.09,.08,C.red,-.55,1.47,.25));
+  g.userData.tick=t=>{dot.position.x=-.2+Math.sin(t*1.5)*.4;dot.position.y=2.1+Math.sin(t*3)*.22;wheel.rotation.y=t*2};
+  return g},
+ waterjet(){const g=new THREE.Group();
+  g.add(box(2.4,1,1.9,0x2F3B52,0,.5,0));
+  g.add(box(2.2,.05,1.7,0x2B79C8,0,.98,0,{op:.55,r:.1}));
+  for(let i=-4;i<=4;i++)g.add(box(.04,.08,1.6,0x6D7888,i*.24,1.05,0));
+  g.add(box(1.4,.04,1.1,0xB9C6DE,0,1.1,0,{m:.8,r:.3}));
+  g.add(box(2.4,.05,1.9,C.glass,0,2.05,0,{op:.1}));
+  g.add(box(.6,.9,.6,0x26324A,1.6,.45,-.5));
+  const gan=box(2.2,.12,.14,0x51689A,0,1.75,0);g.add(gan);
+  const head=new THREE.Group();head.add(box(.2,.35,.2,C.haz,0,.15,0));head.add(cyl(.03,.05,.2,C.metal,0,-.1,0));
+  const jet=cyl(.015,.015,.45,0xBFF0FF,0,-.4,0,{e:0x9FE8FF,ei:3,op:.85});head.add(jet);g.add(head);
+  const mist=mk(new THREE.SphereGeometry(.13,10,8),0xBFF0FF,{op:.35,e:0x9FE8FF,ei:1});g.add(mist);
+  g.userData.tick=t=>{const x=Math.sin(t*1.4)*.55,z=Math.cos(t*1.4)*.4;gan.position.z=z;head.position.set(x,1.55,z);mist.position.set(x,1.12,z);mist.scale.setScalar(.8+Math.random()*.5);jet.scale.x=jet.scale.z=.8+Math.random()*.4};
+  return g},
+ router(){const g=new THREE.Group();g.add(box(3,.55,2,0x2F3B52,0,.28,0));
+  g.add(box(2.85,.08,1.85,0x3A4E72,0,.6,0));
+  g.add(box(2.3,.1,1.4,0x7FD8E8,0,.69,0,{op:.55,r:.15}));
+  g.add(box(3.1,1.6,2.1,C.glass,0,1.3,0,{op:.07}));
+  const gan=new THREE.Group();gan.add(box(.14,1.05,.14,0x51689A,-1.45,1.1,0));gan.add(box(.14,1.05,.14,0x51689A,1.45,1.1,0));gan.add(box(3.05,.15,.15,0x51689A,0,1.6,0));g.add(gan);
+  const sp=new THREE.Group();sp.add(box(.3,.5,.3,C.haz,0,1.4,0));const bit=cyl(.06,.02,.3,C.metal,0,1.02,0,{m:.9});sp.add(bit);g.add(sp);
+  const hose=new THREE.Mesh(new THREE.TorusGeometry(.4,.04,6,16,Math.PI*1.3),new THREE.MeshStandardMaterial({color:0x6D7888}));sp.add(hose);hose.position.set(.2,1.8,0);
+  g.userData.tick=t=>{const z=Math.sin(t*.9)*.55,x=Math.sin(t*2.6)*.95;gan.position.z=z;sp.position.set(x,0,z);bit.rotation.y=t*30};
+  return g},
+ lathe(){const g=new THREE.Group();
+  g.add(box(3.2,.9,1.3,0x2F3B52,0,.45,0));
+  const bed=box(3,.2,.6,0x51689A,0,1.0,-.1);bed.rotation.x=-.3;g.add(bed);
+  g.add(box(.8,1.1,1,0x3A4A66,-1.2,1.45,-.1));
+  const chuck=new THREE.Group();chuck.position.set(-.72,1.5,-.1);chuck.rotation.z=Math.PI/2;
+  chuck.add(cyl(.35,.35,.2,C.metal,0,0,0,{m:.9}));
+  for(let i=0;i<3;i++){const j=box(.1,.12,.1,0x6D7888,0,-.12,0);j.position.set(Math.cos(i*2.1)*.25,-.12,Math.sin(i*2.1)*.25);chuck.add(j)}
+  const stock=cyl(.14,.14,1.4,0xB9C6DE,0,-.75,0,{m:.75,r:.25});chuck.add(stock);g.add(chuck);
+  g.add(box(.4,.6,.6,0x3A4A66,1.25,1.3,-.1));g.add(cyl(.06,.03,.25,C.metal,1.0,1.5,-.1));
+  const tur=new THREE.Group();tur.add(box(.4,.4,.4,C.haz,0,0,0));tur.add(box(.25,.05,.05,C.metal,0,.05,-.25));g.add(tur);
+  g.add(box(3.4,1.8,.03,C.glass,0,1.5,.7,{op:.08}));
+  g.userData.tick=t=>{chuck.rotation.x=t*14;tur.position.set(-.1+Math.sin(t*.9)*.6,1.5,.45);};
+  return g},
+ edm(){const g=new THREE.Group();
+  g.add(box(2.6,1,2,0x2F3B52,0,.5,0));
+  g.add(box(2,.6,1.5,0x6AA9FF,0,1.3,0,{op:.25,r:.1}));
+  g.add(box(.9,.15,.7,0xB9C6DE,0,1.15,0,{m:.8}));
+  g.add(box(.3,2.2,.4,0x3A4A66,0,2.1,-.95));
+  const arm=box(.3,.18,1.1,0x3A4A66,0,2.6,-.4);g.add(arm);
+  const wire=cyl(.008,.008,1.4,0xE8C870,0,1.9,0,{m:.9,e:0xE8C870,ei:.4});g.add(wire);
+  const ug=box(.16,.15,.16,C.haz,0,2.55,0);g.add(ug);
+  const spark=new THREE.PointLight(0x9FD0FF,0,1.4);g.add(spark);
+  const sp=mk(new THREE.SphereGeometry(.03,6,6),0xCFE9FF,{e:0xCFE9FF,ei:4});g.add(sp);
+  g.add(box(.6,1.4,.5,0x26324A,1.7,.7,.3,{e:0x1F4FFF,ei:.15}));
+  g.userData.tick=t=>{const a=t*.7,x=Math.cos(a)*.3,z=Math.sin(a)*.22;
+    wire.position.x=ug.position.x=x;wire.position.z=ug.position.z=z;arm.position.x=x;sp.position.set(x,1.2,z);spark.position.copy(sp.position);
+    const f=Math.random();spark.intensity=f*1.6;sp.visible=f>.3};
+  return g},
+ robot(){const g=new THREE.Group();
+  g.add(box(2.6,.7,1.6,0x2F3B52,0,.35,0));
+  g.add(box(2.7,1.6,.02,C.glass,0,1.5,.85,{op:.08}));
+  const base=cyl(.28,.32,.25,0xEDEFF2,-.5,.82,0);g.add(base);
+  const J1=new THREE.Group();J1.position.set(-.5,.95,0);g.add(J1);
+  J1.add(cyl(.22,.22,.25,C.haz,0,.12,0));
+  const J2=new THREE.Group();J2.position.y=.3;J1.add(J2);
+  J2.add(box(.18,.75,.18,C.haz,0,.37,0));
+  const J3=new THREE.Group();J3.position.y=.75;J2.add(J3);
+  const jc=cyl(.12,.12,.24,0xEDEFF2,0,0,0);jc.rotation.x=Math.PI/2;J3.add(jc);
+  J3.add(box(.6,.14,.14,C.haz,.3,0,0));
+  const J5=new THREE.Group();J5.position.x=.62;J3.add(J5);
+  J5.add(cyl(.07,.07,.14,0xEDEFF2,0,-.05,0));
+  const grip=new THREE.Group();grip.position.y=-.15;J5.add(grip);
+  const f1=box(.03,.12,.08,0x6D7888,-.05,-.06,0),f2=box(.03,.12,.08,0x6D7888,.05,-.06,0);grip.add(f1,f2);
+  const cube=box(.14,.14,.14,C.green,.55,.77,.3);g.add(cube);
+  [[.85,-.3,C.red],[.55,-.4,0x66C8FF]].forEach(([x,z,c])=>g.add(box(.14,.14,.14,c,x,.77,z)));
+  g.add(box(.4,.5,.12,C.dark,1.1,.95,.6,{e:0x1F4FFF,ei:.3}));
+  g.userData.tick=t=>{J1.rotation.y=Math.sin(t*.8)*.9;J2.rotation.z=-.5+Math.sin(t*1.1)*.35;J3.rotation.z=-.9+Math.sin(t*1.1+1)*.4;J5.rotation.z=-(J2.rotation.z+J3.rotation.z);
+    const o=.02+Math.max(0,Math.sin(t*2.2))*.04;f1.position.x=-o-.02;f2.position.x=o+.02;cube.rotation.y=t*.4};
+  return g},
+ weld(){const g=new THREE.Group();
+  g.add(box(2.4,.1,1.4,0x4A5878,0,1,0));
+  [[-1.05,-.55],[1.05,-.55],[-1.05,.55],[1.05,.55]].forEach(([x,z])=>g.add(box(.1,1,.1,0x2C3E60,x,.5,z)));
+  g.add(box(1.2,.04,.6,0xB9C6DE,-.1,1.07,0,{m:.85,r:.25}));g.add(box(.04,.4,.6,0xB9C6DE,.5,1.27,0,{m:.85,r:.25}));
+  const seam=box(.02,.02,.01,0xFFF0C0,.48,1.1,-.3,{e:0xFFB040,ei:3});g.add(seam);
+  g.add(box(.7,1.4,.7,0xEDEFF2,-1.7,.7,-.4));g.add(box(.4,.25,.03,C.dark,-1.7,1.2,-.04,{e:0x1F9FFF,ei:.5}));
+  g.add(box(2.8,1.5,.03,0xFF4D4D,.2,1.75,-.9,{op:.25}));g.add(box(.03,1.5,1.8,0xFF4D4D,1.5,1.75,0,{op:.25}));
+  const gun=new THREE.Group();gun.add(box(.08,.3,.1,0x2A3A5C,0,.15,0));gun.add(cyl(.04,.025,.22,0xC0C8D4,0,-.1,0,{m:.8}));g.add(gun);
+  const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(-1.4,1.3,-.4),new THREE.Vector3(-.9,1.9,0),new THREE.Vector3(-.2,1.7,.1),new THREE.Vector3(.3,1.5,0)]);
+  const cable=new THREE.Mesh(new THREE.TubeGeometry(curve,30,.025,6),new THREE.MeshStandardMaterial({color:0x1A1D24}));g.add(cable);
+  const arc=mk(new THREE.SphereGeometry(.05,10,8),0xE6F4FF,{e:0xCFE9FF,ei:5});g.add(arc);
+  const li=new THREE.PointLight(0xBFE4FF,0,3);g.add(li);
+  g.userData.tick=t=>{const k=(t%6)/6,z=-.3+k*.6;gun.position.set(.42,1.32,z);gun.rotation.z=.5;arc.position.set(.48,1.1,z);li.position.copy(arc.position);
+    seam.scale.z=Math.max(1,k*60);seam.position.z=-.3+k*.3;const f=.5+Math.random()*.9;li.intensity=f*2.2;arc.scale.setScalar(.7+f*.5)};
+  return g}
+};
+const VIEW={a1:[5.4,1.3],core:[5.4,1.3],xl:[6.2,1.4],giga:[7.6,1.7],garuda:[6.2,1.5],saturn:[5.2,1.4],b9:[5.4,1.6],mill:[6.4,1.4],sim:[5.2,1.4],waterjet:[5.8,1.1],router:[6.6,1],lathe:[6,1.2],edm:[6,1.4],robot:[5.4,1],weld:[5.8,1.2]};
+
+function scene3(key){
+  const sc=new THREE.Scene();
+  sc.add(new THREE.AmbientLight(0x9FB4D8,.75));
+  const d=new THREE.DirectionalLight(0xffffff,.95);d.position.set(4,7,5);sc.add(d);
+  const p=new THREE.PointLight(0xFFC61A,.7,14);p.position.set(-3,3,3);sc.add(p);
+  const gr=new THREE.GridHelper(14,28,0x2E4368,0x1B2942);gr.position.y=-.02;sc.add(gr);
+  const m=BUILD[key]();sc.add(m);
+  return {sc,m};
+}
+function fitCam(cam,dist,h,a){a=a??Math.PI/4;cam.position.set(Math.cos(a)*dist,h+dist*.32,Math.sin(a)*dist);cam.lookAt(0,h,0)}
+const T0=performance.now(),now=()=>(performance.now()-T0)/1000;
+
+/* --- hero: cycles through machines --- */
+const HERO=["a1","giga","robot","saturn","waterjet"];
+let hero={i:0,sw:0};
+function initHero(){
+  const cv=$("#heroCanvas");if(!cv)return;
+  const r=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});r.setPixelRatio(Math.min(devicePixelRatio,2));
+  const cam=new THREE.PerspectiveCamera(40,1,.1,100);
+  const scenes={};const get=k=>scenes[k]||(scenes[k]=scene3(k));
+  $("#hdots").innerHTML=HERO.map((k,i)=>`<button aria-label="Show ${esc(MACHINES[k].name)}" data-i="${i}"></button>`).join("");
+  const show=i=>{hero.i=(i+HERO.length)%HERO.length;hero.sw=now();const k=HERO[hero.i];
+    $("#hcCode").textContent=MACHINES[k].code+" · "+FAM[MACHINES[k].fam];$("#hcName").textContent=MACHINES[k].name;
+    document.querySelectorAll("#hdots button").forEach((b,j)=>b.classList.toggle("on",j===hero.i))};
+  $("#hdots").onclick=e=>{const b=e.target.closest("button");if(b)show(+b.dataset.i)};
+  let rot=0,drag=false,px=0,moved=0;
+  cv.addEventListener("pointerdown",e=>{drag=true;moved=0;px=e.clientX;cv.setPointerCapture(e.pointerId)});
+  cv.addEventListener("pointermove",e=>{if(drag){moved+=Math.abs(e.clientX-px);rot+=(e.clientX-px)*.01;px=e.clientX}});
+  cv.addEventListener("pointerup",()=>drag=false);cv.addEventListener("pointercancel",()=>drag=false);
+  cv.addEventListener("click",()=>{if(moved<6)go("detail",HERO[hero.i])});
+  show(0);
+  const rs=()=>{const w=cv.clientWidth,h=cv.clientHeight;if(!w)return;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()};
+  addEventListener("resize",rs);rs();
+  (function loop(){requestAnimationFrame(loop);if(!cv.offsetParent)return;
+   const t=now();if(t-hero.sw>7&&!drag)show(hero.i+1);
+   const k=HERO[hero.i],o=get(k);if(o.m.userData.tick)o.m.userData.tick(t);
+   const s=Math.min(1,(t-hero.sw)/.6),e=1-Math.pow(1-s,3);o.m.scale.setScalar(.75+.25*e);
+   if(!drag)rot+=.004;const v=VIEW[k];fitCam(cam,v[0]*.95,v[1],rot+.6);
+   if(cv.width!==Math.round(cv.clientWidth*r.getPixelRatio()))rs();
+   r.render(o.sc,cam)})();
+}
+
+/* --- shared thumbnail renderer (one WebGL context for all cards) --- */
+let thumbR,thumbC,thumbs=[];
+function initThumbs(){
+  const off=document.createElement("canvas");off.width=520;off.height=316;
+  thumbR=new THREE.WebGLRenderer({canvas:off,antialias:true,alpha:true});
+  thumbC=new THREE.PerspectiveCamera(40,520/316,.1,100);
+  (function loop(){requestAnimationFrame(loop);
+   const t=now();
+   thumbs=thumbs.filter(o=>o.cv.isConnected);
+   thumbs.forEach(o=>{
+     if(!o.cv.offsetParent)return;
+     const r=o.cv.getBoundingClientRect();
+     if(r.bottom<-40||r.top>innerHeight+40||!o.cv.clientWidth)return;
+     if(o.m.userData.tick)o.m.userData.tick(t);
+     if(!o.drag)o.rot+=.004;
+     fitCam(thumbC,o.d,o.h,o.rot);
+     const w=Math.round(o.cv.clientWidth*1.6),h=Math.round(o.cv.clientHeight*1.6);
+     if(thumbR.domElement.width!==w||thumbR.domElement.height!==h){thumbR.setSize(w,h,false);thumbC.aspect=w/h;thumbC.updateProjectionMatrix()}
+     thumbR.render(o.sc,thumbC);
+     if(o.cv.width!==w||o.cv.height!==h){o.cv.width=w;o.cv.height=h}
+     o.cv.getContext("2d").drawImage(thumbR.domElement,0,0,w,h)})})();
+}
+function addThumb(cv,key,d,h){
+  const o=scene3(key);
+  const t={cv,sc:o.sc,m:o.m,d,h,rot:.8,drag:false};
+  let px=0;
+  cv.addEventListener("pointerdown",e=>{t.drag=true;px=e.clientX;cv.setPointerCapture(e.pointerId)});
+  cv.addEventListener("pointermove",e=>{if(t.drag){t.rot+=(e.clientX-px)*.01;px=e.clientX}});
+  cv.addEventListener("pointerup",()=>t.drag=false);
+  cv.addEventListener("pointercancel",()=>t.drag=false);
+  thumbs.push(t);return t;
+}
+
+/* --- big viewer on station cards --- */
+let vR;
+function initViewer(cv,key){
+  if(vR){vR.dispose();vR.forceContextLoss&&vR.forceContextLoss()}
+  vR=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+  vR.setPixelRatio(Math.min(devicePixelRatio,2));
+  const o=scene3(key),cam=new THREE.PerspectiveCamera(40,1,.1,100),[d,h]=VIEW[key];
+  let rot=.7,drag=false,px=0;
+  cv.onpointerdown=e=>{drag=true;px=e.clientX;cv.setPointerCapture(e.pointerId)};
+  cv.onpointermove=e=>{if(drag){rot+=(e.clientX-px)*.01;px=e.clientX}};
+  cv.onpointerup=cv.onpointercancel=()=>drag=false;
+  const R=vR;
+  (function loop(){if(!cv.isConnected||R!==vR)return;requestAnimationFrame(loop);
+   const w=cv.clientWidth||600,ht=cv.clientHeight||340;
+   if(cv.width!==Math.round(w*R.getPixelRatio())){R.setSize(w,ht,false);cam.aspect=w/ht;cam.updateProjectionMatrix()}
+   if(o.m.userData.tick)o.m.userData.tick(now());
+   if(!drag)rot+=.003;fitCam(cam,d,h,rot);R.render(o.sc,cam)})();
+}
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+const views=["home","bay","detail","train","cost","book","dash"];
+let current="home";
+function go(v,arg){
+  if((v==="dash"||v==="train")&&!signedIn()){openLogin(()=>go(v,arg));return}
+  current=v;
+  views.forEach(x=>$("#v-"+x).classList.toggle("hide",x!==v));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===v||(v==="detail"||v==="train")&&b.dataset.go==="bay"));
+  scrollTo({top:0,behavior:"instant"});
+  if(v==="detail")renderDetail(arg);
+  if(v==="train")renderTrain(arg);
+  if(v==="dash")renderDash();
+  if(v==="bay")renderBay();
+  if(v==="cost")openCost(arg);
+  if(v==="book")renderBook(arg);
+  try{history.replaceState(null,"","#"+v)}catch(e){}
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-go]");if(b){e.preventDefault();go(b.dataset.go,b.dataset.arg?JSON.parse(b.dataset.arg):undefined)}
+});
+const A=x=>esc(JSON.stringify(x));
+
+/* ============================================================
+   HOME: ticker + wizard
+============================================================ */
+function renderTicker(){
+  const items=Object.values(MACHINES).flatMap(m=>m.facts.slice(0,2).map(f=>`<span><b>${m.code}</b>${esc(f)}</span>`));
+  $("#ticker").innerHTML=items.join("")+items.join("");
+}
+let wStep=0,wAns=[];
+function renderWiz(){
+  const w=$("#wiz");
+  if(wStep<WIZ.length){
+    const q=WIZ[wStep];
+    w.innerHTML=`<div class="prog">${WIZ.map((_,i)=>`<span class="${i<=wStep?"on":""}"></span>`).join("")}</div>
+      <div class="qtext">${q.q}</div><div class="qhint">${q.h}</div>
+      <div class="opts">${q.o.map((o,i)=>`<button class="opt" data-i="${i}"><b>${o.t}</b><small>${o.s}</small></button>`).join("")}</div>
+      ${wStep?`<button class="btn ghost sm" id="wBack" style="margin-top:18px">Back</button>`:""}`;
+    w.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{wAns[wStep]=q.o[+b.dataset.i].v;
+      if(wStep===0&&wAns[0]==="join"){wStep=WIZ.length}else wStep++;renderWiz()});
+    const bk=$("#wBack");if(bk)bk.onclick=()=>{wStep--;renderWiz()};
+  } else {
+    const r=decide(wAns),m=MACHINES[r.m],p=passed(r.m);
+    const est=EST[r.m];
+    w.innerHTML=`<div class="prog">${WIZ.map(()=>`<span class="on"></span>`).join("")}</div>
+     <div class="res">
+       <canvas id="wizCv"></canvas>
+       <div>
+        <span class="tag" style="margin-bottom:8px">Your machine · ${m.code}</span>
+        <div class="qtext" style="margin-bottom:4px">${m.name}</div>
+        <div class="mono" style="font-size:12px;color:var(--faint);margin-bottom:12px">${m.model}</div>
+        <span class="tier t${m.tier}">${tierName[m.tier]}</span>
+        <div class="why">${r.why}</div>
+        <div class="cta-row">
+          <button class="btn" data-go="detail" data-arg="${A(r.m)}">Open the station card</button>
+          ${est?`<button class="btn ghost" data-go="cost" data-arg="${A(r.m)}">Price my part</button>`:""}
+          <button class="btn ghost" data-go="train" data-arg="${A(r.m)}">${p?"Review training":"Start training"}</button>
+          <button class="btn ghost" id="wReset">Start over</button>
+        </div>
+       </div></div>`;
+    $("#wReset").onclick=()=>{wStep=0;wAns=[];renderWiz()};
+    const cv=$("#wizCv"),v=VIEW[r.m];addThumb(cv,r.m,v[0],v[1]);
+  }
+}
+
+/* ============================================================
+   BAY
+============================================================ */
+const stTxt={up:"Free now",busy:"In use",down:"Out of service"};
+let bayFilter="all";
+function renderBay(){
+  const counts={all:Object.keys(MACHINES).length};Object.values(MACHINES).forEach(m=>counts[m.fam]=(counts[m.fam]||0)+1);
+  $("#chips").innerHTML=[["all","All machines"],...Object.entries(FAM)].map(([k,l])=>`<button class="chip ${bayFilter===k?"on":""}" data-f="${k}">${l}<i>${counts[k]||0}</i></button>`).join("");
+  $("#chips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;bayFilter=b.dataset.f;renderBay()};
+  const bay=$("#bay");
+  if(!bay.dataset.done){bay.dataset.done="1";
+    bay.innerHTML=Object.entries(MACHINES).map(([k,m])=>`
+     <div class="card" data-k="${k}" data-fam="${m.fam}">
+       <canvas data-k="${k}" aria-label="3D model of ${esc(m.name)}"></canvas>
+       <div class="cbody">
+         <div class="code"><span>${m.code} · ${FAM[m.fam]}</span><span style="display:flex;align-items:center;gap:6px"><i class="status s-${m.status}"></i>${stTxt[m.status]}</span></div>
+         <h3>${m.name}</h3><div class="model">${m.model}</div><p>${m.blurb}</p>
+         <div class="crow"><span class="tier t${m.tier}">${tierName[m.tier]}</span>
+         <span class="lock" data-lock="${k}"></span></div>
+         <button class="btn sm" data-go="detail" data-arg="${A(k)}" style="margin-top:14px;justify-content:center">View machine</button>
+       </div></div>`).join("");
+    bay.querySelectorAll("canvas").forEach(cv=>{const k=cv.dataset.k,v=VIEW[k];addThumb(cv,k,v[0]*1.05,v[1])});
+  }
+  bay.querySelectorAll(".card").forEach(c=>c.classList.toggle("hide",bayFilter!=="all"&&c.dataset.fam!==bayFilter));
+  refreshLocks();
+}
+function refreshLocks(){document.querySelectorAll("[data-lock]").forEach(el=>{
+  const k=el.dataset.lock;el.className="lock"+(passed(k)?" ok":"");el.textContent=passed(k)?"Pass held":"Pass required"})}
+
+/* ============================================================
+   DETAIL
+============================================================ */
+function renderDetail(k){
+  const m=MACHINES[k],p=passed(k),pr=prog(k);
+  $("#detail").innerHTML=`
+   <button class="btn ghost sm" data-go="bay" style="margin-bottom:22px">← All machines</button>
+   <div class="shead"><span class="tag">${m.code} · ${FAM[m.fam]} · Station card</span><h2>${m.name}</h2><p>${m.blurb}</p></div>
+   <div class="detail">
+    <div class="stack">
+      <canvas id="viewer" aria-label="3D model of ${esc(m.name)}, drag to rotate"></canvas>
+      <div class="panel">
+        <h4>Before you hit start</h4>
+        <ol class="steps">${m.steps.map(s=>`<li>${s}</li>`).join("")}</ol>
+        <div class="warn"><strong>Stop immediately if</strong><p>${m.stop}</p></div>
+      </div>
+      <div class="panel"><h4>Facts to flex with</h4><div class="facts">${m.facts.map(f=>`<p>${f}</p>`).join("")}</div></div>
+    </div>
+    <div class="stack">
+      <div class="panel">
+        <span class="tier t${m.tier}">${tierName[m.tier]}</span>
+        <p style="color:var(--dim);font-size:14px;margin-block:14px 18px">${p?"You hold a valid pass for this machine.":m.tier==="C"?"Staff run this machine. The module teaches you to prepare and submit a job.":"You need a pass before this machine is unlocked for you."}</p>
+        <div class="stack" style="gap:10px">
+        <button class="btn" data-go="train" data-arg="${A(k)}" style="justify-content:center">${p?"Review the module":"Start training · "+pr.lessons.length+"/"+m.lessons.length+" lessons"}</button>
+        ${EST[k]?`<button class="btn ghost" data-go="cost" data-arg="${A(k)}" style="justify-content:center">Estimate a job on this machine</button>`:""}
+        <button class="btn ghost" data-go="book" data-arg="${A({k})}" style="justify-content:center">Book a slot</button>
+        </div>
+      </div>
+      <div class="panel"><h4>Good for</h4><p style="font-size:14px;color:var(--dim)">${m.makes}</p></div>
+      <div class="panel"><h4>Specification</h4>
+        <div class="mono" style="font-size:11.5px;color:var(--faint);margin-top:-6px;margin-bottom:6px">${m.model}</div>
+        ${Object.entries(m.specs).map(([a,b])=>`<div class="spec"><span>${a}</span><b>${b}</b></div>`).join("")}</div>
+      <div class="panel"><h4>Allowed</h4><ul class="klist ok">${m.ok.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+      <div class="panel"><h4>And never</h4><ul class="klist bad">${m.no.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+    </div></div>`;
+  initViewer($("#viewer"),k);
+}
+
+/* ============================================================
+   TRAINING
+============================================================ */
+let qPick={};
+function renderTrain(k){
+  const m=MACHINES[k],pr=prog(k);
+  qPick={};
+  const after={A:"Your pass unlocks the machine straight away. Run it whenever the lab is open.",B:"After the check, a staff member signs you off on the machine. No solo runs until then.",C:"This machine is staff run. The pass shows you can prepare and submit jobs for it."};
+  $("#train").innerHTML=`
+   <button class="btn ghost sm" data-go="detail" data-arg="${A(k)}" style="margin-bottom:22px">← ${m.name}</button>
+   <div class="shead"><span class="tag">${m.code} · Training module</span><h2>Getting signed off</h2>
+   <p>Work through the lessons, then pass the check. Every answer has to be right. This pass unlocks a real machine, so there's no partial credit.</p></div>
+   <div class="trainGrid">
+    <div style="min-width:0">
+      <h4 class="tag" style="margin-bottom:14px">Lessons</h4>
+      <div id="lessons">${m.lessons.map((l,i)=>`
+        <div class="lesson ${pr.lessons.includes(i)?"done":""}" data-i="${i}">
+          <button class="lhead"><div class="lnum">${pr.lessons.includes(i)?"✓":String(i+1).padStart(2,"0")}</div>
+            <div style="flex:1"><b>${l.t}</b><small>${l.d} · video</small></div>
+            <span style="color:var(--faint);font-size:12px">${pr.lessons.includes(i)?"Complete":"Open"}</span></button>
+          <div class="lbody">
+            <div class="screen"><div><div class="play">▶</div>Comet Center footage · ${l.d}</div></div>
+            <ul class="klist">${l.p.map(x=>`<li>${x}</li>`).join("")}</ul>
+            <button class="btn sm mark" style="margin-top:14px">Mark this lesson complete</button>
+          </div></div>`).join("")}</div>
+      <h4 class="tag" style="margin-block:34px 14px">Safety check · ${m.quiz.length} questions</h4>
+      <div id="quiz">${m.quiz.map((q,i)=>`
+        <div class="q" data-q="${i}"><b><i>Q${i+1}</i>${q.q}</b>
+        ${q.a.map((a,j)=>`<button class="ans" data-a="${j}"><em>${"ABCD"[j]}</em>${a}</button>`).join("")}
+        <div class="feedback"></div></div>`).join("")}</div>
+      <button class="btn" id="submitQ" style="margin-top:8px">Submit the check</button>
+      <div id="qres" style="margin-top:18px"></div>
+    </div>
+    <div class="panel" style="position:sticky;top:84px">
+      <h4>Your progress</h4>
+      <div id="pbar"></div>
+      <p style="font-size:13.5px;color:var(--dim);margin-top:16px">Finish all lessons to unlock the check.</p>
+      <div class="note" style="margin-top:14px"><span class="tier t${m.tier}" style="margin-bottom:8px">${tierName[m.tier]}</span><p style="margin-top:8px">${after[m.tier]}</p></div>
+    </div></div>`;
+  const upd=()=>{const c=prog(k).lessons.length,n=m.lessons.length;
+    $("#pbar").innerHTML=`<div style="display:flex;gap:5px;margin-bottom:10px">${m.lessons.map((_,i)=>`<span style="height:5px;flex:1;border-radius:3px;background:${prog(k).lessons.includes(i)?"var(--ta)":"var(--line)"}"></span>`).join("")}</div>
+      <div class="mono" style="font-size:12.5px;color:var(--dim)">${c} of ${n} lessons complete</div>`;
+    $("#submitQ").disabled=c<n;$("#submitQ").textContent=c<n?`Finish all ${n} lessons first`:"Submit the check"};
+  upd();
+  $("#lessons").querySelectorAll(".lesson").forEach(el=>{
+    el.querySelector(".lhead").onclick=()=>el.classList.toggle("open");
+    el.querySelector(".mark").onclick=()=>{
+      const i=+el.dataset.i,pp=prog(k);
+      if(!pp.lessons.includes(i))pp.lessons.push(i);
+      S.progress[k]=pp;save();
+      el.classList.add("done");el.classList.remove("open");
+      el.querySelector(".lnum").textContent="✓";
+      el.querySelector(".lhead span:last-child").textContent="Complete";upd()};
+  });
+  $("#quiz").querySelectorAll(".q").forEach(qe=>{
+    qe.querySelectorAll(".ans").forEach(b=>b.onclick=()=>{
+      if(qe.classList.contains("marked"))return;
+      qe.querySelectorAll(".ans").forEach(x=>x.classList.remove("pick"));
+      b.classList.add("pick");qPick[qe.dataset.q]=+b.dataset.a});
+  });
+  $("#submitQ").onclick=()=>{
+    if(prog(k).lessons.length<m.lessons.length)return;
+    let right=0;
+    $("#quiz").querySelectorAll(".q").forEach(qe=>{
+      const i=+qe.dataset.q,q=m.quiz[i],pick=qPick[i];
+      qe.classList.add("marked");
+      qe.querySelectorAll(".ans").forEach(b=>{const j=+b.dataset.a;b.classList.remove("pick");
+        if(j===q.c)b.classList.add("right");else if(j===pick)b.classList.add("wrong")});
+      if(pick===q.c)right++;
+      qe.querySelector(".feedback").textContent=q.x});
+    if(right===m.quiz.length){
+      const pp=prog(k);pp.passed=true;
+      const who=(S.user.roll||S.user.email.split("@")[0]||"GUEST").toUpperCase().replace(/[^A-Z0-9]/g,"");
+      pp.cert={id:`COMET-${m.code.replace("-","")}-${who}`,date:new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})};
+      S.progress[k]=pp;save();refreshLocks();
+      $("#qres").innerHTML=certHTML(k)+`<div class="cta-row" style="margin-top:18px"><button class="btn" data-go="book" data-arg="${A({k})}">Book a slot</button><button class="btn ghost" data-go="dash">See all my passes</button></div>`;
+      $("#qres").scrollIntoView({behavior:"smooth",block:"center"});toast("Pass issued");
+    } else {
+      $("#qres").innerHTML=`<div class="warn"><strong>Not passed · ${right} of ${m.quiz.length} correct</strong>
+        <p>Read the explanation under each question, then take the check again. There's no limit on attempts and no penalty.</p>
+        <button class="btn sm" id="retry" style="margin-top:14px">Take the check again</button></div>`;
+      $("#retry").onclick=()=>renderTrain(k);
+      $("#qres").scrollIntoView({behavior:"smooth",block:"center"});
+    }
+  };
+}
+function certHTML(k){
+  const m=MACHINES[k],c=prog(k).cert,u=S.user;
+  return `<div class="cert">
+    <div class="ct">Comet Center · Machine access pass</div>
+    <h2>${m.name}</h2>
+    <div class="sub">${tierName[m.tier]} · valid for the current academic year</div>
+    <div class="cfield"><span>Name</span><b>${esc(u.name)}</b></div>
+    <div class="cfield"><span>${u.role==="student"?"Roll number":"Email"}</span><b class="mono">${esc(u.role==="student"?(u.roll||"").toUpperCase():u.email)}</b></div>
+    <div class="cfield"><span>Machine</span><b>${m.code} · ${m.model}</b></div>
+    <div class="cfield"><span>Issued</span><b>${c.date}</b></div>
+    <div class="cfield"><span>Pass number</span><b class="mono">${c.id}</b></div>
+    <div class="seal"><div class="qrblock"></div>
+      <div style="font-size:12.5px;color:var(--dim);line-height:1.55">${m.tier==="B"?"Show this at the machine. Staff sign your induction on the back.":"Show this at the machine. Staff scan the code to confirm the pass is live."}</div></div>
+  </div>`;
+}
+
+/* ============================================================
+   COST ESTIMATOR
+   All prices below are PLACEHOLDERS. Replace the r values (₹ per gram)
+   with Comet Center's real material rates when they're fixed.
+============================================================ */
+const PRICING={
+  bands:[
+    {upto:6, label:"Up to 6 h", student:2,  external:3},
+    {upto:12,label:"6 – 12 h",  student:2.5,external:3.5},
+    {upto:24,label:"12 – 24 h", student:3,  external:4},
+    {upto:Infinity,label:"Over 24 h",student:4,external:5}],
+  // r = ₹ per gram (placeholder), d = density g/cm³
+  mat:{
+    "PLA":{r:1.2,d:1.24},"PETG":{r:1.4,d:1.27},"TPU":{r:2.5,d:1.21},"PVA":{r:6,d:1.23},"ASA":{r:1.8,d:1.07},"ABS":{r:1.6,d:1.04},"PC":{r:3,d:1.2},"PA nylon":{r:4,d:1.14},"PLA-CF":{r:3.5,d:1.3},
+    "PLA pellets":{r:.35,d:1.24},"ABS pellets":{r:.4,d:1.04},"PETG pellets":{r:.4,d:1.27},"HIPS pellets":{r:.35,d:1.04},"PPGF pellets":{r:.8,d:1.12},"PPCF pellets":{r:1.2,d:1.05},
+    "Standard resin":{r:3.5,d:1.12},"ABS-like resin":{r:4.5,d:1.12},"Water-washable resin":{r:4,d:1.1},
+    "B9 Onyx":{r:25,d:1.12},"B9 Transparent":{r:25,d:1.12},"B9 HD Slate":{r:25,d:1.12},"B9 HD Clear":{r:27,d:1.12},"B9 Robust ABS/PC":{r:30,d:1.15},
+    "Aluminium 6061":{r:.45,d:2.7},"Mild steel":{r:.09,d:7.85},"Stainless steel":{r:.3,d:8},"Brass":{r:.8,d:8.5},"Copper":{r:1,d:8.96},"Tool steel (D2)":{r:.4,d:7.7},"Delrin (POM)":{r:.6,d:1.41},
+    "Cast acrylic":{r:.35,d:1.19},"Plywood":{r:.08,d:.6},"MDF":{r:.05,d:.75},"HDPE":{r:.3,d:.95},"Glass":{r:.05,d:2.5},"Granite":{r:.04,d:2.7},"Carbon fibre sheet":{r:3,d:1.6}},
+  tooling:3,   // ₹ per cutting minute, mill / lathe / router cutters
+  abrasive:12, // ₹ per minute of waterjet cutting (garnet)
+  wire:.45     // ₹ per metre of 0.25 mm brass EDM wire
+};
+const EST={
+  a1:{kind:"fdm",env:[256,256,256],mats:["PLA","PETG","TPU","PVA"],flow:9,nozzle:.4,layers:[.12,.2,.28],lh:.2},
+  core:{kind:"fdm",env:[250,220,270],mats:["PLA","PETG","ASA","ABS","PC","PA nylon","PLA-CF"],flow:8,nozzle:.4,layers:[.1,.2,.3],lh:.2},
+  xl:{kind:"fdm",env:[360,360,360],mats:["PLA","PETG","ASA","PC","PA nylon","PVA"],flow:9,nozzle:.4,layers:[.1,.2,.3],lh:.2},
+  giga:{kind:"fdm",env:[800,800,1000],mats:["PLA","PETG","TPU"],flow:20,nozzle:.6,layers:[.2,.3,.4],lh:.3,heads:4,tile:410},
+  garuda:{kind:"fdm",env:[500,500,500],mats:["PLA pellets","ABS pellets","PETG pellets","HIPS pellets","PPGF pellets","PPCF pellets"],flow:35,nozzle:1,layers:[.5,.8],lh:.5},
+  saturn:{kind:"resin",env:[211.68,118.37,220],mats:["Standard resin","ABS-like resin","Water-washable resin"],layers:[.03,.05],lh:.05,spl:5.5},
+  b9:{kind:"resin",env:[38.4,21.6,127],mats:["B9 Onyx","B9 Transparent","B9 HD Slate","B9 HD Clear","B9 Robust ABS/PC"],layers:[.01,.02],lh:.01,spl:9},
+  mill:{kind:"mill",env:[400,300,300],mats:["Aluminium 6061","Brass","Mild steel","Delrin (POM)"],mrr:{"Aluminium 6061":6,"Brass":4,"Mild steel":2,"Delrin (POM)":10},fin:{"Aluminium 6061":450,"Brass":350,"Mild steel":200,"Delrin (POM)":600}},
+  lathe:{kind:"lathe",env:[150,300],mats:["Aluminium 6061","Brass","Mild steel","Delrin (POM)"],mrr:{"Aluminium 6061":15,"Brass":10,"Mild steel":5,"Delrin (POM)":20},fin:{"Aluminium 6061":900,"Brass":700,"Mild steel":400,"Delrin (POM)":1200}},
+  router:{kind:"sheet",env:[900,600,25],mats:["Cast acrylic","Plywood","MDF","HDPE","Aluminium 6061"],feed:{"Cast acrylic":1500,"Plywood":2000,"MDF":2500,"HDPE":1800,"Aluminium 6061":600},dpp:{"Cast acrylic":3,"Plywood":4,"MDF":5,"HDPE":3,"Aluminium 6061":.5},t:6},
+  waterjet:{kind:"sheet",env:[304,304,25],mats:["Aluminium 6061","Mild steel","Stainless steel","Brass","Cast acrylic","Glass","Granite","Carbon fibre sheet"],v6:{"Aluminium 6061":300,"Mild steel":140,"Stainless steel":120,"Brass":190,"Cast acrylic":900,"Glass":500,"Granite":300,"Carbon fibre sheet":400},t:6},
+  edm:{kind:"edm",env:[300,400,200],mats:["Tool steel (D2)","Mild steel","Stainless steel","Aluminium 6061","Copper","Brass"],rate:{"Tool steel (D2)":45,"Mild steel":60,"Stainless steel":50,"Aluminium 6061":120,"Copper":40,"Brass":70},t:20}
+};
+const NEEDS={fdm:"mesh",resin:"mesh",mill:"mesh",lathe:"mesh",sheet:"dxf",edm:"dxf"};
+let E={k:"a1",mat:"PLA",user:"student",units:1,infill:.15,lh:.2,sup:.1,hollow:true,t:6,copies:1,data:null,name:"",sample:true};
+
+/* ---- file parsing ---- */
+function parseSTL(buf){
+  const dv=new DataView(buf);
+  if(buf.byteLength>=84){const n=dv.getUint32(80,true);
+    if(n>0&&84+n*50===buf.byteLength){const p=new Float32Array(n*9);
+      for(let i=0;i<n;i++){const o=84+i*50+12;for(let j=0;j<9;j++)p[i*9+j]=dv.getFloat32(o+j*4,true)}return p}}
+  const txt=new TextDecoder().decode(buf);
+  const re=/vertex\s+([-+\d.eE]+)\s+([-+\d.eE]+)\s+([-+\d.eE]+)/g;const a=[];let m;
+  while((m=re.exec(txt)))a.push(+m[1],+m[2],+m[3]);
+  if(a.length<9)throw new Error("We couldn't find any triangles in this STL. Try exporting it again as a binary STL.");
+  return new Float32Array(a.slice(0,a.length-a.length%9));
+}
+function parseOBJ(txt){
+  const v=[],out=[];
+  txt.split(/\r?\n/).forEach(l=>{const s=l.trim().split(/\s+/);
+    if(s[0]==="v")v.push([+s[1],+s[2],+s[3]]);
+    else if(s[0]==="f"){const idx=s.slice(1).map(t=>{let i=parseInt(t.split("/")[0]);return i<0?v.length+i:i-1});
+      for(let i=1;i+1<idx.length;i++)[idx[0],idx[i],idx[i+1]].forEach(j=>{const p=v[j];if(p)out.push(p[0],p[1],p[2])})}});
+  if(out.length<9)throw new Error("We couldn't find any faces in this OBJ.");
+  return new Float32Array(out);
+}
+function meshStats(p){
+  let V=0,Ar=0;const mn=[Infinity,Infinity,Infinity],mx=[-Infinity,-Infinity,-Infinity];
+  for(let i=0;i<p.length;i+=9){
+    const ax=p[i],ay=p[i+1],az=p[i+2],bx=p[i+3],by=p[i+4],bz=p[i+5],cx=p[i+6],cy=p[i+7],cz=p[i+8];
+    V+=(ax*(by*cz-bz*cy)-ay*(bx*cz-bz*cx)+az*(bx*cy-by*cx))/6;
+    const ux=bx-ax,uy=by-ay,uz=bz-az,wx=cx-ax,wy=cy-ay,wz=cz-az;
+    const nx=uy*wz-uz*wy,ny=uz*wx-ux*wz,nz=ux*wy-uy*wx;Ar+=Math.sqrt(nx*nx+ny*ny+nz*nz)/2;
+    for(let j=0;j<9;j++){const a=j%3,val=p[i+j];if(val<mn[a])mn[a]=val;if(val>mx[a])mx[a]=val}}
+  return {type:"mesh",tris:p,vol:Math.abs(V),area:Ar,min:mn,max:mx,dims:[mx[0]-mn[0],mx[1]-mn[1],mx[2]-mn[2]],n:p.length/9};
+}
+function arcPts(cx,cy,r,a0,a1,out){ // radians, CCW from a0 to a1
+  while(a1<=a0)a1+=Math.PI*2;const n=Math.max(4,Math.ceil((a1-a0)/(Math.PI/24)));
+  for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n;out.push([cx+r*Math.cos(a),cy+r*Math.sin(a)])}
+  return out}
+function bulgeSeg(p1,p2,b,out){
+  if(!b){out.push(p2);return}
+  const th=4*Math.atan(b),dx=p2[0]-p1[0],dy=p2[1]-p1[1],c=Math.hypot(dx,dy);if(!c)return;
+  const r=c/(2*Math.sin(th/2)),mx=(p1[0]+p2[0])/2,my=(p1[1]+p2[1])/2,h=r*Math.cos(th/2);
+  const cx=mx-h*dy/c,cy=my+h*dx/c;
+  let a0=Math.atan2(p1[1]-cy,p1[0]-cx),a1=Math.atan2(p2[1]-cy,p2[0]-cx);
+  const tmp=[];if(b>0)arcPts(cx,cy,Math.abs(r),a0,a1,tmp);else{arcPts(cx,cy,Math.abs(r),a1,a0,tmp);tmp.reverse()}
+  for(let i=1;i<tmp.length;i++)out.push(tmp[i])}
+function parseDXF(txt){
+  const L=txt.split(/\r?\n/),P=[];for(let i=0;i+1<L.length;i+=2)P.push([parseInt(L[i]),L[i+1].trim()]);
+  let ins=0;for(let i=0;i<P.length-1;i++)if(P[i][1]==="$INSUNITS"){ins=parseInt(P[i+1][1]);break}
+  let i=P.findIndex(p=>p[0]===2&&p[1]==="ENTITIES");if(i<0)throw new Error("This DXF has no ENTITIES section.");
+  const polys=[];let poly=null,skipped=0;
+  const flush=(t,pr)=>{const g=c=>pr.filter(p=>p[0]===c).map(p=>parseFloat(p[1]));const f=c=>g(c)[0];
+    if(t==="LINE")polys.push([[f(10),f(20)],[f(11),f(21)]]);
+    else if(t==="CIRCLE"){const pts=arcPts(f(10),f(20),f(40),0,Math.PI*2,[]);polys.push(pts)}
+    else if(t==="ARC")polys.push(arcPts(f(10),f(20),f(40),f(50)*Math.PI/180,f(51)*Math.PI/180,[]));
+    else if(t==="LWPOLYLINE"){const closed=(f(70)||0)&1;const vs=[];let cur=null;
+      pr.forEach(([c,v])=>{if(c===10){cur=[parseFloat(v),0,0];vs.push(cur)}else if(c===20&&cur)cur[1]=parseFloat(v);else if(c===42&&cur)cur[2]=parseFloat(v)});
+      if(vs.length<2)return;const pts=[[vs[0][0],vs[0][1]]];
+      for(let j=1;j<vs.length;j++)bulgeSeg([vs[j-1][0],vs[j-1][1]],[vs[j][0],vs[j][1]],vs[j-1][2],pts);
+      if(closed){const l=vs[vs.length-1];bulgeSeg([l[0],l[1]],[vs[0][0],vs[0][1]],l[2],pts)}
+      polys.push(pts)}
+    else if(t==="POLYLINE")poly={closed:(f(70)||0)&1,v:[]};
+    else if(t==="VERTEX"&&poly)poly.v.push([f(10),f(20),f(42)||0]);
+    else if(t==="SEQEND"&&poly){const vs=poly.v;if(vs.length>1){const pts=[[vs[0][0],vs[0][1]]];
+      for(let j=1;j<vs.length;j++)bulgeSeg([vs[j-1][0],vs[j-1][1]],[vs[j][0],vs[j][1]],vs[j-1][2],pts);
+      if(poly.closed){const l=vs[vs.length-1];bulgeSeg([l[0],l[1]],[vs[0][0],vs[0][1]],l[2],pts)}polys.push(pts)}poly=null}
+    else if(t==="ELLIPSE"){const cx=f(10),cy=f(20),mx=f(11),my=f(21),ra=f(40),s=f(41)||0,e=f(42)||Math.PI*2;
+      const a=Math.hypot(mx,my),rot=Math.atan2(my,mx),b=a*ra,pts=[];let e2=e;while(e2<=s)e2+=Math.PI*2;const n=64;
+      for(let j=0;j<=n;j++){const u=s+(e2-s)*j/n,x=a*Math.cos(u),y=b*Math.sin(u);pts.push([cx+x*Math.cos(rot)-y*Math.sin(rot),cy+x*Math.sin(rot)+y*Math.cos(rot)])}polys.push(pts)}
+    else if(t==="SPLINE"){let xs=g(11),ys=g(21);if(xs.length<2){xs=g(10);ys=g(20)}
+      const pts=xs.map((x,j)=>[x,ys[j]]);if(((f(70)||0)&1)&&pts.length)pts.push(pts[0]);if(pts.length>1)polys.push(pts)}
+    else if(["INSERT","TEXT","MTEXT","DIMENSION","HATCH","3DFACE","SOLID"].includes(t))skipped++;
+  };
+  for(i=i+1;i<P.length;i++){const [c,v]=P[i];if(c!==0)continue;if(v==="ENDSEC")break;
+    const pr=[];let j=i+1;while(j<P.length&&P[j][0]!==0){pr.push(P[j]);j++}
+    flush(v,pr);i=j-1}
+  const segs=[];polys.forEach(pts=>{for(let j=1;j<pts.length;j++){const a=pts[j-1],b=pts[j];if([a[0],a[1],b[0],b[1]].every(Number.isFinite))segs.push([a[0],a[1],b[0],b[1]])}});
+  if(!segs.length)throw new Error("No lines, arcs or circles found. Check the DXF is a flat 2D outline (blocks and 3D solids aren't read)"+(skipped?`. We skipped ${skipped} blocks or text items.`:"."));
+  const unit=ins===1?25.4:ins===5?10:ins===6?1000:ins===2?304.8:1;
+  return dxfStats(segs,unit!==1?unit:null);
+}
+function dxfStats(segs,hint){
+  let len=0;const mn=[Infinity,Infinity],mx=[-Infinity,-Infinity];
+  const par=new Map(),key=(x,y)=>Math.round(x*100)+","+Math.round(y*100);
+  const find=a=>{while(par.get(a)!==a){par.set(a,par.get(par.get(a)));a=par.get(a)}return a};
+  const add=k=>{if(!par.has(k))par.set(k,k);return k};
+  segs.forEach(([x1,y1,x2,y2])=>{len+=Math.hypot(x2-x1,y2-y1);
+    mn[0]=Math.min(mn[0],x1,x2);mn[1]=Math.min(mn[1],y1,y2);mx[0]=Math.max(mx[0],x1,x2);mx[1]=Math.max(mx[1],y1,y2);
+    const a=find(add(key(x1,y1))),b=find(add(key(x2,y2)));if(a!==b)par.set(a,b)});
+  const roots=new Set();par.forEach((_,k)=>roots.add(find(k)));
+  return {type:"dxf",segs,len,min:mn,max:mx,dims:[mx[0]-mn[0],mx[1]-mn[1]],contours:roots.size,unitHint:hint};
+}
+
+/* ---- built-in samples so the page works before any upload ---- */
+function extrudeTris(shape,depth){
+  let geo=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:false,curveSegments:24});
+  if(geo.index)geo=geo.toNonIndexed();
+  const s=geo.attributes.position.array,p=new Float32Array(s.length);
+  for(let i=0;i<s.length;i+=3){p[i]=s[i+2];p[i+1]=s[i];p[i+2]=s[i+1]} // file Z = profile height
+  return p}
+function sampleStand(){ // phone stand side profile, 70 mm wide
+  const s=new THREE.Shape();s.moveTo(0,0);
+  [[80,0],[80,6],[30,6],[66,90],[60,93],[22,8],[14,8],[14,18],[8,18],[8,6],[0,6]].forEach(([x,y])=>s.lineTo(x,y));
+  s.closePath();
+  return extrudeTris(s,70)}
+function sampleChip(){ // microfluidic test chip, 30 × 18 × 4 mm
+  const s=new THREE.Shape();s.moveTo(0,0);s.lineTo(30,0);s.lineTo(30,18);s.lineTo(0,18);s.closePath();
+  [[6,9],[24,9]].forEach(([x,y])=>{const h=new THREE.Path();h.absarc(x,y,1.5,0,Math.PI*2,true);s.holes.push(h)});
+  let geo=new THREE.ExtrudeGeometry(s,{depth:4,bevelEnabled:false,curveSegments:24});if(geo.index)geo=geo.toNonIndexed();
+  return new Float32Array(geo.attributes.position.array)}
+function sampleShaft(){ // stepped shaft along Z: Ø30×20, Ø20×60, Ø12×40
+  const parts=[];let z=0;
+  [[15,20],[10,60],[6,40]].forEach(([r,l])=>{let g=new THREE.CylinderGeometry(r,r,l,40);if(g.index)g=g.toNonIndexed();
+    const a=g.attributes.position.array;for(let i=0;i<a.length;i+=3)parts.push(a[i],a[i+2],a[i+1]+l/2+z);z+=l});
+  return new Float32Array(parts)}
+function samplePlate(){ // 120 × 80 mounting plate with corner holes and a Ø30 bore
+  const polys=[],R=8,W=120,H=80;const p=[];
+  p.push([R,0],[W-R,0]);arcPts(W-R,R,R,-Math.PI/2,0,p);p.push([W,H-R]);arcPts(W-R,H-R,R,0,Math.PI/2,p);p.push([R,H]);arcPts(R,H-R,R,Math.PI/2,Math.PI,p);p.push([0,R]);arcPts(R,R,R,Math.PI,Math.PI*1.5,p);
+  polys.push(p);
+  [[12,12],[108,12],[12,68],[108,68]].forEach(([x,y])=>polys.push(arcPts(x,y,3,0,Math.PI*2,[])));
+  polys.push(arcPts(60,40,15,0,Math.PI*2,[]));
+  const sl=[];sl.push([40,16],[80,16]);arcPts(80,20,4,-Math.PI/2,Math.PI/2,sl);sl.push([40,24]);arcPts(40,20,4,Math.PI/2,Math.PI*1.5,sl);polys.push(sl);
+  const segs=[];polys.forEach(q=>{for(let j=1;j<q.length;j++)segs.push([q[j-1][0],q[j-1][1],q[j][0],q[j][1]])});
+  return dxfStats(segs,null)}
+function loadSample(){
+  const cfg=EST[E.k];E.sample=true;E.units=1;
+  if(NEEDS[cfg.kind]==="dxf"){E.data=samplePlate();E.name="Sample · mounting plate.dxf"}
+  else if(cfg.kind==="lathe"){E.data=meshStats(sampleShaft());E.name="Sample · stepped shaft.stl"}
+  else if(E.k==="b9"){E.data=meshStats(sampleChip());E.name="Sample · micro test chip.stl"}
+  else{E.data=meshStats(sampleStand());E.name="Sample · phone stand.stl"}
+}
+
+/* ---- the estimate ---- */
+const fmtR=n=>"₹"+Math.round(n).toLocaleString("en-IN");
+const fmtH=h=>{const m=Math.round(h*60);if(m<60)return m+" min";const hh=Math.floor(m/60),mm=m%60;return hh+" h"+(mm?" "+mm+" min":"")};
+const fmtG=g=>g>=1000?(g/1000).toFixed(g>=10000?1:2)+" kg":Math.round(g)+" g";
+const r5=x=>Math.ceil(x/5)*5;
+const fitsBox=(dims,env)=>{const a=[...dims].sort((x,y)=>x-y),b=[...env].sort((x,y)=>x-y);return a.every((v,i)=>v<=b[i]+1e-6)};
+function band(h){return PRICING.bands.findIndex(b=>h<=b.upto)}
+function estimate(){
+  const k=E.k,cfg=EST[k],D=E.data,M=PRICING.mat[E.mat],s=E.units;
+  if(!D)return {err:"Drop a file to get an estimate."};
+  if(NEEDS[cfg.kind]!==D.type)return {err:NEEDS[cfg.kind]==="dxf"
+    ?`${MACHINES[k].name} cuts flat profiles. Export your outline as a DXF (1:1, millimetres) and drop that in.`
+    :`${MACHINES[k].name} makes 3D parts. Drop in an STL or OBJ of the part instead of a DXF.`,mismatch:true};
+  const R={lines:[],notes:[],hours:0,grams:0,fits:true,fitMsg:"",extra:""};
+  const c=Math.max(1,Math.round(E.copies));
+  if(D.type==="mesh"){
+    const V=D.vol*s*s*s,Ar=D.area*s*s,dims=D.dims.map(x=>x*s);
+    R.dims=dims;
+    if(V<1){return {err:"This mesh has no measurable volume. It may be open (not watertight) or drawn in metres. Check the units and try again."}}
+    if(cfg.kind==="fdm"){
+      const shellT=cfg.nozzle*2.5,shell=Math.min(V,Ar*shellT);
+      const inner=Math.max(0,V-shell),ext=(shell+inner*E.infill)*(1+E.sup);
+      const g1=ext/1000*M.d,flow=cfg.flow*Math.pow(E.lh/cfg.lh,.8),layers=dims[2]/E.lh;
+      const sec1=ext/flow+layers*1.5;
+      let hrs;
+      if(cfg.heads){const batches=Math.ceil(c/cfg.heads);hrs=(sec1*batches+600)/3600;
+        if(c>1){R.fits=dims[0]<=cfg.tile&&dims[1]<=cfg.tile&&dims[2]<=cfg.env[2];R.fitMsg=R.fits?`${Math.min(c,4)} heads print together, one copy per 410 mm tile`:"Too big for one 410 mm tile. Multi-head copies need one tile each"}
+        R.notes.push(c>1?`Up to 4 copies print at the same time, one per head. ${c} copies take ${batches} run${batches>1?"s":""}.`:"Add copies: up to four print at once on the Giga's four heads at no extra time.")}
+      else{hrs=(sec1*c+300)/3600}
+      if(!R.fitMsg){R.fits=fitsBox(dims,cfg.env);R.fitMsg=R.fits?"Fits the build volume":"Bigger than the build volume"}
+      R.hours=hrs;R.grams=g1*c;
+      R.lines.push({l:`${E.mat} filament`,d:`${fmtG(R.grams)} × ${fmtR(M.r*1000)}/kg`,a:R.grams*M.r});
+      R.extra=`${Math.round(E.infill*100)}% infill · ${E.lh} mm layers · ${Math.round(layers)} layers`;
+      R.notes.push("Time is from extruded volume at a typical flow rate for this machine. Your slicer gives the exact figure.");
+    }
+    if(cfg.kind==="resin"){
+      const Vp=E.hollow?Math.min(V,Ar*2):V,g1=Vp*1.12/1000*M.d;
+      const layers=(dims[2]+5)/E.lh,perPlate=Math.max(1,Math.floor(cfg.env[0]*cfg.env[1]*.7/((dims[0]+6)*(dims[1]+6))));
+      const runs=Math.ceil(c/perPlate);R.hours=(layers*cfg.spl*runs+900)/3600;R.grams=g1*c;
+      R.fits=fitsBox(dims,cfg.env);R.fitMsg=R.fits?"Fits the build plate":"Bigger than the build volume";
+      R.lines.push({l:E.mat,d:`${fmtG(R.grams)} incl. supports × ${fmtR(M.r*1000)}/kg`,a:R.grams*M.r});
+      R.extra=`${E.lh*1000} µm layers · ${Math.round(layers)} layers${E.hollow?" · hollowed, 2 mm wall":""}`;
+      R.notes.push(`Only height costs time on resin. Up to ${perPlate} copies fit on one plate in the same time.`);
+      if(k==="b9")R.notes.push("Check your thinnest wall against the resin: Onyx and Transparent 20 µm, HD Clear 30 µm, HD Slate 40 µm, Robust ABS/PC 80 µm.");
+    }
+    if(cfg.kind==="mill"){
+      const st=dims.map(x=>r5(x+6)),sv=st[0]*st[1]*st[2],rem=Math.max(0,sv-V);
+      const rough=rem/1000/cfg.mrr[E.mat],fin=Ar/cfg.fin[E.mat],cut=rough+fin;
+      const mins=30+cut*c+(c-1)*10;R.hours=mins/60;R.grams=sv/1000*M.d*c;R.stock=st;
+      R.fits=fitsBox(st,cfg.env);R.fitMsg=R.fits?"Stock fits the travel":"Stock is bigger than the 400 × 300 × 300 travel";
+      R.lines.push({l:`${E.mat} stock`,d:`${st.join(" × ")} mm block · ${fmtG(R.grams)} × ${fmtR(M.r*1000)}/kg`,a:R.grams*M.r});
+      R.lines.push({l:"Cutter wear",d:`${Math.round(cut*c)} cutting min × ${fmtR(PRICING.tooling)}/min`,a:cut*c*PRICING.tooling});
+      R.extra=`${(rem/1000).toFixed(0)} cm³ removed per part · 30 min setup`;
+      R.notes.push("Stock is the part's bounding box plus 3 mm a side, rounded up to 5 mm. Simulate on W-02 for an exact cycle time.");
+    }
+    if(cfg.kind==="lathe"){
+      const ix=dims.indexOf(Math.max(...dims)),L=dims[ix],Dm=Math.max(...dims.filter((_,i)=>i!==ix));
+      const sd=r5(Dm+3),sl=r5(L+10),sv=Math.PI*(sd/2)**2*sl,rem=Math.max(0,sv-V);
+      const cut=rem/1000/cfg.mrr[E.mat]+Ar/cfg.fin[E.mat],mins=25+cut*c+(c-1)*5;
+      R.hours=mins/60;R.grams=sv/1000*M.d*c;R.stock=[sd,sl];R.axis=ix;
+      R.fits=sd<=cfg.env[0]&&sl<=cfg.env[1];R.fitMsg=R.fits?"Bar fits the chuck and bed":"Bar is bigger than Ø150 × 300 mm. Check with staff";
+      R.lines.push({l:`${E.mat} bar`,d:`Ø${sd} × ${sl} mm · ${fmtG(R.grams)} × ${fmtR(M.r*1000)}/kg`,a:R.grams*M.r});
+      R.lines.push({l:"Insert wear",d:`${Math.round(cut*c)} cutting min × ${fmtR(PRICING.tooling)}/min`,a:cut*c*PRICING.tooling});
+      R.extra=`Turned about its longest axis · ${(rem/1000).toFixed(0)} cm³ removed per part`;
+      R.notes.push("Lathe capacity shown here (Ø150 × 300 mm) is a placeholder until confirmed.");
+    }
+  } else {
+    const len=D.len*s,w=D.dims[0]*s,h=D.dims[1]*s,t=E.t;R.dims=[w,h,t];
+    const sw=r5(w+10),sh=r5(h+10),sheetG=sw*sh*t/1000*M.d*c;R.stock=[sw,sh,t];
+    if(cfg.kind==="sheet"){
+      R.fits=fitsBox([sw,sh],cfg.env.slice(0,2))&&t<=cfg.env[2];
+      R.fitMsg=R.fits?"Fits the bed":t>cfg.env[2]?`Thicker than ${cfg.env[2]} mm`:`Sheet bigger than ${cfg.env[0]} × ${cfg.env[1]} mm`;
+      if(k==="router"){const passes=Math.ceil(t/cfg.dpp[E.mat]),cut=len*passes/cfg.feed[E.mat]+D.contours*.2;
+        R.hours=(15+cut*c)/60;
+        R.lines.push({l:`${E.mat} sheet`,d:`${sw} × ${sh} × ${t} mm · ${fmtG(sheetG)} × ${fmtR(M.r*1000)}/kg`,a:sheetG*M.r});
+        R.lines.push({l:"Cutter wear",d:`${Math.round(cut*c)} cutting min × ${fmtR(PRICING.tooling)}/min`,a:cut*c*PRICING.tooling});
+        R.extra=`${(len/1000).toFixed(2)} m of cut · ${passes} pass${passes>1?"es":""} at ${cfg.dpp[E.mat]} mm · ${D.contours} outlines`}
+      else{const v=Math.min(2540,cfg.v6[E.mat]*Math.pow(6/t,1.15)),cut=len/v,pierce=D.contours*(4+t*1.2)/60,run=(cut+pierce)*c;
+        R.hours=(10+run)/60;
+        R.lines.push({l:`${E.mat} sheet`,d:`${sw} × ${sh} × ${t} mm · ${fmtG(sheetG)} × ${fmtR(M.r*1000)}/kg`,a:sheetG*M.r});
+        R.lines.push({l:"Garnet abrasive",d:`${Math.round(run)} min of jet × ${fmtR(PRICING.abrasive)}/min`,a:run*PRICING.abrasive});
+        R.extra=`${(len/1000).toFixed(2)} m of cut at ${Math.round(v)} mm/min · ${D.contours} pierces`;
+        if(E.mat==="Glass")R.notes.push("Annealed glass only. Tempered glass shatters on the waterjet.")}
+    } else {
+      const area=len*t,cut=area/cfg.rate[E.mat],thread=D.contours*3,run=(cut+thread)*c,wire=cut*c*8;
+      R.hours=(30+run)/60;
+      R.fits=fitsBox([sw,sh],cfg.env.slice(0,2))&&t<=cfg.env[2];R.fitMsg=R.fits?"Fits the table":t>200?"Job height over 200 mm":"Bigger than 300 × 400 mm travel";
+      R.lines.push({l:`${E.mat} blank`,d:`${sw} × ${sh} × ${t} mm · ${fmtG(sheetG)} × ${fmtR(M.r*1000)}/kg`,a:sheetG*M.r});
+      R.lines.push({l:"Brass wire 0.25 mm",d:`${Math.round(wire)} m × ${fmtR(PRICING.wire)}/m`,a:wire*PRICING.wire});
+      R.extra=`${Math.round(area).toLocaleString("en-IN")} mm² of cut face · ${D.contours} outlines, each needs a start hole if internal`;
+      R.notes.push("Staff run the wire EDM. Submit this job at the front desk.");
+    }
+    R.grams=sheetG;
+  }
+  const base=R.lines.reduce((a,l)=>a+l.a,0),bi=band(R.hours),mult=PRICING.bands[bi][E.user];
+  R.base=base;R.band=bi;R.mult=mult;R.total=base*mult;
+  if(!E.sample&&D.unitHint&&E.units===1)R.notes.unshift(`This DXF says it's drawn in ${D.unitHint===25.4?"inches":"non-millimetre units"}. Switch units if the size looks wrong.`);
+  R.notes.push("All material rates are placeholders until Comet Center fixes its price list. Final price is confirmed at the desk.");
+  return R;
+}
+
+/* ---- estimator UI ---- */
+function openCost(k){
+  if(k&&EST[k]&&k!==E.k){selectMachine(k)}
+  if(!E.data)loadSample();
+  if(!E.userSet)E.user=S.user&&S.user.role==="external"?"external":"student";
+  renderCostForm();initEstViewer();updateEstimate();
+}
+function selectMachine(k){
+  const cfg=EST[k];
+  E.k=k;E.mat=cfg.mats[0];E.lh=cfg.lh;if(cfg.t)E.t=cfg.t;
+  if(E.sample||!E.data)loadSample();
+}
+function renderCostForm(){
+  const cfg=EST[E.k],kind=cfg.kind,groups={};
+  Object.keys(EST).forEach(k=>{const f=FAM[MACHINES[k].fam];(groups[f]=groups[f]||[]).push(k)});
+  const accept=NEEDS[kind]==="dxf"?".dxf":".stl,.obj";
+  $("#estForm").innerHTML=`
+   <div class="field"><label for="eMach">Machine</label>
+    <select id="eMach">${Object.entries(groups).map(([g,ks])=>`<optgroup label="${g}">${ks.map(k=>`<option value="${k}" ${k===E.k?"selected":""}>${MACHINES[k].code} · ${MACHINES[k].name}</option>`).join("")}</optgroup>`).join("")}</select></div>
+   <div class="field"><span class="flabel">Your file</span>
+    <div class="drop" id="drop" role="button" tabindex="0" aria-label="Upload a file">
+     <div class="ico"></div><b>Drop your ${NEEDS[kind]==="dxf"?"DXF outline":"STL or OBJ"} here</b><small>or click to choose · read in your browser, never uploaded</small>
+     <input type="file" id="eFile" accept="${accept},.stl,.obj,.dxf" hidden>
+    </div>
+    <div class="fileline"><span class="mono" id="eName">${esc(E.name)}</span>${E.sample?"":`<button class="linkbtn" id="eSample">Use the sample</button>`}</div>
+   </div>
+   <div class="field"><span class="flabel">Pricing for</span>
+    <div class="seg" id="eUser"><button data-v="student" class="${E.user==="student"?"on":""}">IITH student</button><button data-v="external" class="${E.user==="external"?"on":""}">External</button></div></div>
+   <div class="row2">
+    <div class="field"><label for="eMat">Material</label><select id="eMat">${cfg.mats.map(m=>`<option ${m===E.mat?"selected":""}>${m}</option>`).join("")}</select></div>
+    <div class="field"><label for="eUnits">File units</label><select id="eUnits"><option value="1" ${E.units===1?"selected":""}>Millimetres</option><option value="10" ${E.units===10?"selected":""}>Centimetres</option><option value="25.4" ${E.units===25.4?"selected":""}>Inches</option></select></div>
+   </div>
+   ${kind==="fdm"?`
+   <div class="field"><label for="eInfill">Infill · <span id="eInfV">${Math.round(E.infill*100)}%</span></label><input type="range" id="eInfill" min="5" max="100" step="5" value="${Math.round(E.infill*100)}"></div>
+   <div class="row2">
+    <div class="field"><label for="eLh">Layer height</label><select id="eLh">${cfg.layers.map(l=>`<option value="${l}" ${l===E.lh?"selected":""}>${l} mm</option>`).join("")}</select></div>
+    <div class="field"><label for="eSup">Supports</label><select id="eSup"><option value="0" ${E.sup===0?"selected":""}>None</option><option value="0.1" ${E.sup===.1?"selected":""}>Some</option><option value="0.25" ${E.sup===.25?"selected":""}>Lots</option></select></div>
+   </div>`:""}
+   ${kind==="resin"?`
+   <div class="row2">
+    <div class="field"><label for="eLh">Layer height</label><select id="eLh">${cfg.layers.map(l=>`<option value="${l}" ${l===E.lh?"selected":""}>${l*1000} µm</option>`).join("")}</select></div>
+    <div class="field"><span class="flabel">Hollow it</span><div class="seg" id="eHol"><button data-v="1" class="${E.hollow?"on":""}">Yes</button><button data-v="0" class="${E.hollow?"":"on"}">Solid</button></div></div>
+   </div>`:""}
+   ${NEEDS[kind]==="dxf"?`<div class="field"><label for="eT">Material thickness (mm)</label><input type="number" id="eT" min="0.5" max="${cfg.env[2]}" step="0.5" value="${E.t}"></div>`:""}
+   <div class="field"><label for="eCopies">Copies</label><input type="number" id="eCopies" min="1" max="200" step="1" value="${E.copies}"></div>
+  `;
+  const re=()=>updateEstimate();
+  $("#eMach").onchange=e=>{selectMachine(e.target.value);renderCostForm();updateEstimate()};
+  const fi=$("#eFile"),dr=$("#drop");
+  dr.onclick=()=>fi.click();dr.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();fi.click()}};
+  fi.onchange=()=>{if(fi.files[0])readFile(fi.files[0])};
+  dr.ondragover=e=>{e.preventDefault();dr.classList.add("over")};dr.ondragleave=()=>dr.classList.remove("over");
+  dr.ondrop=e=>{e.preventDefault();dr.classList.remove("over");if(e.dataTransfer.files[0])readFile(e.dataTransfer.files[0])};
+  const smp=$("#eSample");if(smp)smp.onclick=()=>{loadSample();renderCostForm();updateEstimate()};
+  $("#eUser").onclick=e=>{const b=e.target.closest("button");if(!b)return;E.user=b.dataset.v;E.userSet=true;$("#eUser").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));re()};
+  $("#eMat").onchange=e=>{E.mat=e.target.value;re()};
+  $("#eUnits").onchange=e=>{E.units=+e.target.value;re()};
+  const inf=$("#eInfill");if(inf)inf.oninput=e=>{E.infill=+e.target.value/100;$("#eInfV").textContent=e.target.value+"%";re()};
+  const lh=$("#eLh");if(lh)lh.onchange=e=>{E.lh=+e.target.value;re()};
+  const su=$("#eSup");if(su)su.onchange=e=>{E.sup=+e.target.value;re()};
+  const ho=$("#eHol");if(ho)ho.onclick=e=>{const b=e.target.closest("button");if(!b)return;E.hollow=b.dataset.v==="1";ho.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));re()};
+  const tt=$("#eT");if(tt)tt.oninput=e=>{const v=parseFloat(e.target.value);if(v>0){E.t=v;re()}};
+  $("#eCopies").oninput=e=>{const v=parseInt(e.target.value);if(v>0){E.copies=Math.min(200,v);re()}};
+}
+function readFile(f){
+  const ext=(f.name.split(".").pop()||"").toLowerCase();
+  if(!["stl","obj","dxf"].includes(ext)){showEstError(`Comet Center reads STL, OBJ and DXF files. "${f.name}" is a .${ext} file. Export your part as one of those.`);return}
+  if(f.size>200*1024*1024){showEstError("That file is over 200 MB. Reduce the mesh resolution and export again.");return}
+  $("#eName").textContent="Reading "+f.name+"…";
+  const rd=new FileReader();
+  rd.onerror=()=>showEstError("The browser couldn't read that file. Try saving it again.");
+  rd.onload=()=>{try{
+      let D;if(ext==="stl")D=meshStats(parseSTL(rd.result));
+      else if(ext==="obj")D=meshStats(parseOBJ(new TextDecoder().decode(rd.result)));
+      else D=parseDXF(new TextDecoder().decode(rd.result));
+      E.data=D;E.name=f.name;E.sample=false;E.units=D.unitHint&&ext==="dxf"?(D.unitHint===25.4?25.4:1):1;
+      if(NEEDS[EST[E.k].kind]!==D.type){const alt=D.type==="dxf"?"waterjet":"a1";toast(`Switched to ${MACHINES[alt].name} for this file`);selectMachine(alt);E.data=D;E.name=f.name;E.sample=false}
+      renderCostForm();updateEstimate();
+    }catch(err){showEstError(err.message||"We couldn't read that file.")}};
+  rd.readAsArrayBuffer(f);
+}
+function showEstError(msg){$("#estRes").innerHTML=`<div class="errbox"><b>Can't estimate this file</b>${esc(msg)}</div>`;const n=$("#eName");if(n)n.textContent=E.name}
+let lastTotal=0;
+function updateEstimate(){
+  const R=estimate(),out=$("#estRes");
+  buildEstScene(R);
+  if(R.err){out.innerHTML=`<div class="errbox"><b>${R.mismatch?"Wrong file type for this machine":"Nothing to estimate yet"}</b>${esc(R.err)}${R.mismatch?`<div style="margin-top:12px"><button class="btn sm" id="eUseSample">Use the sample instead</button></div>`:""}</div>`;
+    const b=$("#eUseSample");if(b)b.onclick=()=>{loadSample();renderCostForm();updateEstimate()};return}
+  const m=MACHINES[E.k],B=PRICING.bands[R.band],who=E.user==="student"?"IITH student":"External";
+  const dims=R.dims.map(x=>x<10?x.toFixed(1):Math.round(x)).join(" × ");
+  out.innerHTML=`
+   <div class="total">
+    <div><span class="tag" style="margin-bottom:6px">Estimated price · ${E.copies>1?E.copies+" copies":"1 part"}</span>
+     <div class="big" id="eTot">${fmtR(R.total)}</div>
+     <div class="why2">${fmtR(R.base)} material and consumables × ${R.mult} · ${who}, job ${B.label.toLowerCase()}</div></div>
+    <div class="cta-row">
+     <button class="btn" data-go="book" data-arg="${A({k:E.k,h:Math.max(1,Math.ceil(R.hours))})}">Book ${Math.max(1,Math.ceil(R.hours))} h on ${m.code}</button>
+     <button class="btn ghost" id="eCopy">Copy quote</button>
+    </div>
+   </div>
+   <div class="tiles">
+    <div class="tile"><span>Job time</span><b>${fmtH(R.hours)}</b><small>${esc(R.extra)}</small></div>
+    <div class="tile"><span>Material</span><b>${fmtG(R.grams)}</b><small>${E.mat}${R.stock?" · stock "+(R.stock.length===2?"Ø"+R.stock[0]+" × "+R.stock[1]:R.stock.join(" × "))+" mm":""}</small></div>
+    <div class="tile ${R.fits?"good":"bad"}"><span>Fit</span><b>${R.fits?"Fits":"Too big"}</b><small>${dims} mm · ${esc(R.fitMsg)}</small></div>
+   </div>
+   <div class="panel"><h4>How the price is built</h4><div class="tscroll"><table class="tbl">
+     <thead><tr><th>Item</th><th class="r">Amount</th></tr></thead><tbody>
+     ${R.lines.map(l=>`<tr><td>${l.l}<small>${l.d}</small></td><td class="r mono">${fmtR(l.a)}</td></tr>`).join("")}
+     <tr><td>Base cost<small>material and consumables</small></td><td class="r mono">${fmtR(R.base)}</td></tr>
+     <tr><td>${who} rate, job ${B.label.toLowerCase()}<small>multiplier on base cost</small></td><td class="r mono">× ${R.mult}</td></tr>
+     <tr><td><b>Estimated price</b></td><td class="r mono"><b>${fmtR(R.total)}</b></td></tr></tbody></table></div></div>
+   <div class="panel"><h4>Rate by job length</h4><div class="tscroll"><table class="tbl ladder">
+     <thead><tr><th>Job time</th><th class="r" style="text-align:center">IITH student</th><th style="text-align:center">External</th></tr></thead><tbody>
+     ${PRICING.bands.map((b,i)=>`<tr class="${i===R.band?"onrow":""}"><td>${b.label}</td><td class="cell ${i===R.band&&E.user==="student"?"on":""}">× ${b.student}</td><td class="cell ${i===R.band&&E.user==="external"?"on":""}">× ${b.external}</td></tr>`).join("")}
+     </tbody></table></div>
+     <p style="font-size:12.5px;color:var(--faint);margin-top:10px">Multipliers apply to the cost of material and consumables. Longer jobs tie up the machine, so they carry a higher rate.</p></div>
+   <div class="panel"><h4>Good to know</h4><ul class="klist">${R.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>
+    <details class="rates" style="margin-top:14px"><summary>Placeholder material rates</summary><div class="tscroll"><table class="tbl"><thead><tr><th>Material</th><th class="r">₹ per kg</th></tr></thead><tbody>
+    ${EST[E.k].mats.map(n=>`<tr><td>${n}</td><td class="r mono">${fmtR(PRICING.mat[n].r*1000)}</td></tr>`).join("")}</tbody></table></div></details></div>`;
+  countUp($("#eTot"),lastTotal,R.total);lastTotal=R.total;
+  $("#eCopy").onclick=()=>{const txt=`Comet Center estimate · ${m.code} ${m.name}\nFile: ${E.name}\n${E.copies} × part, ${E.mat}\nTime: ${fmtH(R.hours)} · Material: ${fmtG(R.grams)}\n${R.lines.map(l=>`${l.l}: ${fmtR(l.a)}`).join("\n")}\nBase ${fmtR(R.base)} × ${R.mult} (${who}, ${B.label}) = ${fmtR(R.total)}\nEstimate only. Final price confirmed at the desk.`;
+    const done=()=>toast("Quote copied");
+    try{navigator.clipboard.writeText(txt).then(done,()=>fallbackCopy(txt))}catch(e){fallbackCopy(txt)}};
+}
+function fallbackCopy(txt){const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("Quote copied")}catch(e){toast("Select and copy the quote manually")}ta.remove()}
+function countUp(el,from,to){if(!el)return;const t0=performance.now(),d=550;
+  (function f(){const k=Math.min(1,(performance.now()-t0)/d),e=1-Math.pow(1-k,3);el.textContent=fmtR(from+(to-from)*e);if(k<1&&el.isConnected)requestAnimationFrame(f)})()}
+
+/* ---- estimator 3D view ---- */
+let EV=null;
+function initEstViewer(){
+  if(EV)return;const cv=$("#estCv");
+  const r=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});r.setPixelRatio(Math.min(devicePixelRatio,2));
+  const sc=new THREE.Scene();sc.add(new THREE.AmbientLight(0x9FB4D8,.75));
+  const d=new THREE.DirectionalLight(0xffffff,.9);d.position.set(1,2,1.4);sc.add(d);
+  const d2=new THREE.DirectionalLight(0xFFC61A,.35);d2.position.set(-2,1,-1);sc.add(d2);
+  const content=new THREE.Group();sc.add(content);
+  const cam=new THREE.PerspectiveCamera(38,1,.1,1e6);
+  EV={r,sc,content,cam,az:.75,el:.45,dist:400,ty:0,drag:false,last:0};
+  let px=0,py=0;
+  cv.addEventListener("pointerdown",e=>{EV.drag=true;px=e.clientX;py=e.clientY;cv.setPointerCapture(e.pointerId)});
+  cv.addEventListener("pointermove",e=>{if(!EV.drag)return;EV.az-=(e.clientX-px)*.008;EV.el=Math.max(-.1,Math.min(1.4,EV.el+(e.clientY-py)*.006));px=e.clientX;py=e.clientY;EV.last=performance.now()});
+  const up=()=>{EV.drag=false;EV.last=performance.now()};cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
+  cv.addEventListener("wheel",e=>{e.preventDefault();EV.dist*=Math.pow(1.0015,e.deltaY);EV.last=performance.now()},{passive:false});
+  (function loop(){requestAnimationFrame(loop);if(!cv.offsetParent)return;
+    const w=cv.clientWidth,h=cv.clientHeight;if(cv.width!==Math.round(w*r.getPixelRatio())){r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+    if(!EV.drag&&performance.now()-EV.last>2000)EV.az+=.0035;
+    const ce=Math.cos(EV.el);cam.position.set(Math.cos(EV.az)*ce*EV.dist,EV.ty+Math.sin(EV.el)*EV.dist,Math.sin(EV.az)*ce*EV.dist);cam.lookAt(0,EV.ty,0);
+    r.render(sc,cam)})();
+}
+function edgesBox(w,h,d,color,y){const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(w,h,d)),new THREE.LineBasicMaterial({color,transparent:true,opacity:.75}));e.position.y=y??h/2;return e}
+function buildEstScene(R){
+  if(!EV)return;const C2=EV.content;C2.traverse(o=>{o.geometry&&o.geometry.dispose()});C2.clear();
+  const cfg=EST[E.k],D=E.data,s=E.units,ok=!R.err&&R.fits,col=R.err?0x5E739A:ok?0x3ED598:0xFF4D4D;
+  const tag=[];let envMax=Math.max(...cfg.env),partMax=50,ty=0;
+  if(D&&D.type==="mesh"&&NEEDS[cfg.kind]==="mesh"){
+    const p=D.tris,pos=new Float32Array(p.length);
+    const cx=(D.min[0]+D.max[0])/2,cy=(D.min[1]+D.max[1])/2,mz=D.min[2];
+    for(let i=0;i<p.length;i+=3){pos[i]=(p[i]-cx)*s;pos[i+1]=(p[i+2]-mz)*s;pos[i+2]=-(p[i+1]-cy)*s}
+    const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(pos,3));g.computeVertexNormals();
+    const mat=new THREE.MeshStandardMaterial({color:0xFFC61A,roughness:.5,metalness:.15,side:THREE.DoubleSide,flatShading:D.n<4000});
+    const W=D.dims[0]*s,H=D.dims[2]*s,Dp=D.dims[1]*s;partMax=Math.max(W,H,Dp);
+    const mesh=new THREE.Mesh(g,mat);
+    if(cfg.kind==="lathe"&&!R.err){
+      const ax=R.axis;const grp=new THREE.Group();grp.add(mesh);
+      if(ax===2){grp.rotation.z=-Math.PI/2;mesh.position.y=-H/2}else if(ax===1){grp.rotation.y=Math.PI/2;mesh.position.y=-H/2}else{mesh.position.y=-H/2}
+      const sd=R.stock[0],sl=R.stock[1];grp.position.y=sd/2+10;C2.add(grp);
+      const st=mk(new THREE.CylinderGeometry(sd/2,sd/2,sl,40),0x66C8FF,{op:.15,r:.2});st.rotation.z=Math.PI/2;st.position.y=sd/2+10;C2.add(st);
+      const ch=mk(new THREE.CylinderGeometry(sd*.9,sd*.9,20,30),0x6D7888,{m:.8});ch.rotation.z=Math.PI/2;ch.position.set(-sl/2-12,sd/2+10,0);C2.add(ch);
+      tag.push(["Your part","#FFC61A"],["Bar stock","#66C8FF"]);ty=sd/2+10;partMax=Math.max(sl,sd);
+    } else {
+      C2.add(mesh);ty=H/2;
+      if(cfg.kind==="mill"&&R.stock){const [a,b,c]=R.stock;const st=mk(new THREE.BoxGeometry(a,c,b),0x66C8FF,{op:.14,r:.2});st.position.y=c/2;C2.add(st);C2.add(edgesBox(a,c,b,0x66C8FF));tag.push(["Your part","#FFC61A"],["Stock block","#66C8FF"]);partMax=Math.max(a,b,c)}
+      else tag.push(["Your part","#FFC61A"]);
+      if(cfg.heads&&E.copies>1){const n=Math.min(4,E.copies);[[-1,-1],[1,-1],[-1,1],[1,1]].slice(1,n).forEach(([x,z])=>{const c2=new THREE.Mesh(g,mat);c2.position.set(x*205,0,z*205);C2.add(c2)});mesh.position.set(-205,0,-205);
+        [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([x,z])=>{const t=mk(new THREE.BoxGeometry(406,3,406),0x2E323C,{r:.8});t.position.set(x*205,-2,z*205);C2.add(t)});partMax=Math.max(partMax,800)}
+    }
+    if(cfg.kind!=="lathe"){const [ex,ey,ez]=cfg.env;C2.add(edgesBox(ex,ez,ey,col));
+      const bed=mk(new THREE.BoxGeometry(ex,2,ey),0x22304C,{r:.8,op:.7});bed.position.y=-1.5;if(!(cfg.heads&&E.copies>1))C2.add(bed);
+      tag.push([cfg.kind==="mill"?"Machine travel":"Build volume",ok?"#3ED598":"#FF4D4D"])}
+  } else if(D&&D.type==="dxf"&&NEEDS[cfg.kind]==="dxf"){
+    const t=E.t,cx=(D.min[0]+D.max[0])/2,cy=(D.min[1]+D.max[1])/2,arr=[];
+    D.segs.forEach(([x1,y1,x2,y2])=>{arr.push((x1-cx)*s,t+.3,-(y1-cy)*s,(x2-cx)*s,t+.3,-(y2-cy)*s)});
+    const lg=new THREE.BufferGeometry();lg.setAttribute("position",new THREE.Float32BufferAttribute(arr,3));
+    C2.add(new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:0xFFC61A})));
+    const lg2=lg.clone();const bot=new THREE.LineSegments(lg2,new THREE.LineBasicMaterial({color:0xFFC61A,transparent:true,opacity:.35}));bot.position.y=-t-.6;C2.add(bot);
+    const [sw,sh]=R.stock||[D.dims[0]*s+10,D.dims[1]*s+10];
+    const sheet=mk(new THREE.BoxGeometry(sw,t,sh),0x66C8FF,{op:.18,r:.2});sheet.position.y=t/2;C2.add(sheet);C2.add(edgesBox(sw,t,sh,0x66C8FF));
+    const [ex,ey]=cfg.env;const bedE=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(ex,ey)),new THREE.LineBasicMaterial({color:col}));bedE.rotation.x=-Math.PI/2;bedE.position.y=-.5;C2.add(bedE);
+    tag.push(["Cut path","#FFC61A"],["Sheet","#66C8FF"],["Bed",ok?"#3ED598":"#FF4D4D"]);
+    partMax=Math.max(sw,sh);envMax=Math.max(ex,ey);ty=t/2;
+  }
+  const grid=new THREE.GridHelper(envMax*1.4,14,0x2E4368,0x1B2942);grid.position.y=-3;C2.add(grid);
+  EV.ty=ty;EV.dist=Math.max(partMax*2.4,Math.min(envMax*1.6,partMax*6));
+  $("#vtag").innerHTML=tag.map(([l,c])=>`<i style="color:${c}">${l}</i>`).join("")+`<i style="color:var(--faint)">Drag to orbit · scroll to zoom</i>`;
+}
+
+/* ============================================================
+   BOOKING
+============================================================ */
+let B={k:"a1",day:0,sel:[],want:0};
+const HOURS=[9,10,11,12,13,14,15,16,17,18,19,20];
+function dayDate(i){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+i);return d}
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+function exampleTaken(k,ds,h){let x=0;const s=k+ds+h;for(let i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))>>>0;return x%5===0||(MACHINES[k].status==="busy"&&x%3===0)}
+function renderBook(arg){
+  if(arg&&arg.k){if(arg.k!==B.k)B.sel=[];B.k=arg.k;B.want=arg.h||0}
+  const m=MACHINES[B.k],days=[...Array(7)].map((_,i)=>dayDate(i)),ds=iso(days[B.day]);
+  const mine=S.bookings.filter(b=>b.k===B.k&&b.day===ds).flatMap(b=>b.hours);
+  const nowH=new Date().getHours();
+  const need=m.tier!=="C"&&!passed(B.k);
+  $("#book").innerHTML=`
+   <div class="shead"><span class="tag">Book a slot</span><h2>Book machine time</h2>
+   <p>Pick a machine, a day and the hours you need. Slots are one hour each, 9:00 to 21:00.</p></div>
+   <div class="bookGrid">
+    <div class="panel">
+     <div class="row2" style="margin-bottom:16px">
+      <div class="field" style="margin:0"><label for="bMach">Machine</label><select id="bMach">${Object.entries(MACHINES).map(([k,x])=>`<option value="${k}" ${k===B.k?"selected":""}>${x.code} · ${x.name}</option>`).join("")}</select></div>
+      <div class="field" style="margin:0"><span class="flabel">Access</span><div style="padding-top:8px"><span class="tier t${m.tier}">${tierName[m.tier]}</span></div></div>
+     </div>
+     <div class="days" id="bDays">${days.map((d,i)=>`<button class="day ${i===B.day?"on":""}" data-i="${i}"><small>${i===0?"Today":d.toLocaleDateString("en-IN",{weekday:"short"})}</small><b>${d.getDate()}</b><small>${d.toLocaleDateString("en-IN",{month:"short"})}</small></button>`).join("")}</div>
+     <div class="slots" id="bSlots">${HOURS.map(h=>{const past=B.day===0&&h<=nowH,isMine=mine.includes(h),taken=!isMine&&exampleTaken(B.k,ds,h),sel=B.sel.includes(h);
+       return `<button class="slot ${taken?"taken":""} ${isMine?"mine":""} ${sel?"sel":""}" data-h="${h}" ${past||taken||isMine?"disabled":""}><b>${String(h).padStart(2,"0")}:00 – ${String(h+1).padStart(2,"0")}:00</b><small>${isMine?"Your booking":taken?"Booked":past?"Past":sel?"Selected":"Free"}</small></button>`}).join("")}</div>
+     <div class="legend"><span><i></i>Free</span><span><i style="border-color:var(--haz);background:color-mix(in srgb,var(--haz) 20%,transparent)"></i>Selected</span><span><i style="border-color:var(--ta)"></i>Yours</span><span><i style="background:repeating-linear-gradient(135deg,var(--ink2) 0 3px,var(--ink3) 3px 6px)"></i>Booked (example data)</span></div>
+    </div>
+    <div class="stack">
+     <div class="panel">
+      <h4>Your booking</h4>
+      <div class="spec"><span>Machine</span><b>${m.code} · ${m.name}</b></div>
+      <div class="spec"><span>Day</span><b>${days[B.day].toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"short"})}</b></div>
+      <div class="spec"><span>Hours</span><b>${B.sel.length?B.sel.sort((a,b)=>a-b).map(h=>h+":00").join(", "):"None yet"}</b></div>
+      ${B.want?`<div class="note" style="margin-top:12px">Your cost estimate says about <strong>${B.want} h</strong>. ${B.sel.length>=B.want?"You've selected enough time.":`Select ${B.want-B.sel.length} more hour${B.want-B.sel.length>1?"s":""}.`}${B.want>12?" Long jobs can run overnight; staff will confirm.":""}</div>`:""}
+      ${need?`<div class="warn"><strong>Pass needed</strong><p>You need the ${m.name} pass before your slot.${m.tier==="B"?" Staff induction happens at your first slot.":""}</p><button class="btn sm" data-go="train" data-arg="${A(B.k)}" style="margin-top:12px">Start training</button></div>`:""}
+      ${m.tier==="C"?`<div class="note" style="margin-top:12px"><strong>Staff run.</strong> This books a job slot with staff. Bring your file to the front desk.</div>`:""}
+      <button class="btn" id="bConfirm" style="width:100%;justify-content:center;margin-top:16px" ${B.sel.length?"":"disabled"}>${signedIn()?"Confirm booking":"Sign in to book"}</button>
+      <p style="font-size:12px;color:var(--faint);margin-top:10px">Bookings are saved on this device until the shared booking calendar is connected.</p>
+     </div>
+     ${EST[B.k]?`<button class="btn ghost" data-go="cost" data-arg="${A(B.k)}" style="justify-content:center">Estimate the job first</button>`:""}
+    </div>
+   </div>`;
+  $("#bMach").onchange=e=>{B.k=e.target.value;B.sel=[];B.want=0;renderBook()};
+  $("#bDays").onclick=e=>{const b=e.target.closest(".day");if(!b)return;B.day=+b.dataset.i;B.sel=[];renderBook()};
+  $("#bSlots").onclick=e=>{const b=e.target.closest(".slot");if(!b||b.disabled)return;const h=+b.dataset.h;B.sel=B.sel.includes(h)?B.sel.filter(x=>x!==h):[...B.sel,h];renderBook()};
+  $("#bConfirm").onclick=()=>{
+    if(!signedIn()){openLogin(()=>renderBook());return}
+    S.bookings.push({id:Date.now(),k:B.k,day:ds,hours:[...B.sel].sort((a,b)=>a-b)});save();
+    toast(`Booked ${B.sel.length} h on ${m.code}`);B.sel=[];B.want=0;renderBook()};
+}
+
+/* ============================================================
+   DASHBOARD
+============================================================ */
+function renderDash(){
+  const held=Object.keys(MACHINES).filter(passed),u=S.user;
+  const today=iso(dayDate(0));
+  const bk=S.bookings.filter(b=>b.day>=today).sort((a,b)=>a.day<b.day?-1:a.day>b.day?1:a.hours[0]-b.hours[0]);
+  $("#dash").innerHTML=`
+   <div class="shead"><span class="tag">${esc(u.role==="student"?(u.roll||"").toUpperCase():u.email)} · ${u.role==="student"?"IITH student":"External"}</span>
+   <h2>${esc(u.name.split(" ")[0])}'s passes</h2>
+   <p>${held.length?`You hold ${held.length} of ${Object.keys(MACHINES).length} passes at Comet Center.`:"You don't hold any passes yet. Each module takes about 25 minutes."}</p></div>
+   <h4 class="tag">Upcoming bookings</h4>
+   <div class="blist" style="margin-bottom:36px">${bk.length?bk.map(b=>{const m=MACHINES[b.k],d=new Date(b.day+"T00:00");return `<div class="brow"><span class="tier t${m.tier}">${m.code}</span><b style="flex:1;min-width:160px">${m.name}</b><span class="mono">${d.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"})} · ${b.hours.map(h=>h+":00").join(", ")}</span><button class="linkbtn" data-cancel="${b.id}">Cancel</button></div>`}).join(""):`<div class="empty">No bookings yet.<br><button class="btn sm" data-go="book" style="margin-top:14px">Book a slot</button></div>`}</div>
+   <h4 class="tag">Training</h4>
+   <div class="dash" style="margin-bottom:40px">${Object.entries(MACHINES).map(([k,m])=>{
+     const pr=prog(k),done=pr.lessons.length,tot=m.lessons.length,p=pr.passed;
+     const col=p?"var(--ta)":done?"var(--haz)":"var(--line2)";
+     return `<div class="bcard ${p?"":"locked"}">
+       <div class="ring" style="border:3px solid ${col};color:${col}">${p?"✓":Math.round(done/tot*100)+"%"}</div>
+       <div class="mono" style="font-size:11px;color:var(--faint);letter-spacing:.1em">${m.code}</div>
+       <h3 style="font-size:16px;margin-block:5px 9px">${m.name}</h3>
+       <span class="tier t${m.tier}">${tierName[m.tier]}</span>
+       <button class="btn sm ghost" data-go="train" data-arg="${A(k)}" style="width:100%;justify-content:center;margin-top:14px">${p?"Review":done?"Continue":"Start"}</button>
+     </div>`}).join("")}</div>
+   ${held.length?`<h4 class="tag">Issued passes</h4><div style="display:grid;gap:22px">${held.map(certHTML).join("")}</div>`
+   :`<div class="empty">Pass a module and your access pass appears here.<br><button class="btn sm" data-go="bay" style="margin-top:16px">Browse the machines</button></div>`}`;
+  $("#dash").querySelectorAll("[data-cancel]").forEach(b=>b.onclick=()=>{
+    if(b.dataset.armed){S.bookings=S.bookings.filter(x=>String(x.id)!==b.dataset.cancel);save();renderDash();toast("Booking cancelled")}
+    else{b.dataset.armed="1";b.textContent="Tap again to cancel";setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent="Cancel"}},3000)}});
+}
+
+/* ============================================================
+   SIGN IN
+============================================================ */
+let afterLogin=null,lRole=null;
+function openLogin(cb){afterLogin=cb||null;$("#lopts").classList.remove("hide");$("#lform").classList.add("hide");$("#lerr").textContent="";$("#login").classList.add("on")}
+function closeLogin(){$("#login").classList.remove("on")}
+$("#lopts").onclick=e=>{const b=e.target.closest(".lopt");if(!b)return;lRole=b.dataset.role;
+  if(lRole==="guest"){S.user={role:"guest",name:"Guest"};save();paintUser();closeLogin();toast("Browsing as a guest");return}
+  $("#lopts").classList.add("hide");$("#lform").classList.remove("hide");
+  $("#lemailLbl").textContent=lRole==="student"?"Institute email":"Google account email";
+  $("#lemail").placeholder=lRole==="student"?"cs22btech11001@iith.ac.in":"you@gmail.com";
+  $("#lrollWrap").classList.toggle("hide",lRole!=="student");$("#lname").focus()};
+$("#lemail").addEventListener("input",e=>{if(lRole==="student"){const m=e.target.value.match(/^([^@]+)@/);if(m&&!$("#lroll").dataset.touched)$("#lroll").value=m[1].toUpperCase()}});
+$("#lroll").addEventListener("input",e=>e.target.dataset.touched="1");
+$("#lback").onclick=()=>{$("#lopts").classList.remove("hide");$("#lform").classList.add("hide")};
+$("#lclose").onclick=closeLogin;
+$("#login").onclick=e=>{if(e.target.id==="login")closeLogin()};
+addEventListener("keydown",e=>{if(e.key==="Escape")closeLogin()});
+$("#lform").onsubmit=e=>{e.preventDefault();
+  const n=$("#lname").value.trim(),em=$("#lemail").value.trim().toLowerCase(),err=$("#lerr");
+  if(!n){err.textContent="Enter your name.";$("#lname").focus();return}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){err.textContent="Enter a valid email address.";$("#lemail").focus();return}
+  if(lRole==="student"&&!/@([a-z0-9-]+\.)?iith\.ac\.in$/.test(em)){err.textContent="Student sign-in needs an @iith.ac.in email. From outside IITH? Go back and choose that option.";$("#lemail").focus();return}
+  S.user={role:lRole,name:n,email:em,roll:lRole==="student"?($("#lroll").value.trim()||em.split("@")[0]).toUpperCase():""};
+  save();paintUser();closeLogin();toast("Signed in as "+n.split(" ")[0]);
+  if(E&&!E.userSet)E.user=lRole==="external"?"external":"student";
+  const cb=afterLogin;afterLogin=null;if(cb)cb();else if(current==="cost")updateEstimate();
+};
+let armOut=0;
+$("#who").onclick=()=>{
+  if(!signedIn()){openLogin();return}
+  if(Date.now()-armOut<3000){S.user=null;save();paintUser();toast("Signed out");if(current==="dash"||current==="train")go("home");return}
+  armOut=Date.now();$("#whoTxt").textContent="Tap again to sign out";setTimeout(paintUser,3000)};
+function paintUser(){
+  const u=S.user,on=signedIn();
+  $("#av").textContent=on?u.name.trim()[0].toUpperCase():"?";
+  $("#whoTxt").textContent=on?(u.role==="student"?u.roll||u.email:u.email):"Sign in";
+  const r=$("#whoRole");r.textContent=on?(u.role==="student"?"IITH":"External"):"Guest";r.className="role "+(on?u.role:"");
+  refreshLocks();
+}
+
+/* ============================================================
+   BOOT
+============================================================ */
+$("#goWiz").onclick=()=>{wStep=0;wAns=[];renderWiz();$("#wizSec").scrollIntoView({behavior:"smooth",block:"start"})};
+$("#jFind").onclick=()=>$("#goWiz").click();
+load();if(!S.progress)S.progress={};if(!S.bookings)S.bookings=[];
+paintUser();renderTicker();renderWiz();
+if(window.THREE){initHero();initThumbs();}
+else document.querySelectorAll("canvas").forEach(c=>c.style.display="none");
+const h0=(location.hash||"").slice(1);if(views.includes(h0)&&h0!=="detail"&&h0!=="train")go(h0);
+</script>
+
+</body></html>
