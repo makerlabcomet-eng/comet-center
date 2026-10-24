@@ -2097,7 +2097,9 @@ function renderAdmin(){
   // Open jobs are always all loaded; finished ones build up, so All jobs and Collected end with "Load older jobs".
   const shown=cnt[AD.f]||0,total=JOBS.counts&&(AD.f==="all"||AD.f==="collected")?Math.max(JOBS.counts[AD.f],shown):shown;
   if(JOBS.counts){cnt.all=Math.max(cnt.all,JOBS.counts.all);cnt.collected=Math.max(cnt.collected||0,JOBS.counts.collected)}
-  const more=JOBS.loadedAll&&total>shown?`<div class="atools" style="justify-content:center;margin:12px 0 6px"><button class="btn ghost sm" id="aMore" ${JOBS.moreBusy?"disabled":""}>${JOBS.moreBusy?"Loading…":`Load older jobs`}</button><small style="color:var(--faint)">Showing ${shown} of ${total}${q?". Search only covers the jobs loaded so far":""}</small></div>`:"";
+  // without totals, a full batch means there may be older jobs
+  const maybeMore=!JOBS.counts&&(AD.f==="all"||AD.f==="collected")&&JOBS.recent.length>=JOBS.recentN;
+  const more=JOBS.loadedAll&&(total>shown||maybeMore)?`<div class="atools" style="justify-content:center;margin:12px 0 6px"><button class="btn ghost sm" id="aMore" ${JOBS.moreBusy?"disabled":""}>${JOBS.moreBusy?"Loading…":`Load older jobs`}</button><small style="color:var(--faint)">Showing ${shown}${JOBS.counts?` of ${total}`:""}${q?". Search only covers the jobs loaded so far":""}</small></div>`:"";
   $("#admin").innerHTML=`
    <div class="shead"><span class="tag">Admin · ${esc(S.user.email)}</span><h2>Job desk</h2>
    <p>Every generated job lands here. At the job desk (${esc(DESK)}), find the student's job ID, take the payment, enter the transaction ID and mark it verified. The next TA plans the print from the verified list.</p></div>
