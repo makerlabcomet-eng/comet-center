@@ -25,6 +25,8 @@ var KEEP_DAYS = 30;
 
 var BASE = 'https://firestore.googleapis.com/v1/projects/' + PROJECT_ID + '/databases/(default)/documents';
 var MAX_PARTS = 12;                 // 3 MB each, so about 36 MB after compression
+var MAX_PART_CHARS = 4200000;       // one 3 MB part as base64 is 4,194,304 characters
+var MAX_UNPAID_FILES = 5;           // per account: unpaid jobs that already have a file
 var UNZIP_LIMIT = 45 * 1024 * 1024; // bigger originals are saved still compressed (.gz)
 var DAY = 24 * 60 * 60 * 1000;
 
@@ -58,7 +60,7 @@ function doPost(e) {
     if (!/^[a-z0-9]{6,20}$/.test(p.session || '')) throw new Error('Bad upload session.');
     if (!(p.n >= 1 && p.n <= MAX_PARTS && p.i >= 0 && p.i < p.n && p.i % 1 === 0 && p.n % 1 === 0)) throw new Error('The file is too big to upload. Paste a Google Drive link instead.');
     if (!/\.(stl|obj|dxf)$/i.test(name)) throw new Error('Only STL, OBJ and DXF files can be uploaded.');
-    if (typeof p.data !== 'string' || !/^[A-Za-z0-9+\/=]*$/.test(p.data)) throw new Error('Bad file data.');
+    if (typeof p.data !== 'string' || p.data.length > MAX_PART_CHARS || !/^[A-Za-z0-9+\/=]*$/.test(p.data)) throw new Error('Bad file data.');
 
     var user = checkUser(p.idToken);
     var job = getJob(p.jobId);
@@ -66,6 +68,9 @@ function doPost(e) {
     if (job.uid !== user.uid) throw new Error('This job belongs to another account.');
     if (job.upload) throw new Error('This job already has a file.');
     if (job.status === 'collected' || job.status === 'cancelled') throw new Error('This job is closed.');
+    // Stops one account filling the lab Drive with files for jobs nobody pays for
+    if (p.i === 0 && job.status === 'awaiting' && unpaidFiles(user.uid) >= MAX_UNPAID_FILES)
+      throw new Error('You already have ' + MAX_UNPAID_FILES + ' unpaid jobs with files. Pay for or cancel one at the desk first.');
 
     var incoming = folderAt([ROOT_NAME, '_incoming']);
     var key = p.jobId + '_' + p.session + '_';
@@ -160,6 +165,19 @@ function checkUser(idToken) {
 function getJob(id) {
   var d = call('get', BASE + '/jobs/' + encodeURIComponent(id), null, true);
   return d && d.fields ? fromFirestore({ mapValue: { fields: d.fields } }) : null;
+}
+function unpaidFiles(uid) {
+  var res = call('post', BASE + ':runQuery', {
+    structuredQuery: {
+      from: [{ collectionId: 'jobs' }],
+      where: { compositeFilter: { op: 'AND', filters: [
+        { fieldFilter: { field: { fieldPath: 'uid' }, op: 'EQUAL', value: { stringValue: uid } } },
+        { fieldFilter: { field: { fieldPath: 'status' }, op: 'EQUAL', value: { stringValue: 'awaiting' } } }
+      ] } },
+      limit: 200
+    }
+  });
+  return res.filter(function (r) { return r.document && r.document.fields && r.document.fields.upload }).length;
 }
 function findUploadedJobs() {
   var res = call('post', BASE + ':runQuery', {

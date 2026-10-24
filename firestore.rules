@@ -46,18 +46,37 @@ service cloud.firestore {
     // ---------- jobs (generated from the cost estimator) ----------
     match /jobs/{jobId} {
       allow read: if (signedIn() && resource.data.uid == request.auth.uid) || isAdmin();
+      // The student's browser writes the job, so check every field's shape and size.
       allow create: if verified()
+        && jobId.matches('CMT-[0-9]{6}-[A-Z0-9]{4}')
+        && request.resource.data.keys().hasOnly(['id', 'uid', 'created', 'status', 'user', 'machine', 'file', 'link', 'note',
+             'settings', 'dims', 'fits', 'fitMsg', 'hours', 'grams', 'extra', 'lines', 'base', 'mult', 'band', 'total',
+             'img', 'txn', 'shelf', 'log'])
         && request.resource.data.id == jobId
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.status == 'awaiting'
         && request.resource.data.txn == ''
+        && request.resource.data.shelf == ''
+        && request.resource.data.created is int
+        && request.resource.data.user.keys().hasOnly(['name', 'email', 'roll', 'role'])
         && request.resource.data.user.email == email()
         && request.resource.data.user.role == myRole()
-        // Upload and email fields are written only by the lab's scripts.
-        && !request.resource.data.keys().hasAny(['upload', 'fileDeletedAt', 'emailSent', 'emailedAt'])
-        && request.resource.data.total is number
-        && str(request.resource.data.img, 200000)
-        && str(request.resource.data.link, 500)
+        && str(request.resource.data.user.name, 80) && str(request.resource.data.user.roll, 30)
+        && request.resource.data.machine.keys().hasOnly(['key', 'code', 'name', 'tier'])
+        && str(request.resource.data.machine.key, 20) && str(request.resource.data.machine.code, 20)
+        && str(request.resource.data.machine.name, 80) && request.resource.data.machine.tier in ['A', 'B', 'C']
+        && request.resource.data.total is number && request.resource.data.total >= 0
+        && request.resource.data.base is number && request.resource.data.mult is number
+        && request.resource.data.hours is number && request.resource.data.grams is number
+        && request.resource.data.fits is bool
+        && request.resource.data.settings is list && request.resource.data.settings.size() <= 20
+        && request.resource.data.lines is list && request.resource.data.lines.size() <= 20
+        && request.resource.data.dims is list && request.resource.data.dims.size() <= 3
+        && request.resource.data.log is list && request.resource.data.log.size() <= 1
+        && str(request.resource.data.file, 200)
+        && str(request.resource.data.fitMsg, 300) && str(request.resource.data.extra, 300) && str(request.resource.data.band, 60)
+        && (request.resource.data.img == '' || (str(request.resource.data.img, 200000) && request.resource.data.img.matches('data:image/jpeg;base64,[A-Za-z0-9+/=]+')))
+        && (request.resource.data.link == '' || (str(request.resource.data.link, 500) && request.resource.data.link.matches('https://[^ "<>]+')))
         && str(request.resource.data.note, 300);
       // Only staff change a job: payment, status, shelf.
       allow update: if isAdmin()
@@ -76,7 +95,9 @@ service cloud.firestore {
     // No names or emails here: everyone can read bookings to see free slots.
     match /bookings/{slotId} {
       allow read: if true;
-      allow create: if verified()
+      // Booking is switched off on the website, so no new bookings are accepted.
+      // To switch it back on, change "if false" back to "if verified()".
+      allow create: if false && verified()
         && request.resource.data.keys().hasOnly(['uid', 'role', 'machine', 'date', 'hour', 'start', 'createdAt'])
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.role == myRole()

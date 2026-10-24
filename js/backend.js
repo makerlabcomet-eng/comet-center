@@ -87,7 +87,29 @@ if (!CFG.apiKey && !EMU) {
   // Firestore can't store lists inside lists, so settings [["Material","PLA"], …]
   // are saved as [{label, value}, …] and turned back on read.
   const toDoc = job => ({ ...job, settings: (job.settings || []).map(([label, value]) => ({ label, value: String(value) })) });
-  const fromDoc = d => ({ ...d, settings: (d.settings || []).map(s => Array.isArray(s) ? s : [s.label, s.value]) });
+  // Jobs are written by the student's browser, so a crafted one could hold anything.
+  // Coerce every field to the type the page expects; the page still escapes all text.
+  const txt = (v, max = 300) => (typeof v === "string" ? v : v == null ? "" : String(v)).slice(0, max);
+  const num = v => (typeof v === "number" && isFinite(v) ? v : 0);
+  const fromDoc = d => {
+    const u = d.user || {}, m = d.machine || {};
+    return {
+      ...d,
+      id: txt(d.id, 40), status: txt(d.status, 20), created: num(d.created),
+      user: { name: txt(u.name, 80), email: txt(u.email, 120), roll: txt(u.roll, 30), role: u.role === "external" ? "external" : "student" },
+      machine: { key: txt(m.key, 20), code: txt(m.code, 20), name: txt(m.name, 80), tier: ["A", "B", "C"].includes(m.tier) ? m.tier : "A" },
+      file: txt(d.file, 200), link: txt(d.link, 500), note: txt(d.note, 300), fitMsg: txt(d.fitMsg), extra: txt(d.extra), band: txt(d.band, 60),
+      txn: txt(d.txn, 40), shelf: txt(d.shelf, 40), verifiedBy: txt(d.verifiedBy, 120),
+      settings: (Array.isArray(d.settings) ? d.settings : []).slice(0, 20).map(s => Array.isArray(s) ? [txt(s[0], 40), txt(s[1], 80)] : [txt(s && s.label, 40), txt(s && s.value, 80)]),
+      dims: (Array.isArray(d.dims) ? d.dims : []).slice(0, 3).map(num),
+      lines: (Array.isArray(d.lines) ? d.lines : []).slice(0, 20).map(l => ({ l: txt(l && l.l, 80), d: txt(l && l.d), a: num(l && l.a) })),
+      log: (Array.isArray(d.log) ? d.log : []).map(l => ({ at: num(l && l.at), by: txt(l && l.by, 120), t: txt(l && l.t) })),
+      hours: num(d.hours), grams: num(d.grams), base: num(d.base), mult: num(d.mult), total: num(d.total),
+      fits: d.fits === true, verifiedAt: num(d.verifiedAt), emailedAt: num(d.emailedAt),
+      // only a real JPEG data URL is ever put in an <img src>
+      img: typeof d.img === "string" && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(d.img) ? d.img : "",
+    };
+  };
   B.createJob = job => setDoc(doc(db, "jobs", job.id), { ...toDoc(job), uid: auth.currentUser.uid });
   B.watchMyJobs = (uid, cb, onErr) => onSnapshot(query(collection(db, "jobs"), where("uid", "==", uid)),
     s => cb(s.docs.map(d => fromDoc(d.data())).sort((a, b) => b.created - a.created)), onErr);

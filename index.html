@@ -569,9 +569,9 @@ textarea{width:100%;padding:11px 13px;background:var(--ink);border:1px solid var
 
 <div class="toast" id="toast"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" integrity="sha512-ZDSPMa/JM1D+7kdg2x3BsruQ6T/JpJo3jWDWkCZsP+5yVyp1KfESqLI+7RqB5k24F7p2cV7i2YHh/890y6P6Sw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- Editable settings and content. Lab staff change these files, not this one. See config/README.md -->
 <script>
 window.COMET_CONFIG_ERRORS=[];
@@ -733,7 +733,7 @@ function backendMsg(e){
   return (e&&e.message)||"Something went wrong. Try again.";
 }
 function newJobId(){const d=new Date(),p=n=>String(n).padStart(2,"0");
-  return `CMT-${String(d.getFullYear()).slice(2)}${p(d.getMonth()+1)}${p(d.getDate())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`}
+  return `CMT-${String(d.getFullYear()).slice(2)}${p(d.getMonth()+1)}${p(d.getDate())}-${Math.random().toString(36).slice(2,6).toUpperCase().padEnd(4,"0")}`}
 const fmtDT=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
 
 /* ============================================================
@@ -1717,7 +1717,7 @@ $("#jobModal").onclick=e=>{if(e.target.id==="jobModal")$("#jobModal").classList.
 $("#jmHide").onclick=()=>$("#jobModal").classList.remove("on");
 $("#jmForm").onsubmit=async e=>{e.preventDefault();
   const link=$("#jmLink").value.trim(),err=$("#jmErr"),btn=$("#jmForm button[type=submit]");
-  if(link&&!/^https:\/\/\S+$/.test(link)){err.textContent="Paste the full share link, starting with https://";$("#jmLink").focus();return}
+  if(link&&!/^https:\/\/[^\s"<>]+$/.test(link)){err.textContent="Paste the full share link, starting with https://";$("#jmLink").focus();return}
   if(!window.jspdf||!window.qrcode){err.textContent="The PDF tools didn't load. Check your internet connection and reload the page.";return}
   err.textContent="";btn.disabled=true;
   const done=()=>{btn.disabled=false;btn.textContent="Generate job sheet"};
@@ -1748,9 +1748,9 @@ function snapshotJob(link,note){
   try{if(EV){EV.r.render(EV.sc,EV.cam);const c=document.createElement("canvas"),src=EV.r.domElement,w=480,h=Math.round(w*src.height/src.width);
     c.width=w;c.height=h;const x=c.getContext("2d");x.fillStyle="#0B1322";x.fillRect(0,0,w,h);x.drawImage(src,0,0,w,h);img=c.toDataURL("image/jpeg",.75)}}catch(e){}
   return {id:newJobId(),created:Date.now(),status:"awaiting",
-    user:{name:u.name,email:u.email,roll:u.roll||"",role:u.role},
-    machine:{key:E.k,code:m.code,name:m.name,tier:m.tier},file:E.name,link,note,settings:set,
-    dims:R.dims.map(v=>Math.round(v*10)/10),fits:R.fits,fitMsg:R.fitMsg,hours:R.hours,grams:R.grams,extra:R.extra,
+    user:{name:String(u.name).slice(0,80),email:u.email,roll:String(u.roll||"").slice(0,30),role:u.role},
+    machine:{key:E.k,code:m.code,name:m.name,tier:m.tier},file:String(E.name).slice(0,200),link,note,settings:set,
+    dims:R.dims.map(v=>Math.round(v*10)/10),fits:!!R.fits,fitMsg:R.fitMsg,hours:R.hours,grams:R.grams,extra:R.extra,
     lines:R.lines.map(l=>({l:l.l,d:l.d,a:Math.round(l.a*100)/100})),base:R.base,mult:R.mult,band:B.label,total:Math.round(R.total),
     img,txn:"",shelf:"",log:[{at:Date.now(),by:u.email,t:"Job generated"}]};
 }
@@ -2049,7 +2049,7 @@ function renderDash(){
    <h4 class="tag">Jobs</h4>
    <div class="blist" style="margin-bottom:36px">${mine.length?mine.map(j=>`<div class="brow">
      <span class="mono" style="color:var(--tx)">${esc(j.id)}</span>${pill(j.status)}
-     <b style="flex:1;min-width:160px">${j.machine.code} · ${esc(j.machine.name)}<small style="display:block;font-weight:400;color:var(--faint);font-size:12.5px">${esc(j.file)} · ${fmtR(j.total)} · ${fmtDT(j.created)}${j.status==="ready"&&j.shelf?` · collect from ${esc(j.shelf)}`:""}</small>
+     <b style="flex:1;min-width:160px">${esc(j.machine.code)} · ${esc(j.machine.name)}<small style="display:block;font-weight:400;color:var(--faint);font-size:12.5px">${esc(j.file)} · ${fmtR(j.total)} · ${fmtDT(j.created)}${j.status==="ready"&&j.shelf?` · collect from ${esc(j.shelf)}`:""}</small>
      ${UPL||j.upload?`<small style="display:block;font-size:12.5px;color:var(--faint);margin-top:2px">${fileStatusHTML(j)}</small>`:""}</b>
      <button class="linkbtn" data-pdf="${esc(j.id)}">Download job sheet</button></div>`).join("")
      :`<div class="empty">${JOBS.loadedMine?`Your generated jobs appear here with their status.<br><button class="btn sm" data-go="cost" style="margin-top:14px">Open the cost estimator</button>`:"Loading…"}</div>`}</div>
@@ -2100,7 +2100,7 @@ function renderAdmin(){
    <div class="panel" style="padding:8px 8px 4px"><div class="tscroll"><table class="tbl jtbl">
     <thead><tr><th>Job</th><th>Student</th><th>Machine</th><th class="r">Amount</th><th>Status</th><th>Created</th></tr></thead>
     <tbody>${list.length?list.map(j=>`
-     <tr class="jrow ${AD.open===j.id?"open":""}" data-id="${j.id}"><td class="mono">${j.id}</td><td>${esc(j.user.name)}<small>${esc(j.user.roll||j.user.email)}</small></td><td>${j.machine.code}<small>${esc(j.machine.name)}</small></td><td class="r mono">${fmtR(j.total)}</td><td>${pill(j.status)}</td><td><small style="color:var(--dim)">${fmtDT(j.created)}</small></td></tr>
+     <tr class="jrow ${AD.open===j.id?"open":""}" data-id="${esc(j.id)}"><td class="mono">${esc(j.id)}</td><td>${esc(j.user.name)}<small>${esc(j.user.roll||j.user.email)}</small></td><td>${esc(j.machine.code)}<small>${esc(j.machine.name)}</small></td><td class="r mono">${fmtR(j.total)}</td><td>${pill(j.status)}</td><td><small style="color:var(--dim)">${fmtDT(j.created)}</small></td></tr>
      ${AD.open===j.id?`<tr class="jdet"><td colspan="6">${jobDetailHTML(j)}</td></tr>`:""}`).join("")
      :`<tr><td colspan="6"><div class="empty" style="border:0">${JOBS.loadedAll?`No jobs ${AD.f==="all"?"yet":"with this status"}${q?" match the search":""}.`:"Loading jobs…"}</div></td></tr>`}</tbody></table></div></div>
    <p style="font-size:12.5px;color:var(--faint);margin-top:12px">Updates live: new jobs and status changes from other staff appear here by themselves.</p>
@@ -2136,19 +2136,19 @@ function jobDetailHTML(j){
      <div class="spec"><span>${j.user.role==="student"?"Roll number":"Account"}</span><b>${esc(j.user.role==="student"?j.user.roll:"External")}</b></div>
      <div class="spec"><span>Email</span><b>${esc(j.user.email)}</b></div></div>
     <div class="panel"><h4>Job</h4>
-     <div class="spec"><span>Machine</span><b>${j.machine.code} · ${esc(j.machine.name)}</b></div>
+     <div class="spec"><span>Machine</span><b>${esc(j.machine.code)} · ${esc(j.machine.name)}</b></div>
      <div class="spec"><span>File</span><b>${esc(j.file)}</b></div>
      ${j.settings.map(([a,b])=>`<div class="spec"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join("")}
-     <div class="spec"><span>Part size</span><b>${j.dims.join(" × ")} mm</b></div>
+     <div class="spec"><span>Part size</span><b>${esc(j.dims.join(" × "))} mm</b></div>
      <div class="spec"><span>Job time</span><b>${fmtH(j.hours)}</b></div>
      <div class="spec"><span>Material</span><b>${fmtG(j.grams)}</b></div>
      <div class="spec"><span>Fit</span><b style="color:${j.fits?"var(--ta)":"var(--tc)"}">${esc(j.fitMsg)}</b></div>
      <div class="spec"><span>Uploaded file</span><b>${j.upload?(j.fileDeletedAt?"Deleted after 30 days":`<a class="linkbtn" href="https://drive.google.com/uc?export=download&id=${encodeURIComponent(j.upload.fileId)}" target="_blank" rel="noopener">Download</a> · <a class="linkbtn" href="https://drive.google.com/file/d/${encodeURIComponent(j.upload.fileId)}/view" target="_blank" rel="noopener">Open in Drive</a><small style="display:block;font-weight:400;color:var(--faint)">${esc(j.upload.name)} · ${fmtMB(j.upload.size)}${j.upload.gz?" · compressed: extract it first":""}</small>`):"Not uploaded yet"}</b></div>
-     ${j.link||!j.upload?`<div class="spec"><span>File link</span><b>${j.link?`<a class="linkbtn" href="${esc(j.link)}" target="_blank" rel="noopener">Open file</a>`:"Not given. Ask the student to bring it"}</b></div>`:""}
+     ${j.link||!j.upload?`<div class="spec"><span>File link</span><b>${/^https:\/\//i.test(j.link)?`<a class="linkbtn" href="${esc(j.link)}" target="_blank" rel="noopener noreferrer">Open file</a>`:j.link?esc(j.link):"Not given. Ask the student to bring it"}</b></div>`:""}
      ${j.note?`<div class="spec"><span>Notes</span><b>${esc(j.note)}</b></div>`:""}</div>
    </div>
    <div class="stack" style="gap:14px">
-    ${j.img?`<img src="${j.img}" alt="Preview of the part" style="border-radius:10px;border:1px solid var(--line);width:100%">`:""}
+    ${j.img?`<img src="${esc(j.img)}" alt="Preview of the part" style="border-radius:10px;border:1px solid var(--line);width:100%">`:""}
     <div class="panel"><h4>Payment · ${fmtR(j.total)}</h4>
      ${j.status==="awaiting"?`
       <label for="dTxn">UPI transaction ID</label><input id="dTxn" placeholder="12-digit UTR, e.g. 412345678901" style="margin-block:6px 10px">
@@ -2192,7 +2192,8 @@ function downloadCSV(list){
   const cols=[["Job ID",j=>j.id],["Created",j=>new Date(j.created).toISOString()],["Status",j=>JOB_ST[j.status]],["Name",j=>j.user.name],["Roll number",j=>j.user.roll],["Email",j=>j.user.email],["Type",j=>j.user.role==="student"?"IITH":"External"],
     ["Machine",j=>j.machine.code+" "+j.machine.name],["File",j=>j.file],["File link",j=>j.link],["Uploaded file",j=>j.upload&&!j.fileDeletedAt?"https://drive.google.com/file/d/"+j.upload.fileId+"/view":""],["Settings",j=>j.settings.map(s=>s.join(": ")).join("; ")],["Job time (h)",j=>j.hours.toFixed(2)],["Material (g)",j=>Math.round(j.grams)],
     ["Base cost (Rs)",j=>Math.round(j.base)],["Multiplier",j=>j.mult],["Amount (Rs)",j=>j.total],["Transaction ID",j=>j.txn],["Verified by",j=>j.verifiedBy||""],["Verified at",j=>j.verifiedAt?new Date(j.verifiedAt).toISOString():""],["Shelf",j=>j.shelf],["Notes",j=>j.note]];
-  const q=v=>{v=String(v??"");return /[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v};
+  // A leading = + - @ would make Excel run the cell as a formula, so prefix a quote mark
+  const q=v=>{v=String(v??"");if(/^[=+\-@\t\r]/.test(v))v="'"+v;return /[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v};
   const csv="﻿"+[cols.map(c=>q(c[0])).join(","),...list.map(j=>cols.map(c=>q(c[1](j))).join(","))].join("\r\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
   a.download=`comet-jobs-${iso(new Date())}.csv`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
