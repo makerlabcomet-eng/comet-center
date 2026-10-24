@@ -327,6 +327,45 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);opacity:0;background:var(--ta);color:#06261A;padding:11px 18px;border-radius:10px;font-weight:600;font-size:14px;z-index:120;transition:.25s;pointer-events:none}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
+/* ---------- videos + SOP ---------- */
+.vids{display:grid;gap:8px}
+.vid{display:flex;align-items:center;gap:12px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--ink3);font-size:13.8px}
+.vid .play{width:30px;height:30px;font-size:11px;margin:0;flex:none}
+.vid div{flex:1;min-width:0}
+.vid small{display:block;color:var(--faint);font-family:var(--mono);font-size:11px}
+a.btn,a.linkbtn{text-decoration:none}
+a.linkbtn{text-decoration:underline}
+.soon{font-family:var(--mono);font-size:11px;color:var(--faint);white-space:nowrap}
+
+/* ---------- jobs + admin ---------- */
+.pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.st-awaiting{color:var(--haz);border-color:color-mix(in srgb,var(--haz) 40%,transparent)}
+.st-verified{color:var(--sky);border-color:color-mix(in srgb,var(--sky) 40%,transparent)}
+.st-printing{color:var(--tb);border-color:color-mix(in srgb,var(--tb) 40%,transparent)}
+.st-ready{color:var(--ta);border-color:color-mix(in srgb,var(--ta) 40%,transparent)}
+.st-collected{color:var(--faint);border-color:var(--line2)}
+.st-cancelled{color:var(--tc);border-color:color-mix(in srgb,var(--tc) 40%,transparent)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.kpi{background:var(--ink2);border:1px solid var(--line);border-radius:12px;padding:13px 15px;text-align:left}
+.kpi span{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.kpi b{font-family:var(--display);font-size:26px;font-variant-numeric:tabular-nums}
+.kpi.on{border-color:var(--haz)}
+.atools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.atools input{flex:1;min-width:200px}
+.jtbl tr.jrow{cursor:pointer}
+.jtbl tr.jrow:hover td{background:var(--ink3)}
+.jtbl tr.jrow.open td{background:var(--ink3)}
+.jdet td{background:var(--ink);padding:18px}
+.jgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+.jgrid .panel{padding:16px}
+.jlog{list-style:none;display:grid;gap:6px;font-size:12.5px;color:var(--dim)}
+.jlog li span{font-family:var(--mono);font-size:11px;color:var(--faint);margin-right:8px}
+textarea{width:100%;padding:11px 13px;background:var(--ink);border:1px solid var(--line);border-radius:9px;color:var(--tx);font-family:inherit;font-size:14px;resize:vertical}
+.mbox label{margin-bottom:6px}
+.mbox form input{margin-bottom:14px}
+@media(max-width:760px){.jgrid{grid-template-columns:1fr}}
+
 @media(max-width:980px){
   .est,.bookGrid,.trainGrid,.detail{grid-template-columns:minmax(0,1fr)}
 }
@@ -348,7 +387,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
    <button data-go="bay">Machines</button>
    <button data-go="cost">Cost estimator</button>
    <button data-go="book">Book a slot</button>
-   <button data-go="dash">My passes</button>
+   <button data-go="dash">My jobs</button>
+   <button data-go="admin" id="navAdmin" class="hide">Admin</button>
   </nav>
   <button class="who" id="who"><div class="av" id="av">?</div><small id="whoTxt">Sign in</small><span class="role" id="whoRole">Guest</span></button>
  </div>
@@ -361,7 +401,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
   <div class="hbox">
    <div class="eyebrow">Comet Center · IIT Hyderabad</div>
    <h1>Don't know<br>which machine?<em>Neither did we.</em></h1>
-   <p class="lede">Tell us what you're trying to build. Comet Center points you at the right machine, teaches you to run it, prices the job and issues the pass that unlocks it. No queueing to ask a senior.</p>
+   <p class="lede">Tell us what you're trying to build. Comet Center points you at the right machine, shows you how to run it safely and prices the job before you start. No queueing to ask a senior.</p>
    <div class="cta-row">
     <button class="btn" id="goWiz">Find my machine</button>
     <button class="btn ghost" data-go="cost">Price my part</button>
@@ -369,7 +409,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
    <div class="stats">
     <div><b>15</b>Machines</div>
     <div><b>3</b>Access levels</div>
-    <div><b>~25 min</b>To first pass</div>
+    <!-- <div><b>~25 min</b>To first pass</div> -->
+    <div><b data-desk>9–10 AM</b>Job desk</div>
    </div>
   </div>
   <div class="hstage">
@@ -388,10 +429,11 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
   </div>
   <div class="journey">
    <button class="jstep" id="jFind"><b>Find the machine</b><small>Answer four questions about your part.</small></button>
-   <button class="jstep" data-go="bay"><b>Learn it</b><small>Short lessons, then a safety check.</small></button>
-   <button class="jstep" data-go="dash"><b>Get your pass</b><small>Tied to your institute email.</small></button>
+   <button class="jstep" data-go="bay"><b>Learn it</b><small>Videos, the SOP and the safety rules.</small></button>
+   <!-- <button class="jstep" data-go="dash"><b>Get your pass</b><small>Tied to your institute email.</small></button> -->
    <button class="jstep" data-go="cost"><b>Price the job</b><small>Upload your STL or DXF for cost and time.</small></button>
-   <button class="jstep" data-go="book"><b>Book and make</b><small>Pick a slot and run it, or hand it to staff.</small></button>
+   <button class="jstep" data-go="cost"><b>Generate your job</b><small>Download the job sheet with its payment QR.</small></button>
+   <button class="jstep" data-go="dash"><b>Pay and hand over</b><small>Bring the sheet to the desk, <span data-desk>9–10 AM</span>.</small></button>
   </div>
  </section>
 
@@ -412,11 +454,11 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
   <div class="shead">
    <span class="tag">The rules, in three colours</span>
    <h2>Access levels</h2>
-   <p>Every machine at Comet Center wears a coloured band, the same one printed on its poster. Your passes have to match before the machine is yours.</p>
+   <p>Every machine at Comet Center wears a coloured band, the same one printed on its poster. It tells you how much help you need before you run it.</p>
   </div>
   <div class="tiers">
-   <div class="panel"><span class="tier tA">Self run</span><p style="margin-top:14px;color:var(--dim);font-size:14px">Watch, quiz, done. Run it alone whenever the lab is open. Failures cost plastic, not fingers.</p></div>
-   <div class="panel"><span class="tier tB">Induction first</span><p style="margin-top:14px;color:var(--dim);font-size:14px">Pass the module, then a staff member signs you off on the machine. No solo runs until then.</p></div>
+   <div class="panel"><span class="tier tA">Self run</span><p style="margin-top:14px;color:var(--dim);font-size:14px">Read the SOP, watch the videos, then run it alone whenever the lab is open. Failures cost plastic, not fingers.</p></div>
+   <div class="panel"><span class="tier tB">Induction first</span><p style="margin-top:14px;color:var(--dim);font-size:14px">Watch the videos, then a staff member inducts you on the machine. No solo runs until then.</p></div>
    <div class="panel"><span class="tier tC">Staff run only</span><p style="margin-top:14px;color:var(--dim);font-size:14px">You learn to prepare the job. Staff set up and start it. Submit your file at the front desk.</p></div>
   </div>
  </section>
@@ -428,7 +470,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
   <div class="shead">
    <span class="tag">Step 02 · Machine bay</span>
    <h2>Every machine at Comet Center</h2>
-   <p>Drag any model to spin it. Open a machine for its station card, the rules, and its training module.</p>
+   <p>Drag any model to spin it. Open a machine for its station card, the rules, its videos and its SOP.</p>
   </div>
   <div class="chips" id="chips"></div>
   <div class="bay" id="bay"></div>
@@ -436,7 +478,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 </div>
 
 <div id="v-detail" class="hide"><section class="wrap" id="detail"></section></div>
-<div id="v-train" class="hide"><section class="wrap" id="train"></section></div>
+<!-- Training + quiz + pass removed for now (kept for later): -->
+<!-- <div id="v-train" class="hide"><section class="wrap" id="train"></section></div> -->
 
 <!-- ============ COST ============ -->
 <div id="v-cost" class="hide">
@@ -461,17 +504,35 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 
 <!-- ============ DASHBOARD ============ -->
 <div id="v-dash" class="hide"><section class="wrap" id="dash"></section></div>
+
+<!-- ============ ADMIN ============ -->
+<div id="v-admin" class="hide"><section class="wrap" id="admin"></section></div>
 </main>
 
-<footer><div class="wrap"><span>Comet Center · IIT Hyderabad · Learn. Build. Scale.</span><span>Preview build. Machine status, slot availability and sign-in are examples until the booking backend is connected.</span></div></footer>
+<footer><div class="wrap"><span>Comet Center · IIT Hyderabad · Learn. Build. Scale.</span><span>Preview build. Sign-in, jobs and bookings are saved only in this browser until the backend is connected.</span></div></footer>
+
+<div class="modal" id="jobModal" role="dialog" aria-modal="true" aria-labelledby="jmTitle"><div class="mbox">
+ <h3 id="jmTitle">Generate your job</h3>
+ <p>We'll create a job sheet (PDF) with your estimate and a payment QR. Bring it to the Comet Center desk (<span data-desk>9–10 AM</span>). Staff confirm the price, you pay in front of them, and your job joins the queue.</p>
+ <div id="jmSum" class="note" style="margin-bottom:16px"></div>
+ <form id="jmForm" novalidate>
+  <label for="jmLink">Link to your file (Google Drive, shared with "anyone with the link")</label>
+  <input id="jmLink" type="url" placeholder="https://drive.google.com/file/d/…">
+  <label for="jmNote">Notes for staff (optional)</label>
+  <input id="jmNote" maxlength="300" placeholder="Colour, deadline, which face is the top…">
+  <div class="formerr" id="jmErr"></div>
+  <div class="cta-row"><button class="btn" type="submit">Generate job sheet</button><button class="btn ghost" type="button" id="jmCancel">Cancel</button></div>
+ </form>
+</div></div>
 
 <div class="modal" id="login" role="dialog" aria-modal="true" aria-labelledby="lgTitle"><div class="mbox">
  <h3 id="lgTitle">Sign in</h3>
- <p>Pick how you're joining Comet Center. Guests can explore machines and price parts. Training and booking need a sign-in.</p>
+ <p>Anyone can explore the machines and price a part without signing in. Sign in to generate a job or book a slot.</p>
  <div class="lopts" id="lopts">
-  <button class="lopt" data-role="student"><span class="gl">G</span><span><b>IIT Hyderabad student or staff</b><small>Continue with your @iith.ac.in Google account</small></span></button>
+  <button class="lopt" data-role="student"><span class="gl">G</span><span><b>IIT Hyderabad student or staff</b><small>Continue with your IITH Google account (any @…iith.ac.in email)</small></span></button>
   <button class="lopt" data-role="external"><span class="gl">G</span><span><b>From outside IITH</b><small>Continue with any Google account to book and get quotes</small></span></button>
-  <button class="lopt" data-role="guest"><span class="gl g2">→</span><span><b>Just exploring</b><small>Browse as a guest, no sign-in</small></span></button>
+  <!-- Guest option removed: all content is open without sign-in.
+  <button class="lopt" data-role="guest"><span class="gl g2">→</span><span><b>Just exploring</b><small>Browse as a guest, no sign-in</small></span></button> -->
  </div>
  <form id="lform" class="hide" novalidate>
   <div class="note" style="margin-bottom:16px"><strong>Preview:</strong> Google sign-in switches on when the site goes live. Type your details for now.</div>
@@ -487,283 +548,62 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<!-- Editable settings and content. Lab staff change these files, not this one. See config/README.md -->
+<script>
+window.COMET_CONFIG_ERRORS=[];
+addEventListener("error",e=>{
+  const t=e.target;
+  if(t&&t.tagName==="SCRIPT"&&/\/config\//.test(t.src))COMET_CONFIG_ERRORS.push("Couldn't load "+t.src.split("/").slice(-2).join("/"));
+  else if(e.filename&&/\/config\//.test(e.filename))COMET_CONFIG_ERRORS.push(e.filename.split("/").slice(-2).join("/")+", line "+e.lineno+": "+e.message);
+},true);
+</script>
+<script src="config/settings.js"></script>
+<script src="config/machines.js"></script>
+<script src="config/pricing.js"></script>
 <script>
 /* ============================================================
-   MACHINES  (content from the Comet Center posters and cards)
+   SETTINGS, MACHINES AND PRICES
+   The data lives in config/settings.js, config/machines.js and
+   config/pricing.js so lab staff can edit it without touching this
+   file. Here it's mapped to the short names the code below uses.
 ============================================================ */
-const FAM={print:"3D printing",machine:"Machining",cut:"Cutting",robot:"Robotics & joining"};
-const MACHINES={
-a1:{name:"Bambu Lab A1",model:"Bambu Lab A1 · open-frame FDM",code:"P-01",fam:"print",tier:"A",status:"up",
- blurb:"Melts filament and draws your part one 0.2 mm layer at a time. Where almost everyone starts.",
- makes:"Brackets, phone stands, enclosures, nuts and bolts, first prototypes",
- specs:{"Build volume":"256 × 256 × 256 mm","Nozzle":"0.4 mm, up to 300 °C","Bed":"Textured PEI, up to 100 °C","Top speed":"500 mm/s","Slicer":"Bambu Studio"},
- ok:["PLA, the default. Cheap and forgiving","PETG, tougher with a little flex","TPU, for flexible parts","PVA, as dissolvable support"],
- no:["ABS and ASA. They warp on an open frame, so use the Core One+","Any spool from outside until staff check it","Nails, knives or anything but the scraper on the plate"],
- steps:["Slice in Bambu Studio with the Comet Center A1 profile.","Wipe the plate with IPA, edge to edge. No fingerprints after that.","Clear the bed: old print, blobs and the scraper all come off.","Check the filament: enough left, dry, not tangled on the spool.","Send the job and let the auto mesh run. It takes a minute.","Watch layer one go down. Loose or stringy means stop.","Leave it alone while it moves. Never reach in.","When it's done, lift the whole plate off and flex it. The part pops free.","Log the job, put the plate back and leave the bed clear."],
- stop:"The first layer isn't sticking, plastic is balling up on the nozzle, or the part breaks loose. Stop from the screen and tell the lab staff.",
- facts:["10,000 mm/s² of acceleration, about 1 g, the same shove as a launching coaster.","One 1 kg spool is about 330 m of plastic. Your print is a single continuous line of it.","The ISS has been printing its own spare parts since 2014. You're on the same tech."],
- lessons:[
-  {t:"How FDM works",d:"4 min",p:["Model, slice, print, clean up: the four moves","Why layers bond, and why parts are weakest across them","Reading the slice preview before you commit four hours"]},
-  {t:"The plate and the first layer",d:"5 min",p:["IPA wipe and why skin oil ruins adhesion","What the auto mesh is measuring","Too high, too low, just right: reading layer one"]},
-  {t:"Getting the part off and leaving it clean",d:"3 min",p:["Scraper only, and flexing the plate","Removing supports without snapping detail","What the next person should find"]}],
- quiz:[
-  {q:"Why shouldn't you touch the build plate with your fingers?",a:["It's always hot enough to burn you","Skin oil stops the next print from sticking","It knocks the bed out of level","It voids the warranty"],c:1,x:"Palm oil on PEI is the most common reason a first layer won't stick. Wipe with IPA and hold the plate by its edges."},
-  {q:"Your first layer looks like loose spaghetti. What do you do?",a:["Let it run, it usually recovers","Stop the print, clean the plate and start again","Speed the print up","Open a window to cool it"],c:1,x:"A bad first layer never recovers. Stopping costs five minutes. Not stopping costs the job and often a blob on the nozzle."},
-  {q:"A finished part is stuck hard to the plate. What's the right move?",a:["Pry it off with a knife","Lift the whole plate off and flex it","Heat the bed back up to 100 °C","Leave it for the next person"],c:1,x:"The flexible plate is designed for this. Flex it and the part pops off with no tools and no scratched PEI."},
-  {q:"You need an ABS part. Which machine do you book?",a:["The A1, at a higher temperature","The Core One+ with its enclosure","The Giga","Any of them"],c:1,x:"ABS and ASA curl and crack as they cool on an open frame. The Core One+ keeps warm air around the part so the layers stay bonded."}]},
-
-core:{name:"Prusa Core One+",model:"Original Prusa CORE One+ · enclosed CoreXY",code:"P-02",fam:"print",tier:"B",status:"up",
- blurb:"The box is the point. A warm chamber lets it print the ABS, ASA, PC and nylon that crack on open machines.",
- makes:"Heat-resistant housings, snap fits in ASA, nylon gears, carbon-fibre brackets",
- specs:{"Build volume":"250 × 220 × 270 mm","Chamber":"Actively held, up to 55 °C","Nozzle":"0.4 mm, up to 290 °C","Bed":"Smooth PEI, up to 120 °C","Layers":"0.05 – 0.30 mm","Slicer":"PrusaSlicer"},
- ok:["PLA and PETG. Door can stay shut, vents handle it","ASA and ABS. This is the machine for them","PC and PA nylon. Slow down, keep the chamber hot","Carbon-fibre composites, with the hardened nozzle"],
- no:["Opening the door mid-print. It cracks the part","CF filament on a brass nozzle. It wears through fast","Skipping the chamber warm-up for ASA or PC"],
- steps:["Slice in PrusaSlicer with the Comet Center Core One+ profile.","Check the sheet is clean and seated on the magnets.","Load filament from the right-side spool bay and watch it purge.","For ASA or PC, preheat until the chamber reaches temperature.","Shut the door and start. It stays shut for the whole job.","Watch the first layer through the glass.","Never reach in. The head moves without warning.","Let the part cool in the chamber, then lift the sheet out and flex it once.","Log the material on the sheet, especially nylon and PC runs."],
- stop:"Cracking sounds, layers splitting, or the head hitting the part. Pause from the screen and call staff. Don't open the door on a hot ABS part.",
- facts:["There's no chamber heater. Two fans push the bed's own heat around the box and vents open by themselves for PLA.","Every panel is screwed, not glued, and the CAD is public. The printer can print its own upgrades.","CoreXY means the bed never moves sideways, so tall prints stay steady."],
- lessons:[
-  {t:"Why the box matters",d:"4 min",p:["How cooling layers pull a part into a curl","What 55 °C of chamber air does for ABS and ASA","Fumes and noise stay inside too"]},
-  {t:"Materials by chamber temperature",d:"5 min",p:["PLA and PETG: door shut, vents open","ASA and ABS: enclosure only","PC, nylon and CF: slow, hot and a hardened nozzle"]},
-  {t:"Door discipline and taking parts off",d:"3 min",p:["Why opening the door mid-print cracks the part","Letting it cool in the chamber","Flexing the sheet, and logging the material"]}],
- quiz:[
-  {q:"Why does ABS crack on an open-frame printer?",a:["The nozzle is too hot","Layers cool unevenly and pull apart","ABS is too heavy","The bed is too small"],c:1,x:"Warm air around the part lets layers cool slowly and stay bonded. Cold draughts make them shrink at different rates and split."},
-  {q:"Your ASA part is halfway done. Can you open the door to check it?",a:["Yes, quickly","Yes, if the bed is hot","No, opening it mid-print cracks the part","Only for PLA"],c:2,x:"The sudden cold air is exactly what the enclosure exists to prevent. Watch through the glass."},
-  {q:"You want to print carbon-fibre nylon. What has to be fitted?",a:["A 0.2 mm nozzle","A hardened nozzle","A glass bed","Nothing special"],c:1,x:"Carbon fibre is abrasive and wears a brass nozzle out within a print or two."}]},
-
-xl:{name:"Prusa XL",model:"Original Prusa XL · 5-tool toolchanger",code:"P-03",fam:"print",tier:"B",status:"up",
- blurb:"Five heads, five materials, one plate. It parks the head it's holding, picks up the next one and keeps printing.",
- makes:"Multi-colour models, parts with dissolvable supports, full-size helmets",
- specs:{"Toolheads":"Up to 5 × Nextruder","Build volume":"360 × 360 × 360 mm","Nozzle":"0.4 mm, up to 290 °C","Bed":"Segmented PEI, 16 tiles, up to 120 °C","Motion":"CoreXY","Slicer":"PrusaSlicer"},
- ok:["PLA, PETG, ASA, PC and PA","PVA for supports that dissolve in water","Mixed nozzle sizes on different heads"],
- no:["Reaching past a parked head. It's still hot","Pulling a tool out of its dock by hand","Resting anything on the dock row","Cancelling someone else's multi-day job"],
- steps:["Assign each colour or material to a tool in PrusaSlicer.","Confirm the slicer's tool for each colour matches the reel on that bay.","Check the dock row is clear. A blocked pickup ends the print.","Check every feed tube is untangled and every spool turns freely.","Leave the purge tower in the job. Every swap wipes and purges on it.","Start and watch the first two tool changes.","Never touch a nozzle or a parked head. 290 °C.","Let it finish, then remove the part and peel away the purge tower.","Drop PVA supports in water and log the job."],
- stop:"A failed pickup, a head knocked out of its dock, or a tangled feed line. Pause from the front console and call staff.",
- facts:["A five-colour print can trigger thousands of tool changes. Each swap takes seconds and the print never stops.","Every head finds the bed by feel. A load cell senses contact instead of guessing a height.","The bed is 16 tiles. Print one small part and only the tiles under it heat up."],
- lessons:[
-  {t:"How a toolchanger works",d:"4 min",p:["Docks, the carriage and the pickup","Why idle heads stay hot","What the purge tower is for"]},
-  {t:"Assigning tools in PrusaSlicer",d:"5 min",p:["Colour and material per tool","Soluble supports in PVA","Mixed nozzles: wide for bulk, fine for detail"]},
-  {t:"Five heads, five checks",d:"3 min",p:["Right tool, right reel","Docks clear and tubes free","Leaving the purge alone"]}],
- quiz:[
-  {q:"What is the little tower printed next to your part for?",a:["Decoration","Every tool swap wipes and purges onto it","It holds the part down","It measures temperature"],c:1,x:"Each new head pushes out a bit of filament first so the colour is clean on your part. That tower is meant to be there."},
-  {q:"Someone left a scraper on the dock row. What happens?",a:["Nothing","A blocked pickup can end the print","The heads move around it","It speeds up tool changes"],c:1,x:"The carriage needs a clear path to each dock. A blocked pickup stops the job."},
-  {q:"How do you remove supports printed in PVA?",a:["Sand them off","Drop the part in water","Heat them with a gun","Cut them with a knife"],c:1,x:"PVA dissolves in water. Print the scaffolding in PVA, soak the part and walk away."}]},
-
-giga:{name:"ELEGOO OrangeStorm Giga",model:"ELEGOO OrangeStorm Giga · large-format FDM",code:"P-04",fam:"print",tier:"B",status:"busy",
- blurb:"Four heads, four plates, 640 litres. The machine you book when the part will not fit anywhere else.",
- makes:"Furniture-scale shells, metre-tall parts, four copies at once",
- specs:{"Volume":"800 × 800 × 1000 mm (640 L)","Platform":"820 × 820 mm, 4 × 410 mm PEI tiles","Bed":"Up to 100 °C, all four in 17 min","Nozzle":"0.6 mm, up to 300 °C","Heads":"1 fitted, up to 4 on one X rail","Speed":"300 mm/s max, 150 mm/s in practice","Power":"1,530 W, +100 W per extra head","Slicer":"ELEGOO Cura"},
- ok:["PLA","PETG","TPU"],
- no:["ABS, ASA, PC and nylon. They curl off the open plate long before a tall part finishes","Leaning on the gantry","Reaching in. Four nozzles at 300 °C"],
- steps:["Book the bed on the calendar. Big jobs run for a day or more.","Model to fit one 410 mm tile, or fill all four.","Slice in ELEGOO Cura with the 0.6 mm profile. One copy per head, per tile.","Check every reel. Each head needs enough for the whole job.","Two people to a tile when placing or lifting plates.","Watch layer one on every tile. A tall failure costs a spool.","Never lean on the gantry while it moves.","Take a tile: lift one plate off the magnet and leave the other three alone.","Log the job and the reel weights."],
- stop:"A part lifting at a corner, a head dragging through a print, or one reel running dry. Pause and call staff. If power cuts, it resumes from the layer it stopped on.",
- facts:["The bed is 0.67 m² of PEI, about the size of a small desk.","One Giga build volume holds 27 A1 build volumes.","Filling the volume solid would take about 800 kg of plastic."],
- lessons:[
-  {t:"Thinking in metres",d:"4 min",p:["What fits on a tile and what needs all four","Why open-frame limits you to PLA, PETG and TPU","Planning a 24-hour job around the calendar"]},
-  {t:"Four heads, one clock",d:"5 min",p:["Every head runs the same G-code","Four copies in the time of one","Four colours by loading a different reel per head"]},
-  {t:"Rules for the big one",d:"3 min",p:["Two people to a tile","Watching layer one everywhere","Reel checks and power-cut resume"]}],
- quiz:[
-  {q:"Can the four heads print four different models at once?",a:["Yes, any four models","No, every head runs the same G-code, so all four are the same model","Only on PLA","Only two at a time"],c:1,x:"The heads share one X rail and move together. Same model, but each head can carry a different colour."},
-  {q:"You want a 900 mm tall ABS part. Is the Giga right?",a:["Yes, it's the tallest","No, ABS curls off an open frame long before a tall part finishes","Yes, at 300 °C","Only with glue"],c:1,x:"The Giga is PLA, PETG and TPU only. Large ABS parts need an enclosed machine or the pellet printer's heated chamber."},
-  {q:"Before a four-head job, what do you check on each reel?",a:["Its colour only","That it holds enough for the whole job","Its brand","Nothing"],c:1,x:"Each head prints its own copy end to end. One reel running dry ruins that tile."}]},
-
-garuda:{name:"Garuda3D GF500",model:"Garuda3D GF500 · FGF pellet extrusion",code:"P-05",fam:"print",tier:"B",status:"up",
- blurb:"Eats raw plastic granules and pushes them through a heated screw. Half a metre cubed at a time, for a fraction of filament cost.",
- makes:"Casting patterns, vacuum-forming moulds, helmet bucks, jigs and fixtures",
- specs:{"Volume":"500 × 500 × 500 mm (125 L)","Feedstock":"Dry pellets, 2 – 4 mm","Nozzle":"1.0 mm brass, 2.0 mm optional, 300 °C","Chamber":"50 °C, HEPA + carbon filter","Bed":"Aluminium, up to 110 °C, PEI / glass / PP plates","Speed":"10 – 50 mm/s","Slicer":"OrcaSlicer"},
- ok:["PLA, HSPLA, PETG","ABS, HIPS, GPPS","PPGF and PPCF (glass and carbon filled)","Flexibles"],
- no:["Wet pellets. They steam in the barrel and print as foam","Opening the door mid-print. Hot chamber, hot melt","Running a big job with the inverter off"],
- steps:["Dry the pellets. Straight from the bag is not dry; check the drying chart.","Fit the plate that matches your pellet: PEI, glass or PP.","Clean the plate with IPA, edge to edge.","Estimate the part mass and fill the hopper. Five kilos goes fast at a 1 mm bead.","New bag or new supplier? Print a small test block first.","Slice in OrcaSlicer and send over Wi-Fi or USB.","Let the probe map all 500 mm of bed.","Keep the door shut. Watch the job over LAN from your desk.","Grind failed prints, dry them and pour them back in."],
- stop:"Foamy or sputtering extrusion, the hopper running empty, or the screw stalling. Pause from the console and call staff.",
- facts:["Filament is just pellets that went through an extra factory. Skipping that step takes about 80% off the material bill.","The same resin grades used in injection moulding go straight in. Prototype in the exact production plastic.","A failed print is feedstock. Grind it, dry it, pour it straight back in."],
- lessons:[
-  {t:"Granule to part",d:"4 min",p:["Load, convey, melt, build","Heated zones at 180, 240 and 300 °C","Why thick beads mean strong walls and rough surfaces"]},
-  {t:"Pellet rules",d:"4 min",p:["Drying, and what wet pellets do","Matching the plate to the pellet","Testing a new bag before a long job"]},
-  {t:"Good candidates",d:"3 min",p:["Parts too big or too cheap for filament","Casting patterns and layup tools","Finishing with sandpaper afterwards"]}],
- quiz:[
-  {q:"You pour pellets straight from a new bag. What's the risk?",a:["None","They've absorbed moisture, steam in the barrel and print as foam","They melt too fast","The hopper jams"],c:1,x:"Granules drink moisture from the air. Dry them first using the chart for that grade."},
-  {q:"Why do you match the plate to the pellet?",a:["For colour","The wrong sheet either won't hold the part or won't let it go","It changes the print speed","It doesn't matter"],c:1,x:"PEI, glass and PP each bond differently with different plastics."},
-  {q:"You switch to pellets from a new supplier. What first?",a:["Start the full job","Print a small test block","Raise the temperature 50 °C","Use the 2 mm nozzle"],c:1,x:"Different supplier, different melt. A small block shows problems before you lose a day."}]},
-
-saturn:{name:"ELEGOO Saturn 4 Ultra 16K",model:"ELEGOO Saturn 4 Ultra 16K · MSLA resin",code:"P-06",fam:"print",tier:"B",status:"up",
- blurb:"Light instead of heat, liquid instead of filament, and the print hangs upside down. 14-micron pixels.",
- makes:"Miniatures, character busts, fine mechanisms, smooth master patterns",
- specs:{"Build volume":"211.68 × 118.37 × 220 mm","Screen":"16K mono LCD, 15,120 × 6,230 px, 14 µm pixel","Layers":"0.02 – 0.05 mm","Tank":"Heated, held at 30 °C","Speed":"Up to 150 mm/h of height","Light":"405 nm COB lamp + Fresnel lens"},
- ok:["Standard 405 nm resin","ABS-like resin","Water-washable resin"],
- no:["Resin or IPA down the drain","Touching a wet print bare-handed","Leaving the hood open under light","Scraping the film with anything metal"],
- steps:["Gear up: nitrile gloves on both hands, extraction on.","Stir and sweep the vat with the spatula. No cured lumps.","Check the resin level: above the model, below the MAX line.","Lock the plate: ears down, clamp tight, lid closed.","Slice with supports and start the job. The AI camera watches for failures.","When it's done, park the wet plate on the drip stand to drain.","Carry it over the tray to the wash station. A wet plate never travels.","Wash in IPA, then cure under UV.","Waste resin and used IPA go in the marked jar."],
- stop:"Resin on skin, a torn vat film or resin outside the vat. Wash skin with soap and water and tell staff straight away.",
- facts:["94 million pixels on a 10-inch panel, about eleven 4K TVs, redrawn every few seconds.","Only height costs time. One miniature or forty of them, each layer takes exactly as long.","Resin came first: stereolithography was patented in 1986, three years ahead of filament printing."],
- lessons:[
-  {t:"How one layer happens",d:"4 min",p:["Dip, flash, peel, lift","Why the tilting vat peels sideways","Gravity and why supports matter"]},
-  {t:"Three wet-bench rules",d:"5 min",p:["Nitrile on, both hands, and why resin sensitises skin","Nothing goes down the sink","A wet plate never travels"]},
-  {t:"Wash and cure",d:"4 min",p:["IPA wash timing","UV cure","Handling green parts without bending them"]}],
- quiz:[
-  {q:"One miniature takes 3 hours. How long do forty of the same height take?",a:["120 hours","About 3 hours","40 minutes","Twice as long"],c:1,x:"The whole layer is flashed at once. Only height costs time, so a full plate takes as long as one part."},
-  {q:"Uncured resin gets on your hand. What do you do?",a:["Wipe it on a towel","Wash with soap and water, then tell staff","Rinse it with IPA","Let it dry"],c:1,x:"Resin is a skin sensitiser. IPA drives it further into skin. Soap and water, then report it."},
-  {q:"Where does used IPA go?",a:["The sink","The marked waste jar","The normal bin","Back in the bottle"],c:1,x:"Nothing goes down the sink. Waste resin and IPA are collected separately."}]},
-
-b9:{name:"B9 Elite Micro",model:"B9Creations Elite Micro · micro resin",code:"P-07",fam:"print",tier:"B",status:"up",
- blurb:"No nozzle, no filament. UV light hardens liquid resin one 10 µm layer at a time, for parts that are small and have to be right.",
- makes:"Microfluidic chips, medical device parts, tiny connectors, micro filters",
- specs:{"Build size":"38.4 × 21.6 × 127 mm","Detail":"Down to 10 µm features","Accuracy":"± 10 µm","Job time":"Minutes to hours","Resins":"Six from B9, plus your own","Software":"B9Create"},
- ok:["Onyx, black and rigid, 20 µm wall","Transparent, for fluid channels, 20 µm wall","HD Slate, everyday precise parts, 40 µm wall","HD Clear, polishable, 30 µm wall","Robust ABS/PC, tough, 80 µm wall"],
- no:["Opening the hood while it prints. Daylight also hardens resin","Scraping the tank bottom","Resin or IPA down the drain"],
- steps:["Load your model in B9Create and pick the resin. It sets exposure and supports.","Check your thinnest wall against the resin's minimum.","Gloves on. Check the tank is clean and filled.","Close the tinted hood and start.","When it finishes, drip-drain the part over the tank.","Rinse it briefly and gently in IPA.","Harden it in the UV chamber.","Inspect it under the microscope.","Waste resin and IPA go in the marked jar."],
- stop:"Resin on skin, a cloudy or damaged tank floor, or the build table not lifting. Stop and call staff.",
- facts:["A pattern pressed 10 µm deep is shallower than a red blood cell is wide.","One printed channel measured 300 µm across and a foot long, in one piece.","B9Creations printers appear in 220+ research papers, and one has printed in orbit on the ISS."],
- lessons:[
-  {t:"How small is 10 µm?",d:"3 min",p:["Microns against hair, paper and blood cells","Build size and why it's 38 × 22 mm","Where the machine is used"]},
-  {t:"Pick your resin",d:"4 min",p:["Minimum wall thickness per resin","Transparent for channels, Onyx for detail","Bringing your own resin"]},
-  {t:"When it finishes, you're not finished",d:"4 min",p:["Drip, rinse, cure","Inspecting under a microscope","Waste handling"]}],
- quiz:[
-  {q:"Your design has 50 µm walls. Which resin can't hold them?",a:["Onyx","HD Clear","Robust ABS/PC","Transparent"],c:2,x:"Robust ABS/PC needs 80 µm walls minimum. The others go down to 20 – 40 µm."},
-  {q:"Why keep the hood shut while it prints?",a:["To keep it quiet","Daylight also hardens resin","To keep it warm","It isn't needed"],c:1,x:"Stray light cures resin in the tank where you don't want it."},
-  {q:"What's the last step after UV curing?",a:["Sanding","Inspect it under a microscope","Painting","Freezing"],c:1,x:"At this scale, the microscope is the only way to know the features came out."}]},
-
-mill:{name:"CNC milling machine",model:"BFW XTRON-433 · vertical machining centre",code:"W-01",fam:"machine",tier:"B",status:"up",
- blurb:"Mills, drills, slots and pockets metal parts, moulds and fixtures from solid stock, to a hundredth of a millimetre.",
- makes:"Aluminium brackets, moulds, jigs, precision fixtures",
- specs:{"Travel X-Y-Z":"400 × 300 × 300 mm","Spindle":"8000 rpm · 5.5 kW","Taper · tool changer":"BT-40 · 12 tools","Positioning accuracy":"0.010 mm"},
- ok:["Aluminium 6061, the standard teaching material","Brass and mild steel","Delrin and tooling board for practice"],
- no:["Solo runs before you're signed off","Gloves, rings, loose sleeves or lanyards near the spindle","Opening the doors while the spindle turns"],
- steps:["Dry-run your program on the CNC simulator (W-02) first.","Bring your CAM file for staff review a day before your slot.","Check the stock size matches what the CAM file expects.","Clamp in the vice on parallels and tighten to the marked value.","Safety glasses on. Tie back hair, remove rings and sleeves.","Set tool lengths and work offsets with staff watching.","Run single-block with feed override at 10%.","Doors closed while the spindle turns.","Clear chips with the brush and hook, never with hands."],
- stop:"Chatter, a change in the cutting sound, coolant loss, or the part moving in the vice. Feed hold and call staff.",
- facts:["0.010 mm positioning accuracy is about a seventh of a human hair.","The 12-tool changer swaps cutters by itself, mid-program.","A teaching rule of thumb: simulate it, then cut air, then cut metal."],
- lessons:[
-  {t:"What the mill does and why it's induction first",d:"5 min",p:["Forces and speeds in plain numbers","Where every emergency stop is","What a loose part does at 8000 rpm"]},
-  {t:"Workholding and offsets",d:"7 min",p:["Vice, parallels and clamping order","Work offsets and tool lengths","How a wrong zero crashes the machine"]},
-  {t:"From CAM file to first cut",d:"6 min",p:["Simulating first on W-02","Single-block and feed override","Chips, coolant and cleanup"]}],
- quiz:[
-  {q:"When can you run the mill on your own?",a:["After you pass this module","After staff sign you off","Any time in your slot","Never"],c:1,x:"The module is step one. Staff induction on the real machine comes before any solo run."},
-  {q:"Why no gloves near the spindle?",a:["They reduce grip","They can catch and pull your hand in","Coolant ruins them","They're fine"],c:1,x:"Anything that can wrap around a rotating tool is a hazard."},
-  {q:"The tool rapids toward the vice on your first run. What do you do?",a:["Wait and see","Hit the emergency stop","Open the door","Lower the spindle speed"],c:1,x:"Stop first, diagnose second. That's why the first run is single-block at 10% feed."}]},
-
-sim:{name:"CNC simulator",model:"Ace Micromatic CNC Simulator · Fanuc / Sinumerik",code:"W-02",fam:"machine",tier:"A",status:"up",
- blurb:"A training console for learning and dry-running CNC programs before you take them to a real machine.",
- makes:"Practice programs for the mill and lathe, with zero risk",
- specs:{"Controls":"Switchable Fanuc / Sinumerik","Modes":"Turning and milling","Displays":"Machine view + control screen","Operator inputs":"Handwheel, overrides, E-stop, foot pedal"},
- ok:["Your own G-code programs","Lab exercise programs","Any time the lab is open"],
- no:["Moving it with the castor brakes off","Taking an unsimulated program to the mill or lathe"],
- steps:["Put the brakes on the castors before you start.","Pick the controller: Fanuc or Sinumerik.","Pick the mode: turning or milling.","Load your program and set the virtual stock.","Run it in single-block and watch the machine view.","Try the overrides and the handwheel.","Fix anything that crashes, then run it again end to end.","Note the cycle time. It feeds your cost estimate."],
- stop:"Nothing on this console can hurt you. If the screen freezes, tell staff rather than unplugging it.",
- facts:["Crashing the simulator costs nothing. Crashing the mill can cost a spindle.","The same console switches between the two most common CNC controllers in Indian industry.","Cycle time from a dry run is the best input for the cost estimator."],
- lessons:[
-  {t:"Fanuc and Sinumerik basics",d:"6 min",p:["The control panel, mode by mode","G-code you'll actually use","Switching controllers"]},
-  {t:"Dry-running a program",d:"5 min",p:["Single-block","Reading the machine view","Spotting rapids through stock"]},
-  {t:"Overrides, handwheel and E-stop",d:"4 min",p:["Feed and spindle overrides","Jogging with the handwheel","Practising the E-stop"]}],
- quiz:[
-  {q:"What do you do before using the simulator?",a:["Nothing","Put the castor brakes on","Switch the mill on","Wear gloves"],c:1,x:"It's on wheels. Brakes on first."},
-  {q:"Why simulate before cutting metal?",a:["It's faster","Mistakes cost nothing here","The mill needs it","It isn't needed"],c:1,x:"A crash on the console is free. A crash on the mill is expensive and dangerous."},
-  {q:"What does feed override at 10% do?",a:["Runs at 10% of programmed feed","Uses 10% of the tools","Stops after 10%","Adds 10% coolant"],c:0,x:"It slows every feed move so you can stop before trouble."}]},
-
-waterjet:{name:"Waterjet cutter",model:"OMAX ProtoMAX · abrasive waterjet, 30,000 psi",code:"W-03",fam:"cut",tier:"B",status:"up",
- blurb:"Cuts flat profiles in metal, glass, stone, composite and plastic with sand and water, so there's no heat-affected zone.",
- makes:"Metal plates, brackets, gaskets, glass and stone shapes, composite panels",
- specs:{"Cutting travel":"304 × 304 mm · 25 mm Z","Pump":"3.7 kW at 2068 bar","Speed":"Up to 2540 mm/min","Accuracy":"0.127 mm","Supply":"230 – 240 V AC · 1 ph · 30 A"},
- ok:["Aluminium, mild and stainless steel, brass","Glass and stone","Carbon fibre and composites","Acrylic and other plastics"],
- no:["Opening the lid while it cuts","Hands anywhere near the nozzle","Starting without checking abrasive and water","Tempered glass. It shatters"],
- steps:["Export your outline as a DXF, 1:1 in millimetres.","Check the abrasive hopper and the water level.","Place and weight the sheet on the slats.","Set material and thickness in the software.","Close the lid.","Start the cut. Keep hands clear of the nozzle.","Wait for the jet to stop fully before opening the lid.","Lift parts out, rinse them and dry them.","Clear offcuts and log the job."],
- stop:"Water spraying outside the tank, a sudden change in sound, or the part shifting. Stop the cut and call staff.",
- facts:["30,000 psi is about 2,000 times the air pressure around you.","Cutting with water means no heat-affected zone. The metal next to the cut stays the way it was.","The jet goes through 25 mm of steel and glass with the same nozzle."],
- lessons:[
-  {t:"Cutting with water and sand",d:"4 min",p:["Why there's no heat-affected zone","What the abrasive does","Speed versus edge quality"]},
-  {t:"Preparing a DXF",d:"5 min",p:["Closed outlines, 1:1, millimetres","Pierce points and lead-ins","Tabs so parts don't drop"]},
-  {t:"Abrasive, water and the lid",d:"3 min",p:["Pre-start checks","Lid closed, hands clear","Rinsing parts afterwards"]}],
- quiz:[
-  {q:"Why can the waterjet cut heat-sensitive materials?",a:["The water is chilled","There's no heat-affected zone","It cuts slowly","It uses a laser"],c:1,x:"It erodes the material with abrasive and water, so nothing next to the cut gets hot."},
-  {q:"What do you check before every cut?",a:["Abrasive and water","Only the file","The weather","Nothing"],c:0,x:"No abrasive means no cut. No water means no jet."},
-  {q:"When can you open the lid?",a:["Any time","Once the jet has fully stopped","Halfway through","When it gets loud"],c:1,x:"Ultra-high pressure. Lid closed and hands clear while it runs."}]},
-
-router:{name:"CNC router",model:"Enclosed gantry CNC router · dust extraction",code:"W-04",fam:"cut",tier:"B",status:"up",
- blurb:"Profiles and engraves sheet material: wood, acrylic, composites and soft metals, inside a full glass enclosure.",
- makes:"Acrylic panels, plywood furniture parts, engraved signs, composite plates",
- specs:{"Configuration":"Gantry with vertical Z axis","Guarding":"Full glass enclosure","Extraction":"Dust hose, run it always","Workholding":"Clamp or screw stock down"},
- ok:["Cast acrylic","Plywood and MDF","Composites","Soft metals like aluminium, at low feed"],
- no:["Unclamped stock. It becomes a projectile","Running without extraction","Reaching in while the spindle turns"],
- steps:["Export your outline as a DXF and set cut depth per pass.","Check the sheet is flat. A bowed sheet lifts into the cutter.","Clamp or screw the stock down.","Add tabs so cut-out parts stay attached.","Zero X and Y at the sheet corner, Z on the surface.","Dry-run with the spindle off and Z raised.","Close the guard and start extraction, then the spindle.","Never reach in while the spindle turns.","Cut tabs at the bench with a hand tool."],
- stop:"A squeal, melting or stringing behind the cutter, or the sheet moving. Feed hold, then spindle stop, then call staff.",
- facts:["Cast acrylic chips cleanly. Extruded acrylic melts and welds back together behind the cutter.","Tabs keep every cut-out part captive until the spindle stops.","The dust hose isn't optional. MDF dust is the reason."],
- lessons:[
-  {t:"Workholding",d:"5 min",p:["Clamping and screwing down","Tabs: how many and where","Checking a sheet for bow"]},
-  {t:"Feeds, speeds and melting acrylic",d:"5 min",p:["Cast versus extruded","Depth per pass","Recognising melting early"]},
-  {t:"Guard, extraction, start",d:"3 min",p:["Order of operations","Dry run","Never reaching in"]}],
- quiz:[
-  {q:"Why do cut-out parts need tabs?",a:["To make them stronger","So the loose part isn't thrown by the cutter","To save material","For the extraction"],c:1,x:"A freed part under a spinning cutter gets launched."},
-  {q:"What starts first?",a:["The spindle","Extraction, then the spindle","The job, then extraction","Nothing in particular"],c:1,x:"Clamp the stock, close the guard, start extraction, then the spindle."},
-  {q:"Mid-cut, the sheet moves. What do you do?",a:["Hold it down by hand","Feed hold, then stop the spindle","Speed up","Ignore it"],c:1,x:"Never put hands near a running spindle. Stop motion, then the spindle."}]},
-
-lathe:{name:"CNC lathe",model:"BFW CNC Turning Centre · FANUC 0i-TF Plus",code:"W-05",fam:"machine",tier:"B",status:"up",
- blurb:"Turns round parts: shafts, bushes, threads, bores and faces from bar and billet.",
- makes:"Shafts, bushes, spacers, threaded parts, pulleys",
- specs:{"Control":"FANUC 0i-TF Plus","Workholding":"3-jaw chuck + tailstock","Tooling":"Turret with coolant","Paths · guarding":"Up to 2 · full enclosure"},
- ok:["Aluminium bar","Mild steel and brass bar","Delrin and nylon rod"],
- no:["Leaving the chuck key in the chuck","Gloves or loose sleeves near the spindle","Bar sticking out of the chuck without support"],
- steps:["Simulate the program on W-02 first.","Check the bar diameter and length against the program.","Chuck the bar with the right stick-out. Use the tailstock on long parts.","Chuck key out before you start. Every time.","No gloves, no loose sleeves.","Set tool offsets with staff.","Run single-block with the guard closed.","Wait for the spindle to stop before opening the door.","Clear chips with the hook and brush."],
- stop:"Chatter, the part slipping in the jaws, or smoke from the cut. Feed hold and call staff.",
- facts:["A chuck key left in the chuck becomes a projectile at the first spin.","Two paths means two tools can cut at once.","Long thin parts need the tailstock or they whip and chatter."],
- lessons:[
-  {t:"Turning basics",d:"5 min",p:["Facing, turning, boring, threading","Stock sizes and stick-out","Why round parts go on a lathe"]},
-  {t:"Chuck, tailstock and turret",d:"5 min",p:["Chucking safely","When to use the tailstock","Turret tools and offsets"]},
-  {t:"Running a program",d:"4 min",p:["Single-block","Guard and coolant","Chip handling"]}],
- quiz:[
-  {q:"What do you check before pressing cycle start?",a:["Chuck key is out","The lights are on","Coolant colour","Nothing"],c:0,x:"Chuck key out before you start. It's the oldest lathe rule there is."},
-  {q:"Why no gloves near the spindle?",a:["They get dirty","They can wrap around the work and pull you in","They're too warm","They're fine"],c:1,x:"No gloves, no loose sleeves near the spindle."},
-  {q:"A 200 mm long, 15 mm thin shaft. What else do you use?",a:["Nothing","The tailstock","A bigger chuck","Faster speed"],c:1,x:"Long, thin parts deflect and chatter without support at the free end."}]},
-
-edm:{name:"Wire EDM",model:"Electronica SPRINTCUT · ELPULS 40",code:"W-06",fam:"machine",tier:"C",status:"up",
- blurb:"Cuts hardened conductive metal to fine tolerance with sparks along a 0.25 mm wire. Dies, punches, inserts and tapered profiles.",
- makes:"Dies, punches, inserts, tapered profiles, hardened parts",
- specs:{"Travel":"300 × 400 mm · aux 80 × 80 mm","Job height · taper":"200 mm · ±30° over 50 mm","Wire · finish":"0.25 mm · 0.8 µm Ra","Dielectric · supply":"Deionised water · 10 kVA"},
- ok:["Hardened tool steel","Mild and stainless steel","Aluminium, copper and brass","Any electrically conductive material"],
- no:["Non-conductive materials. It can't cut them","Running it yourself. Staff set up and start every job"],
- steps:["Design the profile and export a DXF, 1:1 in millimetres.","Mark any internal profile that needs a start hole.","Note the job height and any taper angle.","Submit the job through the front desk.","Staff thread the wire, set up and start.","Collect your part when staff tell you it's done."],
- stop:"This is a staff-run machine. If anything looks wrong, tell staff. Don't touch the controls.",
- facts:["Nothing touches the metal. Thousands of sparks a second erode it away.","A 0.8 µm Ra finish is smoother than most ground surfaces.","The wire can tilt to cut ±30° tapers, which is how dies get their draft."],
- lessons:[
-  {t:"What wire EDM does",d:"4 min",p:["Sparks, wire and deionised water","Why only conductive metal","Tolerances and finish"]},
-  {t:"Designing for EDM",d:"5 min",p:["Start holes for internal profiles","Corner radius and wire size","Taper and job height"]},
-  {t:"Submitting a job",d:"3 min",p:["What staff need from you","Lead times","Collecting the part"]}],
- quiz:[
-  {q:"Can wire EDM cut acrylic?",a:["Yes","No, it only cuts conductive material","Only thin acrylic","Only with taper"],c:1,x:"EDM needs the spark to jump between the wire and the work, so the work must conduct."},
-  {q:"Who starts the machine?",a:["You, after the module","Staff only","Anyone","Your supervisor"],c:1,x:"High voltage and water. Staff set-up and start only."},
-  {q:"Your part has an internal window. What does it need?",a:["Nothing","A start hole for the wire","A thicker wire","A taper"],c:1,x:"The wire has to be threaded through the material before it can cut an internal profile."}]},
-
-robot:{name:"Robot arm cell",model:"FANUC ER-4iA · R-30iB Mate Plus",code:"W-07",fam:"robot",tier:"B",status:"up",
- blurb:"A six-axis educational robot cell for learning programming, pick-and-place, machine tending and vision-guided handling.",
- makes:"Pick-and-place routines, vision sorting, machine-tending demos",
- specs:{"Axes · payload":"6 axes · 4 kg","Reach":"550 mm","Repeatability":"±0.01 mm · 20 kg arm","Included":"iRVision · touchscreen iPendant"},
- ok:["Teaching at reduced speed","Vision-guided pick-and-place","Programs reviewed by staff"],
- no:["Standing inside the cell while the arm moves","Teaching at full speed","Letting go of the enable switch without stopping"],
- steps:["Check the cell gate and the emergency stops.","Pick up the iPendant and hold the enable switch.","Set speed to reduced for teaching.","Jog joint by joint, then in world frame.","Teach points and record them.","Step through the program with the pendant in hand.","Leave the cell and close the gate before running at speed.","Watch from outside the cell.","Save your program and log the session."],
- stop:"The arm moves unexpectedly or the gate opens during a run. Let go of the enable switch or hit E-stop.",
- facts:["±0.01 mm repeatability means it returns to the same point within a hundredth of a millimetre.","iRVision lets the robot find a part by camera instead of by fixed position.","The arm weighs 20 kg and carries 4 kg."],
- lessons:[
-  {t:"Six axes and frames",d:"5 min",p:["Joint versus world jogging","Tool frames","Reach and payload"]},
-  {t:"The pendant and the enable switch",d:"5 min",p:["Deadman behaviour","Reduced speed","Recording points"]},
-  {t:"Vision-guided picks",d:"5 min",p:["Calibrating iRVision","Finding a part","Pick and place"]}],
- quiz:[
-  {q:"Where do you stand when the program runs at speed?",a:["Next to the arm","Outside the cell, gate closed","Wherever","Under the arm"],c:1,x:"Stay outside the cell while the arm moves."},
-  {q:"How do you teach new points?",a:["At full speed","At reduced speed, pendant in hand","Without the pendant","By pushing the arm"],c:1,x:"Teach at reduced speed with the pendant and enable switch."},
-  {q:"The arm moves unexpectedly. What do you do?",a:["Grab it","Release the enable switch or hit E-stop","Shout","Wait"],c:1,x:"Letting go of the enable switch stops motion immediately."}]},
-
-weld:{name:"Laser welder",model:"Handheld fiber laser · 2 units, CW 1080 nm",code:"W-08",fam:"robot",tier:"C",status:"down",
- blurb:"Handheld fiber laser for welding sheet metal, thin cutting, and stripping rust, paint or oxide from surfaces.",
- makes:"Sheet metal enclosures, stainless frames, rust and paint removal",
- specs:{"Power":"1500 / 2000 / 3000 W","Weld capacity (SS)":"3.5 / 4 / 6 mm","Cleaning · wire":"1 – 20 mm width · up to 1.6 mm","Gas · cooling":"Nitrogen or argon · water chiller"},
- ok:["Stainless and mild steel sheet","Aluminium, with staff settings","Rust and paint stripping"],
- no:["Entering the bay without rated eyewear","Running without fume extraction","Welding with the screens open"],
- steps:["Bring your parts and drawing to the front desk.","Staff check the joint design and material.","Rated eyewear on before entering the bay.","Screens in place, fume extraction on.","Staff run the weld.","Parts cool in the bay before collection."],
- stop:"Staff-run machine. If you're in the bay and something looks wrong, step back and tell staff.",
- facts:["Class 4 laser: even a reflection can damage eyes.","The same gun welds, cuts thin sheet and cleans rust.","A fiber laser weld is narrow, so parts distort far less than with an arc."],
- lessons:[
-  {t:"What a fiber laser welder does",d:"4 min",p:["Welding, cutting and cleaning","Why the weld is narrow","Material limits"]},
-  {t:"Laser safety",d:"5 min",p:["Class 4 hazards","Eyewear, screens and the bay","Fume extraction"]},
-  {t:"Preparing parts for staff",d:"3 min",p:["Clean, fitted joints","Drawings and weld symbols","Collection"]}],
- quiz:[
-  {q:"What do you need before entering the bay?",a:["Nothing","Rated laser eyewear","Sunglasses","Gloves only"],c:1,x:"Class 4 laser. Rated eyewear inside the bay, always."},
-  {q:"Who operates the laser welder?",a:["Anyone with the module","Staff only","Your lab partner","No one"],c:1,x:"It's staff run only. You prepare parts and drawings."},
-  {q:"Why must the screens be in place?",a:["For privacy","Reflections can injure people outside the bay","To keep heat in","They aren't needed"],c:1,x:"Stray beams and reflections are a hazard to everyone nearby."}]}
-};
+const CFG=window.COMET_SETTINGS,CM=window.COMET_MACHINES,CP=window.COMET_PRICING;
+if(!CFG||!CM||!CP||window.COMET_CONFIG_ERRORS.length){configFail();throw new Error("Comet Center settings failed to load")}
+function configFail(){
+  const errs=window.COMET_CONFIG_ERRORS.length?window.COMET_CONFIG_ERRORS:["A settings file in the config folder didn't load."];
+  document.body.innerHTML=`<div style="max-width:640px;margin:60px auto;padding:28px;font:15px/1.6 system-ui,sans-serif;background:#101A2E;color:#E8EEF8;border:1px solid #FF4D4D;border-radius:14px">
+   <h2 style="margin:0 0 10px;color:#FF4D4D;font-size:20px">The website's settings have a mistake</h2>
+   <p style="margin:0 0 14px;color:#8FA2C0">Someone edited a file in the <b>config</b> folder and a comma, quote or bracket went missing. The site can't start until it's fixed.</p>
+   <pre style="white-space:pre-wrap;background:#0A1120;padding:12px;border-radius:8px;color:#FFC61A;font-size:13px">${errs.map(e=>String(e).replace(/[<>&]/g,"")).join("\n")}</pre>
+   <p style="margin:14px 0 0;color:#8FA2C0">To fix it: open the file on GitHub, check the line above, or undo the last change (History → the commit → Revert). Help: config/README.md</p></div>`}
+const TIER={self:"A",induction:"B",staff:"C"};
+const FAM=CM.families;
+const MACHINES={},MEDIA={};
+Object.entries(CM.machines).forEach(([k,m])=>{
+  MACHINES[k]={name:m.name,model:m.model,code:m.code,fam:m.family,tier:TIER[m.access]||"A",status:m.status||"up",
+    blurb:m.summary||"",makes:m.goodFor||"",specs:m.specs||{},ok:m.allowed||[],no:m.never||[],steps:m.steps||[],stop:m.stopIf||"",facts:m.facts||[],
+    lessons:(m.lessons||[]).map(l=>({t:l.title,d:l.length,p:l.points||[]})),
+    quiz:(m.quiz||[]).map(x=>({q:x.question,a:x.answers,c:x.correct-1,x:x.why}))};
+  MEDIA[k]={sop:m.sop||"",videos:(m.videos||[]).map(v=>[v.youtube,v.title,v.channel])};
+});
+const PRICING={
+  bands:CP.multipliers.map(b=>({upto:b.upToHours==null?Infinity:b.upToHours,label:b.label,student:b.iith,external:b.external})),
+  mat:Object.fromEntries(Object.entries(CP.materials).map(([n,v])=>[n,{r:v.pricePerKg/1000,d:v.density}])),
+  tooling:CP.consumables.cutterPerMinute,abrasive:CP.consumables.abrasivePerMinute,wire:CP.consumables.edmWirePerMetre};
+const EST={};
+Object.entries(CP.estimator).forEach(([k,c])=>{
+  const e={kind:c.kind,env:c.capacity,mats:c.materials};
+  [["flow","flowRate"],["nozzle","nozzle"],["layers","layerHeights"],["lh","defaultLayerHeight"],["heads","heads"],["tile","tileSize"],["spl","secondsPerLayer"],
+   ["mrr","roughingRate"],["fin","finishingRate"],["feed","feedRate"],["dpp","depthPerPass"],["v6","speedAt6mm"],["rate","cutRate"],["t","defaultThickness"]]
+   .forEach(([a,b])=>{if(c[b]!=null)e[a]=c[b]});
+  EST[k]=e;
+});
+const ADMINS=(CFG.admins||[]).map(e=>String(e).trim().toLowerCase());
+const IITH_RE=new RegExp("@([a-z0-9-]+\\.)*"+String(CFG.iithDomain||"iith.ac.in").toLowerCase().replace(/\./g,"\\.")+"$");
+const PAY={upi:CFG.payment.upiId,payee:CFG.payment.payeeName,placeholder:CFG.payment.placeholder!==false};
+const DESK=CFG.jobDesk.hours;
 
 /* ============================================================
    WIZARD
@@ -833,6 +673,31 @@ function prog(k){return S.progress[k]||{lessons:[],passed:false,cert:null}}
 function passed(k){return prog(k).passed}
 function signedIn(){return S.user&&S.user.role!=="guest"}
 function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),2400)}
+
+/* ============================================================
+   LAB CONFIG  (the values are in the config folder)
+============================================================ */
+// Admins, IITH domain, payment details, SOPs and videos now come from the config folder
+// (see "SETTINGS, MACHINES AND PRICES" near the top of this script).
+const isAdmin=()=>signedIn()&&ADMINS.includes((S.user.email||"").toLowerCase());
+
+/* ============================================================
+   JOBS  (preview store: this browser only. Swap for Firestore later.)
+============================================================ */
+const JOB_ST={awaiting:"Awaiting payment",verified:"Paid · verified",printing:"In progress",ready:"Ready to collect",collected:"Collected",cancelled:"Cancelled"};
+const JOB_FLOW=["awaiting","verified","printing","ready","collected"];
+const JKEY="cometcenter:jobs:v1";
+const JOBS={
+  all(){try{return JSON.parse(localStorage.getItem(JKEY)||"[]")}catch(e){return []}},
+  save(list){try{localStorage.setItem(JKEY,JSON.stringify(list));return true}catch(e){toast("Couldn't save: browser storage is full or blocked");return false}},
+  get(id){return this.all().find(j=>j.id===id)},
+  add(j){const l=this.all();l.unshift(j);return this.save(l)},
+  update(id,patch,logText){const l=this.all(),j=l.find(x=>x.id===id);if(!j)return null;
+    Object.assign(j,patch);j.log=j.log||[];j.log.push({at:Date.now(),by:S.user?S.user.email:"",t:logText});this.save(l);return j}
+};
+function newJobId(){const d=new Date(),p=n=>String(n).padStart(2,"0");
+  return `CMT-${String(d.getFullYear()).slice(2)}${p(d.getMonth()+1)}${p(d.getDate())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`}
+const fmtDT=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
 
 /* ============================================================
    3D MODELS
@@ -1164,21 +1029,24 @@ function initViewer(cv,key){
 /* ============================================================
    NAVIGATION
 ============================================================ */
-const views=["home","bay","detail","train","cost","book","dash"];
+const views=["home","bay","detail",/*"train",*/"cost","book","dash","admin"];
 let current="home";
 function go(v,arg){
-  if((v==="dash"||v==="train")&&!signedIn()){openLogin(()=>go(v,arg));return}
+  if(v==="train"){v="detail"} // training removed for now: send old links to the machine page
+  if((v==="dash"/*||v==="train"*/)&&!signedIn()){openLogin(()=>go(v,arg));return}
+  if(v==="admin"&&!isAdmin()){if(!signedIn()){openLogin(()=>go(v,arg));return}toast("The admin page is for lab staff only");v="home"}
   current=v;
   views.forEach(x=>$("#v-"+x).classList.toggle("hide",x!==v));
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===v||(v==="detail"||v==="train")&&b.dataset.go==="bay"));
   scrollTo({top:0,behavior:"instant"});
   if(v==="detail")renderDetail(arg);
-  if(v==="train")renderTrain(arg);
+  // if(v==="train")renderTrain(arg);
   if(v==="dash")renderDash();
+  if(v==="admin")renderAdmin();
   if(v==="bay")renderBay();
   if(v==="cost")openCost(arg);
   if(v==="book")renderBook(arg);
-  try{history.replaceState(null,"","#"+v)}catch(e){}
+  try{history.replaceState(null,"","#"+v+(v==="detail"&&typeof arg==="string"?"/"+arg:""))}catch(e){}
 }
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-go]");if(b){e.preventDefault();go(b.dataset.go,b.dataset.arg?JSON.parse(b.dataset.arg):undefined)}
@@ -1205,7 +1073,7 @@ function renderWiz(){
       if(wStep===0&&wAns[0]==="join"){wStep=WIZ.length}else wStep++;renderWiz()});
     const bk=$("#wBack");if(bk)bk.onclick=()=>{wStep--;renderWiz()};
   } else {
-    const r=decide(wAns),m=MACHINES[r.m],p=passed(r.m);
+    const r=decide(wAns),m=MACHINES[r.m]/*,p=passed(r.m)*/;
     const est=EST[r.m];
     w.innerHTML=`<div class="prog">${WIZ.map(()=>`<span class="on"></span>`).join("")}</div>
      <div class="res">
@@ -1219,7 +1087,7 @@ function renderWiz(){
         <div class="cta-row">
           <button class="btn" data-go="detail" data-arg="${A(r.m)}">Open the station card</button>
           ${est?`<button class="btn ghost" data-go="cost" data-arg="${A(r.m)}">Price my part</button>`:""}
-          <button class="btn ghost" data-go="train" data-arg="${A(r.m)}">${p?"Review training":"Start training"}</button>
+          ${""/* <button class="btn ghost" data-go="train" data-arg="${A(r.m)}">${p?"Review training":"Start training"}</button> */}
           <button class="btn ghost" id="wReset">Start over</button>
         </div>
        </div></div>`;
@@ -1246,7 +1114,7 @@ function renderBay(){
          <div class="code"><span>${m.code} · ${FAM[m.fam]}</span><span style="display:flex;align-items:center;gap:6px"><i class="status s-${m.status}"></i>${stTxt[m.status]}</span></div>
          <h3>${m.name}</h3><div class="model">${m.model}</div><p>${m.blurb}</p>
          <div class="crow"><span class="tier t${m.tier}">${tierName[m.tier]}</span>
-         <span class="lock" data-lock="${k}"></span></div>
+         ${""/* <span class="lock" data-lock="${k}"></span> */}</div>
          <button class="btn sm" data-go="detail" data-arg="${A(k)}" style="margin-top:14px;justify-content:center">View machine</button>
        </div></div>`).join("");
     bay.querySelectorAll("canvas").forEach(cv=>{const k=cv.dataset.k,v=VIEW[k];addThumb(cv,k,v[0]*1.05,v[1])});
@@ -1254,14 +1122,20 @@ function renderBay(){
   bay.querySelectorAll(".card").forEach(c=>c.classList.toggle("hide",bayFilter!=="all"&&c.dataset.fam!==bayFilter));
   refreshLocks();
 }
-function refreshLocks(){document.querySelectorAll("[data-lock]").forEach(el=>{
-  const k=el.dataset.lock;el.className="lock"+(passed(k)?" ok":"");el.textContent=passed(k)?"Pass held":"Pass required"})}
+function refreshLocks(){ // pass badges removed for now
+  /* document.querySelectorAll("[data-lock]").forEach(el=>{
+  const k=el.dataset.lock;el.className="lock"+(passed(k)?" ok":"");el.textContent=passed(k)?"Pass held":"Pass required"}) */
+  const n=$("#navAdmin");if(n)n.classList.toggle("hide",!isAdmin())}
 
 /* ============================================================
    DETAIL
 ============================================================ */
 function renderDetail(k){
-  const m=MACHINES[k],p=passed(k),pr=prog(k);
+  if(!MACHINES[k])k="a1";
+  const m=MACHINES[k]/*,p=passed(k),pr=prog(k)*/,md=MEDIA[k]||{videos:[]};
+  const access={A:"Self run. Read the SOP and watch the videos, then run it yourself whenever the lab is open.",
+    B:"Induction first. Watch the videos, then a staff member inducts you on the machine before your first solo run.",
+    C:"Staff run. Prepare your file, generate your job from the cost estimator and bring the job sheet to the desk."};
   $("#detail").innerHTML=`
    <button class="btn ghost sm" data-go="bay" style="margin-bottom:22px">← All machines</button>
    <div class="shead"><span class="tag">${m.code} · ${FAM[m.fam]} · Station card</span><h2>${m.name}</h2><p>${m.blurb}</p></div>
@@ -1269,35 +1143,43 @@ function renderDetail(k){
     <div class="stack">
       <canvas id="viewer" aria-label="3D model of ${esc(m.name)}, drag to rotate"></canvas>
       <div class="panel">
-        <h4>Before you hit start</h4>
+        <h4>Important instructions · before you hit start</h4>
         <ol class="steps">${m.steps.map(s=>`<li>${s}</li>`).join("")}</ol>
-        <div class="warn"><strong>Stop immediately if</strong><p>${m.stop}</p></div>
+        <div class="warn"><strong>Safety · stop immediately if</strong><p>${m.stop}</p></div>
       </div>
+      <div class="panel"><h4>Safety · never do this</h4><ul class="klist bad">${m.no.map(x=>`<li>${x}</li>`).join("")}</ul></div>
       <div class="panel"><h4>Facts to flex with</h4><div class="facts">${m.facts.map(f=>`<p>${f}</p>`).join("")}</div></div>
     </div>
     <div class="stack">
       <div class="panel">
         <span class="tier t${m.tier}">${tierName[m.tier]}</span>
-        <p style="color:var(--dim);font-size:14px;margin-block:14px 18px">${p?"You hold a valid pass for this machine.":m.tier==="C"?"Staff run this machine. The module teaches you to prepare and submit a job.":"You need a pass before this machine is unlocked for you."}</p>
+        <p style="color:var(--dim);font-size:14px;margin-block:14px 18px">${access[m.tier]}</p>
+        ${""/* <p style="color:var(--dim);font-size:14px;margin-block:14px 18px">${p?"You hold a valid pass for this machine.":m.tier==="C"?"Staff run this machine. The module teaches you to prepare and submit a job.":"You need a pass before this machine is unlocked for you."}</p> */}
         <div class="stack" style="gap:10px">
-        <button class="btn" data-go="train" data-arg="${A(k)}" style="justify-content:center">${p?"Review the module":"Start training · "+pr.lessons.length+"/"+m.lessons.length+" lessons"}</button>
+        ${""/* <button class="btn" data-go="train" data-arg="${A(k)}" style="justify-content:center">${p?"Review the module":"Start training · "+pr.lessons.length+"/"+m.lessons.length+" lessons"}</button> */}
+        ${md.sop?`<a class="btn" href="${esc(md.sop)}" target="_blank" rel="noopener" style="justify-content:center">Open the SOP folder</a>`:`<button class="btn" disabled style="justify-content:center">SOP coming soon</button>`}
         ${EST[k]?`<button class="btn ghost" data-go="cost" data-arg="${A(k)}" style="justify-content:center">Estimate a job on this machine</button>`:""}
         <button class="btn ghost" data-go="book" data-arg="${A({k})}" style="justify-content:center">Book a slot</button>
         </div>
       </div>
+      <div class="panel"><h4>Videos</h4><div class="vids">${md.videos.length?md.videos.map(([id,t,by])=>`<a class="vid" href="https://www.youtube.com/watch?v=${esc(id)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none"><span class="play">▶</span><div><b>${esc(t)}</b><small>YouTube · ${esc(by)}</small></div><span class="linkbtn">Watch</span></a>`).join("")
+        :m.lessons.map(l=>`<div class="vid"><span class="play">▶</span><div><b>${l.t}</b><small>${l.d}</small></div><span class="soon">Coming soon</span></div>`).join("")}</div>
+        <p style="font-size:12px;color:var(--faint);margin-top:10px">Videos from other makers. Comet Center's own footage replaces them when it's recorded.</p></div>
       <div class="panel"><h4>Good for</h4><p style="font-size:14px;color:var(--dim)">${m.makes}</p></div>
       <div class="panel"><h4>Specification</h4>
         <div class="mono" style="font-size:11.5px;color:var(--faint);margin-top:-6px;margin-bottom:6px">${m.model}</div>
         ${Object.entries(m.specs).map(([a,b])=>`<div class="spec"><span>${a}</span><b>${b}</b></div>`).join("")}</div>
       <div class="panel"><h4>Allowed</h4><ul class="klist ok">${m.ok.map(x=>`<li>${x}</li>`).join("")}</ul></div>
-      <div class="panel"><h4>And never</h4><ul class="klist bad">${m.no.map(x=>`<li>${x}</li>`).join("")}</ul></div>
     </div></div>`;
   initViewer($("#viewer"),k);
 }
 
 /* ============================================================
-   TRAINING
+   TRAINING  (lessons + quiz + pass). Switched off for now, kept for later.
+   To bring it back: remove this comment wrapper and the matching end marker below,
+   then restore the "train" view in index.html.
 ============================================================ */
+/* TRAINING-START
 let qPick={};
 function renderTrain(k){
   const m=MACHINES[k],pr=prog(k);
@@ -1396,44 +1278,13 @@ function certHTML(k){
       <div style="font-size:12.5px;color:var(--dim);line-height:1.55">${m.tier==="B"?"Show this at the machine. Staff sign your induction on the back.":"Show this at the machine. Staff scan the code to confirm the pass is live."}</div></div>
   </div>`;
 }
+TRAINING-END */
 
 /* ============================================================
    COST ESTIMATOR
-   All prices below are PLACEHOLDERS. Replace the r values (₹ per gram)
-   with Comet Center's real material rates when they're fixed.
+   Prices, multipliers and machine speeds come from config/pricing.js
+   (mapped to PRICING and EST at the top of this script).
 ============================================================ */
-const PRICING={
-  bands:[
-    {upto:6, label:"Up to 6 h", student:2,  external:3},
-    {upto:12,label:"6 – 12 h",  student:2.5,external:3.5},
-    {upto:24,label:"12 – 24 h", student:3,  external:4},
-    {upto:Infinity,label:"Over 24 h",student:4,external:5}],
-  // r = ₹ per gram (placeholder), d = density g/cm³
-  mat:{
-    "PLA":{r:1.2,d:1.24},"PETG":{r:1.4,d:1.27},"TPU":{r:2.5,d:1.21},"PVA":{r:6,d:1.23},"ASA":{r:1.8,d:1.07},"ABS":{r:1.6,d:1.04},"PC":{r:3,d:1.2},"PA nylon":{r:4,d:1.14},"PLA-CF":{r:3.5,d:1.3},
-    "PLA pellets":{r:.35,d:1.24},"ABS pellets":{r:.4,d:1.04},"PETG pellets":{r:.4,d:1.27},"HIPS pellets":{r:.35,d:1.04},"PPGF pellets":{r:.8,d:1.12},"PPCF pellets":{r:1.2,d:1.05},
-    "Standard resin":{r:3.5,d:1.12},"ABS-like resin":{r:4.5,d:1.12},"Water-washable resin":{r:4,d:1.1},
-    "B9 Onyx":{r:25,d:1.12},"B9 Transparent":{r:25,d:1.12},"B9 HD Slate":{r:25,d:1.12},"B9 HD Clear":{r:27,d:1.12},"B9 Robust ABS/PC":{r:30,d:1.15},
-    "Aluminium 6061":{r:.45,d:2.7},"Mild steel":{r:.09,d:7.85},"Stainless steel":{r:.3,d:8},"Brass":{r:.8,d:8.5},"Copper":{r:1,d:8.96},"Tool steel (D2)":{r:.4,d:7.7},"Delrin (POM)":{r:.6,d:1.41},
-    "Cast acrylic":{r:.35,d:1.19},"Plywood":{r:.08,d:.6},"MDF":{r:.05,d:.75},"HDPE":{r:.3,d:.95},"Glass":{r:.05,d:2.5},"Granite":{r:.04,d:2.7},"Carbon fibre sheet":{r:3,d:1.6}},
-  tooling:3,   // ₹ per cutting minute, mill / lathe / router cutters
-  abrasive:12, // ₹ per minute of waterjet cutting (garnet)
-  wire:.45     // ₹ per metre of 0.25 mm brass EDM wire
-};
-const EST={
-  a1:{kind:"fdm",env:[256,256,256],mats:["PLA","PETG","TPU","PVA"],flow:9,nozzle:.4,layers:[.12,.2,.28],lh:.2},
-  core:{kind:"fdm",env:[250,220,270],mats:["PLA","PETG","ASA","ABS","PC","PA nylon","PLA-CF"],flow:8,nozzle:.4,layers:[.1,.2,.3],lh:.2},
-  xl:{kind:"fdm",env:[360,360,360],mats:["PLA","PETG","ASA","PC","PA nylon","PVA"],flow:9,nozzle:.4,layers:[.1,.2,.3],lh:.2},
-  giga:{kind:"fdm",env:[800,800,1000],mats:["PLA","PETG","TPU"],flow:20,nozzle:.6,layers:[.2,.3,.4],lh:.3,heads:4,tile:410},
-  garuda:{kind:"fdm",env:[500,500,500],mats:["PLA pellets","ABS pellets","PETG pellets","HIPS pellets","PPGF pellets","PPCF pellets"],flow:35,nozzle:1,layers:[.5,.8],lh:.5},
-  saturn:{kind:"resin",env:[211.68,118.37,220],mats:["Standard resin","ABS-like resin","Water-washable resin"],layers:[.03,.05],lh:.05,spl:5.5},
-  b9:{kind:"resin",env:[38.4,21.6,127],mats:["B9 Onyx","B9 Transparent","B9 HD Slate","B9 HD Clear","B9 Robust ABS/PC"],layers:[.01,.02],lh:.01,spl:9},
-  mill:{kind:"mill",env:[400,300,300],mats:["Aluminium 6061","Brass","Mild steel","Delrin (POM)"],mrr:{"Aluminium 6061":6,"Brass":4,"Mild steel":2,"Delrin (POM)":10},fin:{"Aluminium 6061":450,"Brass":350,"Mild steel":200,"Delrin (POM)":600}},
-  lathe:{kind:"lathe",env:[150,300],mats:["Aluminium 6061","Brass","Mild steel","Delrin (POM)"],mrr:{"Aluminium 6061":15,"Brass":10,"Mild steel":5,"Delrin (POM)":20},fin:{"Aluminium 6061":900,"Brass":700,"Mild steel":400,"Delrin (POM)":1200}},
-  router:{kind:"sheet",env:[900,600,25],mats:["Cast acrylic","Plywood","MDF","HDPE","Aluminium 6061"],feed:{"Cast acrylic":1500,"Plywood":2000,"MDF":2500,"HDPE":1800,"Aluminium 6061":600},dpp:{"Cast acrylic":3,"Plywood":4,"MDF":5,"HDPE":3,"Aluminium 6061":.5},t:6},
-  waterjet:{kind:"sheet",env:[304,304,25],mats:["Aluminium 6061","Mild steel","Stainless steel","Brass","Cast acrylic","Glass","Granite","Carbon fibre sheet"],v6:{"Aluminium 6061":300,"Mild steel":140,"Stainless steel":120,"Brass":190,"Cast acrylic":900,"Glass":500,"Granite":300,"Carbon fibre sheet":400},t:6},
-  edm:{kind:"edm",env:[300,400,200],mats:["Tool steel (D2)","Mild steel","Stainless steel","Aluminium 6061","Copper","Brass"],rate:{"Tool steel (D2)":45,"Mild steel":60,"Stainless steel":50,"Aluminium 6061":120,"Copper":40,"Brass":70},t:20}
-};
 const NEEDS={fdm:"mesh",resin:"mesh",mill:"mesh",lathe:"mesh",sheet:"dxf",edm:"dxf"};
 let E={k:"a1",mat:"PLA",user:"student",units:1,infill:.15,lh:.2,sup:.1,hollow:true,t:6,copies:1,data:null,name:"",sample:true};
 
@@ -1615,7 +1466,7 @@ function estimate(){
       const st=dims.map(x=>r5(x+6)),sv=st[0]*st[1]*st[2],rem=Math.max(0,sv-V);
       const rough=rem/1000/cfg.mrr[E.mat],fin=Ar/cfg.fin[E.mat],cut=rough+fin;
       const mins=30+cut*c+(c-1)*10;R.hours=mins/60;R.grams=sv/1000*M.d*c;R.stock=st;
-      R.fits=fitsBox(st,cfg.env);R.fitMsg=R.fits?"Stock fits the travel":"Stock is bigger than the 400 × 300 × 300 travel";
+      R.fits=fitsBox(st,cfg.env);R.fitMsg=R.fits?"Stock fits the travel":`Stock is bigger than the ${cfg.env.join(" × ")} mm travel`;
       R.lines.push({l:`${E.mat} stock`,d:`${st.join(" × ")} mm block · ${fmtG(R.grams)} × ${fmtR(M.r*1000)}/kg`,a:R.grams*M.r});
       R.lines.push({l:"Cutter wear",d:`${Math.round(cut*c)} cutting min × ${fmtR(PRICING.tooling)}/min`,a:cut*c*PRICING.tooling});
       R.extra=`${(rem/1000).toFixed(0)} cm³ removed per part · 30 min setup`;
@@ -1763,7 +1614,8 @@ function updateEstimate(){
      <div class="big" id="eTot">${fmtR(R.total)}</div>
      <div class="why2">${fmtR(R.base)} material and consumables × ${R.mult} · ${who}, job ${B.label.toLowerCase()}</div></div>
     <div class="cta-row">
-     <button class="btn" data-go="book" data-arg="${A({k:E.k,h:Math.max(1,Math.ceil(R.hours))})}">Book ${Math.max(1,Math.ceil(R.hours))} h on ${m.code}</button>
+     <button class="btn" id="eJob">Generate your job</button>
+     <button class="btn ghost" data-go="book" data-arg="${A({k:E.k,h:Math.max(1,Math.ceil(R.hours))})}">Book ${Math.max(1,Math.ceil(R.hours))} h on ${m.code}</button>
      <button class="btn ghost" id="eCopy">Copy quote</button>
     </div>
    </div>
@@ -1790,6 +1642,93 @@ function updateEstimate(){
   $("#eCopy").onclick=()=>{const txt=`Comet Center estimate · ${m.code} ${m.name}\nFile: ${E.name}\n${E.copies} × part, ${E.mat}\nTime: ${fmtH(R.hours)} · Material: ${fmtG(R.grams)}\n${R.lines.map(l=>`${l.l}: ${fmtR(l.a)}`).join("\n")}\nBase ${fmtR(R.base)} × ${R.mult} (${who}, ${B.label}) = ${fmtR(R.total)}\nEstimate only. Final price confirmed at the desk.`;
     const done=()=>toast("Quote copied");
     try{navigator.clipboard.writeText(txt).then(done,()=>fallbackCopy(txt))}catch(e){fallbackCopy(txt)}};
+  $("#eJob").onclick=startJob;
+}
+
+/* ============================================================
+   GENERATE YOUR JOB  (job sheet PDF + payment QR + saved for staff)
+============================================================ */
+function startJob(){
+  if(E.sample){toast("Drop in your own file first. The sample can't be made into a job.");$("#drop").scrollIntoView({behavior:"smooth",block:"center"});return}
+  if(!signedIn()){openLogin(startJob);return}
+  const role=S.user.role==="external"?"external":"student";
+  if(E.user!==role){E.user=role;E.userSet=true;renderCostForm();updateEstimate();toast(`Priced at the ${role==="student"?"IITH student":"external"} rate for your account`)}
+  const R=estimate();if(R.err){toast(R.err);return}
+  const m=MACHINES[E.k];
+  $("#jmSum").innerHTML=`<strong>${m.code} · ${esc(m.name)}</strong><br>${esc(E.name)} · ${E.copies} × ${esc(E.mat)}<br>About ${fmtH(R.hours)} · <strong>${fmtR(R.total)}</strong> estimated`;
+  $("#jmErr").textContent="";$("#jobModal").classList.add("on");$("#jmLink").focus();
+}
+$("#jmCancel").onclick=()=>$("#jobModal").classList.remove("on");
+$("#jobModal").onclick=e=>{if(e.target.id==="jobModal")$("#jobModal").classList.remove("on")};
+$("#jmForm").onsubmit=e=>{e.preventDefault();
+  const link=$("#jmLink").value.trim(),err=$("#jmErr");
+  if(link&&!/^https:\/\/\S+$/.test(link)){err.textContent="Paste the full share link, starting with https://";$("#jmLink").focus();return}
+  if(!window.jspdf||!window.qrcode){err.textContent="The PDF tools didn't load. Check your internet connection and reload the page.";return}
+  const job=snapshotJob(link,$("#jmNote").value.trim());
+  if(!JOBS.add(job))return;
+  $("#jobModal").classList.remove("on");$("#jmForm").reset();
+  try{jobPDF(job).save(job.id+".pdf");toast("Job "+job.id+" created · PDF downloaded")}
+  catch(x){console.error(x);toast("Job saved, but the PDF failed. Download it again from My jobs.")}
+};
+// Everything staff need, frozen at the moment the job is generated.
+function snapshotJob(link,note){
+  const R=estimate(),m=MACHINES[E.k],cfg=EST[E.k],u=S.user,B=PRICING.bands[R.band];
+  const set=[["Material",E.mat],["Copies",E.copies],["File units",{1:"mm",10:"cm",25.4:"inch"}[E.units]]];
+  if(cfg.kind==="fdm")set.push(["Infill",Math.round(E.infill*100)+"%"],["Layer height",E.lh+" mm"],["Supports",{0:"None",0.1:"Some",0.25:"Lots"}[E.sup]]);
+  if(cfg.kind==="resin")set.push(["Layer height",Math.round(E.lh*1000)+" µm"],["Hollow",E.hollow?"Yes, 2 mm wall":"Solid"]);
+  if(NEEDS[cfg.kind]==="dxf")set.push(["Thickness",E.t+" mm"]);
+  let img="";
+  try{if(EV){EV.r.render(EV.sc,EV.cam);const c=document.createElement("canvas"),src=EV.r.domElement,w=480,h=Math.round(w*src.height/src.width);
+    c.width=w;c.height=h;const x=c.getContext("2d");x.fillStyle="#0B1322";x.fillRect(0,0,w,h);x.drawImage(src,0,0,w,h);img=c.toDataURL("image/jpeg",.75)}}catch(e){}
+  return {id:newJobId(),created:Date.now(),status:"awaiting",
+    user:{name:u.name,email:u.email,roll:u.roll||"",role:u.role},
+    machine:{key:E.k,code:m.code,name:m.name,tier:m.tier},file:E.name,link,note,settings:set,
+    dims:R.dims.map(v=>Math.round(v*10)/10),fits:R.fits,fitMsg:R.fitMsg,hours:R.hours,grams:R.grams,extra:R.extra,
+    lines:R.lines.map(l=>({l:l.l,d:l.d,a:Math.round(l.a*100)/100})),base:R.base,mult:R.mult,band:B.label,total:Math.round(R.total),
+    img,txn:"",shelf:"",log:[{at:Date.now(),by:u.email,t:"Job generated"}]};
+}
+function upiLink(j){return `upi://pay?pa=${encodeURIComponent(PAY.upi)}&pn=${encodeURIComponent(PAY.payee)}&am=${j.total}.00&cu=INR&tn=${encodeURIComponent("Comet "+j.id)}`}
+function qrDataURL(text){const q=qrcode(0,"M");q.addData(text);q.make();return q.createDataURL(8,2)}
+// jsPDF's built-in fonts have no ₹ glyph, so the PDF writes "Rs."
+const rs=n=>"Rs. "+Math.round(n).toLocaleString("en-IN");
+function jobPDF(j){
+  const {jsPDF}=window.jspdf,d=new jsPDF({unit:"mm",format:"a4"}),W=210,L=16,Rr=W-16;let y=16;
+  const ink=[10,17,32],dim=[90,104,130],haz=[255,198,26];
+  d.setFillColor(...ink);d.rect(0,0,W,30,"F");d.setFillColor(...haz);d.rect(0,30,W,1.6,"F");
+  d.setTextColor(255,255,255);d.setFont("helvetica","bold");d.setFontSize(17);d.text("COMET CENTER · JOB SHEET",L,14);
+  d.setFont("helvetica","normal");d.setFontSize(9.5);d.setTextColor(200,210,228);d.text("Fabrication and prototyping lab, IIT Hyderabad",L,21);
+  d.setFont("courier","bold");d.setFontSize(14);d.setTextColor(...haz);d.text(j.id,Rr,14,{align:"right"});
+  d.setFont("helvetica","normal");d.setFontSize(9);d.setTextColor(200,210,228);d.text("Generated "+fmtDT(j.created),Rr,21,{align:"right"});
+  y=42;
+  const h=(t)=>{d.setFont("helvetica","bold");d.setFontSize(9);d.setTextColor(...dim);d.text(t.toUpperCase(),L,y);y+=2;d.setDrawColor(220,226,236);d.line(L,y,Rr,y);y+=6};
+  const row=(a,b,x0=L,x1=L+42,wrap=Rr-L-42)=>{d.setFont("helvetica","normal");d.setFontSize(10);d.setTextColor(...dim);d.text(String(a),x0,y);
+    d.setTextColor(...ink);const ls=d.splitTextToSize(String(b??"-"),wrap);d.text(ls,x1,y);y+=5.6*ls.length};
+  // left column: student + job, right: preview
+  const top=y;h("Student");row("Name",j.user.name);row(j.user.role==="student"?"Roll number":"Account",j.user.role==="student"?j.user.roll:"External");row("Email",j.user.email);
+  y+=3;h("Job");row("Machine",`${j.machine.code} · ${j.machine.name}`);row("File",j.file);j.settings.forEach(([a,b])=>row(a,b));
+  row("Part size",j.dims.join(" x ")+" mm");row("Fit",(j.fits?"Fits. ":"Too big. ")+j.fitMsg);row("Job time",fmtH(j.hours));row("Material",fmtG(j.grams));
+  if(j.link)row("File link",j.link);if(j.note)row("Notes",j.note);
+  if(j.img){try{d.addImage(j.img,"JPEG",Rr-62,top-4,62,46)}catch(e){}}
+  y+=3;h("Price");
+  j.lines.forEach(l=>{d.setFont("helvetica","normal");d.setFontSize(10);d.setTextColor(...ink);d.text(l.l,L,y);d.text(rs(l.a),Rr,y,{align:"right"});y+=4.4;
+    d.setFontSize(8.5);d.setTextColor(...dim);d.text(d.splitTextToSize(l.d.replace(/₹/g,"Rs. "),120),L,y);y+=5});
+  d.setFontSize(10);d.setTextColor(...ink);d.text("Base cost",L,y);d.text(rs(j.base),Rr,y,{align:"right"});y+=5.6;
+  d.text(`${j.user.role==="student"?"IITH student":"External"} rate, job ${j.band.toLowerCase()}`,L,y);d.text("x "+j.mult,Rr,y,{align:"right"});y+=4;
+  d.setDrawColor(...ink);d.line(L,y,Rr,y);y+=7;d.setFont("helvetica","bold");d.setFontSize(15);d.text("Amount to pay",L,y);d.text(rs(j.total),Rr,y,{align:"right"});y+=10;
+  // payment block
+  if(y>215){d.addPage();y=20}
+  d.setFillColor(246,248,252);d.setDrawColor(220,226,236);d.roundedRect(L,y,Rr-L,62,3,3,"FD");
+  const qr=qrDataURL(upiLink(j));d.addImage(qr,"PNG",L+5,y+5,52,52);
+  if(PAY.placeholder){d.setFillColor(255,255,255);d.setDrawColor(220,40,40);d.rect(L+3,y+26,56,10,"FD");
+    d.setTextColor(220,40,40);d.setFont("helvetica","bold");d.setFontSize(10.5);d.text("SAMPLE QR · DO NOT PAY",L+31,y+32.6,{align:"center"})}
+  const px=L+64;let py=y+11;d.setTextColor(...ink);d.setFont("helvetica","bold");d.setFontSize(12);d.text("Pay at the Comet Center desk, "+DESK,px,py);py+=7;
+  d.setFont("helvetica","normal");d.setFontSize(9.5);d.setTextColor(...dim);
+  ["1. Show this sheet to the staff member at the desk.","2. They confirm the job and the final price.","3. Scan the QR with any UPI app and pay "+rs(j.total)+" in front of them.","4. Staff record your transaction ID. Your job joins the queue.","Track it any time under My jobs on the website."].forEach(t=>{d.text(t,px,py);py+=5.5});
+  d.setFont("courier","normal");d.setFontSize(8.5);d.text("UPI: "+PAY.upi,px,py+1.5);
+  y+=70;
+  d.setFont("helvetica","normal");d.setFontSize(8);d.setTextColor(...dim);
+  d.text(d.splitTextToSize("This is an estimate from the Comet Center cost estimator. Material rates are placeholders until the lab fixes its price list, and the final price is confirmed at the desk. Your file was read in your browser and never uploaded.",Rr-L),L,Math.min(y,285));
+  return d;
 }
 function fallbackCopy(txt){const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("Quote copied")}catch(e){toast("Select and copy the quote manually")}ta.remove()}
 function countUp(el,from,to){if(!el)return;const t0=performance.now(),d=550;
@@ -1868,26 +1807,26 @@ function buildEstScene(R){
    BOOKING
 ============================================================ */
 let B={k:"a1",day:0,sel:[],want:0};
-const HOURS=[9,10,11,12,13,14,15,16,17,18,19,20];
+const BK=CFG.booking,HOURS=[];for(let h=BK.firstHour;h<=BK.lastHour;h++)HOURS.push(h);
 function dayDate(i){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+i);return d}
 const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 function exampleTaken(k,ds,h){let x=0;const s=k+ds+h;for(let i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))>>>0;return x%5===0||(MACHINES[k].status==="busy"&&x%3===0)}
 function renderBook(arg){
   if(arg&&arg.k){if(arg.k!==B.k)B.sel=[];B.k=arg.k;B.want=arg.h||0}
-  const m=MACHINES[B.k],days=[...Array(7)].map((_,i)=>dayDate(i)),ds=iso(days[B.day]);
+  const m=MACHINES[B.k],days=[...Array(Math.max(1,BK.daysAhead))].map((_,i)=>dayDate(i)),ds=iso(days[B.day]);
   const mine=S.bookings.filter(b=>b.k===B.k&&b.day===ds).flatMap(b=>b.hours);
   const nowH=new Date().getHours();
-  const need=m.tier!=="C"&&!passed(B.k);
+  // const need=m.tier!=="C"&&!passed(B.k); // pass check removed for now
   $("#book").innerHTML=`
    <div class="shead"><span class="tag">Book a slot</span><h2>Book machine time</h2>
-   <p>Pick a machine, a day and the hours you need. Slots are one hour each, 9:00 to 21:00.</p></div>
+   <p>Pick a machine, a day and the hours you need. Slots are one hour each, ${HOURS[0]}:00 to ${HOURS[HOURS.length-1]+1}:00.</p></div>
    <div class="bookGrid">
     <div class="panel">
      <div class="row2" style="margin-bottom:16px">
       <div class="field" style="margin:0"><label for="bMach">Machine</label><select id="bMach">${Object.entries(MACHINES).map(([k,x])=>`<option value="${k}" ${k===B.k?"selected":""}>${x.code} · ${x.name}</option>`).join("")}</select></div>
       <div class="field" style="margin:0"><span class="flabel">Access</span><div style="padding-top:8px"><span class="tier t${m.tier}">${tierName[m.tier]}</span></div></div>
      </div>
-     <div class="days" id="bDays">${days.map((d,i)=>`<button class="day ${i===B.day?"on":""}" data-i="${i}"><small>${i===0?"Today":d.toLocaleDateString("en-IN",{weekday:"short"})}</small><b>${d.getDate()}</b><small>${d.toLocaleDateString("en-IN",{month:"short"})}</small></button>`).join("")}</div>
+     <div class="days" id="bDays" style="grid-template-columns:repeat(${days.length},minmax(64px,1fr))">${days.map((d,i)=>`<button class="day ${i===B.day?"on":""}" data-i="${i}"><small>${i===0?"Today":d.toLocaleDateString("en-IN",{weekday:"short"})}</small><b>${d.getDate()}</b><small>${d.toLocaleDateString("en-IN",{month:"short"})}</small></button>`).join("")}</div>
      <div class="slots" id="bSlots">${HOURS.map(h=>{const past=B.day===0&&h<=nowH,isMine=mine.includes(h),taken=!isMine&&exampleTaken(B.k,ds,h),sel=B.sel.includes(h);
        return `<button class="slot ${taken?"taken":""} ${isMine?"mine":""} ${sel?"sel":""}" data-h="${h}" ${past||taken||isMine?"disabled":""}><b>${String(h).padStart(2,"0")}:00 – ${String(h+1).padStart(2,"0")}:00</b><small>${isMine?"Your booking":taken?"Booked":past?"Past":sel?"Selected":"Free"}</small></button>`}).join("")}</div>
      <div class="legend"><span><i></i>Free</span><span><i style="border-color:var(--haz);background:color-mix(in srgb,var(--haz) 20%,transparent)"></i>Selected</span><span><i style="border-color:var(--ta)"></i>Yours</span><span><i style="background:repeating-linear-gradient(135deg,var(--ink2) 0 3px,var(--ink3) 3px 6px)"></i>Booked (example data)</span></div>
@@ -1899,7 +1838,8 @@ function renderBook(arg){
       <div class="spec"><span>Day</span><b>${days[B.day].toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"short"})}</b></div>
       <div class="spec"><span>Hours</span><b>${B.sel.length?B.sel.sort((a,b)=>a-b).map(h=>h+":00").join(", "):"None yet"}</b></div>
       ${B.want?`<div class="note" style="margin-top:12px">Your cost estimate says about <strong>${B.want} h</strong>. ${B.sel.length>=B.want?"You've selected enough time.":`Select ${B.want-B.sel.length} more hour${B.want-B.sel.length>1?"s":""}.`}${B.want>12?" Long jobs can run overnight; staff will confirm.":""}</div>`:""}
-      ${need?`<div class="warn"><strong>Pass needed</strong><p>You need the ${m.name} pass before your slot.${m.tier==="B"?" Staff induction happens at your first slot.":""}</p><button class="btn sm" data-go="train" data-arg="${A(B.k)}" style="margin-top:12px">Start training</button></div>`:""}
+      ${""/* ${need?`<div class="warn"><strong>Pass needed</strong><p>You need the ${m.name} pass before your slot.${m.tier==="B"?" Staff induction happens at your first slot.":""}</p><button class="btn sm" data-go="train" data-arg="${A(B.k)}" style="margin-top:12px">Start training</button></div>`:""} */}
+      ${m.tier==="B"?`<div class="note" style="margin-top:12px"><strong>First time on this machine?</strong> Watch its videos first. Staff induct you at your first slot.</div>`:""}
       ${m.tier==="C"?`<div class="note" style="margin-top:12px"><strong>Staff run.</strong> This books a job slot with staff. Bring your file to the front desk.</div>`:""}
       <button class="btn" id="bConfirm" style="width:100%;justify-content:center;margin-top:16px" ${B.sel.length?"":"disabled"}>${signedIn()?"Confirm booking":"Sign in to book"}</button>
       <p style="font-size:12px;color:var(--faint);margin-top:10px">Bookings are saved on this device until the shared booking calendar is connected.</p>
@@ -1917,8 +1857,9 @@ function renderBook(arg){
 }
 
 /* ============================================================
-   DASHBOARD
+   DASHBOARD  (old "My passes" version, switched off for now and kept for later)
 ============================================================ */
+/* PASSES-DASH-START
 function renderDash(){
   const held=Object.keys(MACHINES).filter(passed),u=S.user;
   const today=iso(dayDate(0));
@@ -1946,6 +1887,126 @@ function renderDash(){
     if(b.dataset.armed){S.bookings=S.bookings.filter(x=>String(x.id)!==b.dataset.cancel);save();renderDash();toast("Booking cancelled")}
     else{b.dataset.armed="1";b.textContent="Tap again to cancel";setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent="Cancel"}},3000)}});
 }
+PASSES-DASH-END */
+
+/* ============================================================
+   MY JOBS  (student view)
+============================================================ */
+const pill=s=>`<span class="pill st-${s}">${JOB_ST[s]}</span>`;
+function bookingsHTML(){
+  const today=iso(dayDate(0));
+  const bk=S.bookings.filter(b=>b.day>=today).sort((a,b)=>a.day<b.day?-1:a.day>b.day?1:a.hours[0]-b.hours[0]);
+  return bk.length?bk.map(b=>{const m=MACHINES[b.k],d=new Date(b.day+"T00:00");return `<div class="brow"><span class="tier t${m.tier}">${m.code}</span><b style="flex:1;min-width:160px">${m.name}</b><span class="mono">${d.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"})} · ${b.hours.map(h=>h+":00").join(", ")}</span><button class="linkbtn" data-cancel="${b.id}">Cancel</button></div>`}).join("")
+    :`<div class="empty">No bookings yet.<br><button class="btn sm" data-go="book" style="margin-top:14px">Book a slot</button></div>`;
+}
+function renderDash(){
+  const u=S.user,mine=JOBS.all().filter(j=>j.user.email===u.email);
+  $("#dash").innerHTML=`
+   <div class="shead"><span class="tag">${esc(u.role==="student"?(u.roll||"").toUpperCase():u.email)} · ${u.role==="student"?"IITH":"External"}</span>
+   <h2>${esc(u.name.split(" ")[0])}'s jobs</h2>
+   <p>${mine.length?`You have ${mine.length} job${mine.length>1?"s":""}. Bring a job sheet to the desk (${esc(DESK)}) to pay and hand it over.`:"No jobs yet. Price your part in the cost estimator, then press Generate your job."}</p></div>
+   <h4 class="tag">Jobs</h4>
+   <div class="blist" style="margin-bottom:36px">${mine.length?mine.map(j=>`<div class="brow">
+     <span class="mono" style="color:var(--tx)">${j.id}</span>${pill(j.status)}
+     <b style="flex:1;min-width:160px">${j.machine.code} · ${esc(j.machine.name)}<small style="display:block;font-weight:400;color:var(--faint);font-size:12.5px">${esc(j.file)} · ${fmtR(j.total)} · ${fmtDT(j.created)}${j.status==="ready"&&j.shelf?` · collect from ${esc(j.shelf)}`:""}</small></b>
+     <button class="linkbtn" data-pdf="${j.id}">Download job sheet</button></div>`).join("")
+     :`<div class="empty">Your generated jobs appear here with their status.<br><button class="btn sm" data-go="cost" style="margin-top:14px">Open the cost estimator</button></div>`}</div>
+   <h4 class="tag">Upcoming bookings</h4>
+   <div class="blist" style="margin-bottom:36px">${bookingsHTML()}</div>`;
+  $("#dash").querySelectorAll("[data-pdf]").forEach(b=>b.onclick=()=>{const j=JOBS.get(b.dataset.pdf);if(j)jobPDF(j).save(j.id+".pdf")});
+  $("#dash").querySelectorAll("[data-cancel]").forEach(b=>b.onclick=()=>{
+    if(b.dataset.armed){S.bookings=S.bookings.filter(x=>String(x.id)!==b.dataset.cancel);save();renderDash();toast("Booking cancelled")}
+    else{b.dataset.armed="1";b.textContent="Tap again to cancel";setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent="Cancel"}},3000)}});
+}
+
+/* ============================================================
+   ADMIN  (lab staff: emails in ADMINS)
+============================================================ */
+let AD={f:"awaiting",q:"",open:null};
+function renderAdmin(){
+  if(!isAdmin()){go("home");return}
+  const all=JOBS.all(),cnt={all:all.length};all.forEach(j=>cnt[j.status]=(cnt[j.status]||0)+1);
+  const q=AD.q.toLowerCase();
+  const list=all.filter(j=>(AD.f==="all"||j.status===AD.f)&&(!q||[j.id,j.user.name,j.user.roll,j.user.email,j.machine.code,j.machine.name].join(" ").toLowerCase().includes(q)));
+  $("#admin").innerHTML=`
+   <div class="shead"><span class="tag">Admin · ${esc(S.user.email)}</span><h2>Job desk</h2>
+   <p>Every generated job lands here. At the job desk (${esc(DESK)}), find the student's job ID, take the payment, enter the transaction ID and mark it verified. The next TA plans the print from the verified list.</p></div>
+   <div class="kpis">${[["awaiting"],["verified"],["printing"],["ready"],["collected"],["all","All jobs"]].map(([s,l])=>`<button class="kpi ${AD.f===s?"on":""}" data-f="${s}"><span>${l||JOB_ST[s]}</span><b>${cnt[s]||0}</b></button>`).join("")}</div>
+   <div class="atools"><input id="aQ" placeholder="Search job ID, name, roll number, email or machine" value="${esc(AD.q)}"><button class="btn ghost sm" id="aCsv">Download as Excel (CSV)</button></div>
+   <div class="panel" style="padding:8px 8px 4px"><div class="tscroll"><table class="tbl jtbl">
+    <thead><tr><th>Job</th><th>Student</th><th>Machine</th><th class="r">Amount</th><th>Status</th><th>Created</th></tr></thead>
+    <tbody>${list.length?list.map(j=>`
+     <tr class="jrow ${AD.open===j.id?"open":""}" data-id="${j.id}"><td class="mono">${j.id}</td><td>${esc(j.user.name)}<small>${esc(j.user.roll||j.user.email)}</small></td><td>${j.machine.code}<small>${esc(j.machine.name)}</small></td><td class="r mono">${fmtR(j.total)}</td><td>${pill(j.status)}</td><td><small style="color:var(--dim)">${fmtDT(j.created)}</small></td></tr>
+     ${AD.open===j.id?`<tr class="jdet"><td colspan="6">${jobDetailHTML(j)}</td></tr>`:""}`).join("")
+     :`<tr><td colspan="6"><div class="empty" style="border:0">No jobs ${AD.f==="all"?"yet":"with this status"}${q?" match the search":""}.</div></td></tr>`}</tbody></table></div></div>
+   <p style="font-size:12.5px;color:var(--faint);margin-top:12px">Preview: jobs are stored in this browser only, so you see jobs generated on this computer. Once the backend is connected, every student's job appears here for all admins.</p>`;
+  const a=$("#admin");
+  a.querySelectorAll(".kpi").forEach(b=>b.onclick=()=>{AD.f=b.dataset.f;AD.open=null;renderAdmin()});
+  const qi=$("#aQ");qi.oninput=()=>{AD.q=qi.value;clearTimeout(renderAdmin.t);renderAdmin.t=setTimeout(()=>{renderAdmin();const n=$("#aQ");n.focus();n.setSelectionRange(n.value.length,n.value.length)},250)};
+  $("#aCsv").onclick=()=>downloadCSV(all);
+  a.querySelectorAll(".jrow").forEach(r=>r.onclick=()=>{AD.open=AD.open===r.dataset.id?null:r.dataset.id;renderAdmin()});
+  if(AD.open)bindJobDetail(AD.open);
+}
+function jobDetailHTML(j){
+  const i=JOB_FLOW.indexOf(j.status),next=JOB_FLOW[i+1];
+  return `<div class="jgrid">
+   <div class="stack" style="gap:14px">
+    <div class="panel"><h4>Student</h4>
+     <div class="spec"><span>Name</span><b>${esc(j.user.name)}</b></div>
+     <div class="spec"><span>${j.user.role==="student"?"Roll number":"Account"}</span><b>${esc(j.user.role==="student"?j.user.roll:"External")}</b></div>
+     <div class="spec"><span>Email</span><b>${esc(j.user.email)}</b></div></div>
+    <div class="panel"><h4>Job</h4>
+     <div class="spec"><span>Machine</span><b>${j.machine.code} · ${esc(j.machine.name)}</b></div>
+     <div class="spec"><span>File</span><b>${esc(j.file)}</b></div>
+     ${j.settings.map(([a,b])=>`<div class="spec"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join("")}
+     <div class="spec"><span>Part size</span><b>${j.dims.join(" × ")} mm</b></div>
+     <div class="spec"><span>Job time</span><b>${fmtH(j.hours)}</b></div>
+     <div class="spec"><span>Material</span><b>${fmtG(j.grams)}</b></div>
+     <div class="spec"><span>Fit</span><b style="color:${j.fits?"var(--ta)":"var(--tc)"}">${esc(j.fitMsg)}</b></div>
+     <div class="spec"><span>File link</span><b>${j.link?`<a class="linkbtn" href="${esc(j.link)}" target="_blank" rel="noopener">Open file</a>`:"Not given. Ask the student to bring it"}</b></div>
+     ${j.note?`<div class="spec"><span>Notes</span><b>${esc(j.note)}</b></div>`:""}</div>
+   </div>
+   <div class="stack" style="gap:14px">
+    ${j.img?`<img src="${j.img}" alt="Preview of the part" style="border-radius:10px;border:1px solid var(--line);width:100%">`:""}
+    <div class="panel"><h4>Payment · ${fmtR(j.total)}</h4>
+     ${j.status==="awaiting"?`
+      <label for="dTxn">UPI transaction ID</label><input id="dTxn" placeholder="12-digit UTR, e.g. 412345678901" style="margin-block:6px 10px">
+      <div class="formerr" id="dErr"></div>
+      <button class="btn" id="dPay" style="width:100%;justify-content:center">Mark paid and verified</button>`
+     :`<div class="spec"><span>Transaction ID</span><b>${esc(j.txn||"-")}</b></div>${j.verifiedBy?`<div class="spec"><span>Verified by</span><b>${esc(j.verifiedBy)} · ${fmtDT(j.verifiedAt)}</b></div>`:""}`}</div>
+    <div class="panel"><h4>Status ${pill(j.status)}</h4>
+     ${next&&j.status!=="awaiting"?`${next==="ready"?`<label for="dShelf">Pickup shelf</label><input id="dShelf" placeholder="e.g. Shelf B3" style="margin-block:6px 10px">`:""}
+       <button class="btn" id="dNext" data-next="${next}" style="width:100%;justify-content:center">Move to: ${JOB_ST[next]}</button>`:""}
+     <div class="cta-row" style="margin-top:10px">
+      <button class="btn ghost sm" id="dPdf">Download job sheet</button>
+      ${j.status!=="collected"&&j.status!=="cancelled"?`<button class="btn ghost sm" id="dCancel">Cancel job</button>`:""}
+     </div></div>
+    <div class="panel"><h4>History</h4><ul class="jlog">${(j.log||[]).map(l=>`<li><span>${fmtDT(l.at)}</span>${esc(l.t)}${l.by?` · ${esc(l.by)}`:""}</li>`).join("")}</ul></div>
+   </div></div>`;
+}
+function bindJobDetail(id){
+  const j=JOBS.get(id);if(!j)return;
+  const pay=$("#dPay");if(pay)pay.onclick=e=>{e.stopPropagation();const t=$("#dTxn").value.trim();
+    if(!/^[A-Za-z0-9]{6,30}$/.test(t)){$("#dErr").textContent="Enter the transaction ID from the student's UPI app (letters and numbers only).";$("#dTxn").focus();return}
+    JOBS.update(id,{status:"verified",txn:t,verifiedBy:S.user.email,verifiedAt:Date.now()},`Paid and verified · txn ${t}`);toast(id+" marked paid");renderAdmin()};
+  const nx=$("#dNext");if(nx)nx.onclick=e=>{e.stopPropagation();const s=nx.dataset.next,patch={status:s};
+    if(s==="ready"){const sh=$("#dShelf").value.trim();if(!sh){toast("Enter the pickup shelf first");$("#dShelf").focus();return}patch.shelf=sh}
+    JOBS.update(id,patch,JOB_ST[s]+(patch.shelf?" · "+patch.shelf:""));toast(id+" → "+JOB_ST[s]);renderAdmin()};
+  const pdf=$("#dPdf");if(pdf)pdf.onclick=e=>{e.stopPropagation();jobPDF(j).save(j.id+".pdf")};
+  const cn=$("#dCancel");if(cn)cn.onclick=e=>{e.stopPropagation();
+    if(cn.dataset.armed){JOBS.update(id,{status:"cancelled"},"Cancelled");toast(id+" cancelled");renderAdmin()}
+    else{cn.dataset.armed="1";cn.textContent="Tap again to cancel";setTimeout(()=>{if(cn.isConnected){delete cn.dataset.armed;cn.textContent="Cancel job"}},3000)}};
+  $("#admin").querySelectorAll(".jdet input,.jdet button").forEach(el=>el.addEventListener("click",e=>e.stopPropagation()));
+}
+function downloadCSV(list){
+  const cols=[["Job ID",j=>j.id],["Created",j=>new Date(j.created).toISOString()],["Status",j=>JOB_ST[j.status]],["Name",j=>j.user.name],["Roll number",j=>j.user.roll],["Email",j=>j.user.email],["Type",j=>j.user.role==="student"?"IITH":"External"],
+    ["Machine",j=>j.machine.code+" "+j.machine.name],["File",j=>j.file],["File link",j=>j.link],["Settings",j=>j.settings.map(s=>s.join(": ")).join("; ")],["Job time (h)",j=>j.hours.toFixed(2)],["Material (g)",j=>Math.round(j.grams)],
+    ["Base cost (Rs)",j=>Math.round(j.base)],["Multiplier",j=>j.mult],["Amount (Rs)",j=>j.total],["Transaction ID",j=>j.txn],["Verified by",j=>j.verifiedBy||""],["Verified at",j=>j.verifiedAt?new Date(j.verifiedAt).toISOString():""],["Shelf",j=>j.shelf],["Notes",j=>j.note]];
+  const q=v=>{v=String(v??"");return /[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v};
+  const csv="﻿"+[cols.map(c=>q(c[0])).join(","),...list.map(j=>cols.map(c=>q(c[1](j))).join(","))].join("\r\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+  a.download=`comet-jobs-${iso(new Date())}.csv`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+}
 
 /* ============================================================
    SIGN IN
@@ -1956,7 +2017,7 @@ function closeLogin(){$("#login").classList.remove("on")}
 $("#lopts").onclick=e=>{const b=e.target.closest(".lopt");if(!b)return;lRole=b.dataset.role;
   if(lRole==="guest"){S.user={role:"guest",name:"Guest"};save();paintUser();closeLogin();toast("Browsing as a guest");return}
   $("#lopts").classList.add("hide");$("#lform").classList.remove("hide");
-  $("#lemailLbl").textContent=lRole==="student"?"Institute email":"Google account email";
+  $("#lemailLbl").textContent=lRole==="student"?"IITH email (any @…iith.ac.in)":"Google account email";
   $("#lemail").placeholder=lRole==="student"?"cs22btech11001@iith.ac.in":"you@gmail.com";
   $("#lrollWrap").classList.toggle("hide",lRole!=="student");$("#lname").focus()};
 $("#lemail").addEventListener("input",e=>{if(lRole==="student"){const m=e.target.value.match(/^([^@]+)@/);if(m&&!$("#lroll").dataset.touched)$("#lroll").value=m[1].toUpperCase()}});
@@ -1969,7 +2030,8 @@ $("#lform").onsubmit=e=>{e.preventDefault();
   const n=$("#lname").value.trim(),em=$("#lemail").value.trim().toLowerCase(),err=$("#lerr");
   if(!n){err.textContent="Enter your name.";$("#lname").focus();return}
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){err.textContent="Enter a valid email address.";$("#lemail").focus();return}
-  if(lRole==="student"&&!/@([a-z0-9-]+\.)?iith\.ac\.in$/.test(em)){err.textContent="Student sign-in needs an @iith.ac.in email. From outside IITH? Go back and choose that option.";$("#lemail").focus();return}
+  if(lRole==="student"&&!IITH_RE.test(em)){err.textContent="IITH sign-in needs an IITH email, such as name@iith.ac.in or name@coe.iith.ac.in. From outside IITH? Go back and choose that option.";$("#lemail").focus();return}
+  if(lRole==="external"&&IITH_RE.test(em)){err.textContent="That's an IITH email. Go back and choose IIT Hyderabad student or staff to get the IITH rate.";$("#lemail").focus();return}
   S.user={role:lRole,name:n,email:em,roll:lRole==="student"?($("#lroll").value.trim()||em.split("@")[0]).toUpperCase():""};
   save();paintUser();closeLogin();toast("Signed in as "+n.split(" ")[0]);
   if(E&&!E.userSet)E.user=lRole==="external"?"external":"student";
@@ -1978,13 +2040,13 @@ $("#lform").onsubmit=e=>{e.preventDefault();
 let armOut=0;
 $("#who").onclick=()=>{
   if(!signedIn()){openLogin();return}
-  if(Date.now()-armOut<3000){S.user=null;save();paintUser();toast("Signed out");if(current==="dash"||current==="train")go("home");return}
+  if(Date.now()-armOut<3000){S.user=null;save();paintUser();toast("Signed out");if(current==="dash"||current==="admin")go("home");return}
   armOut=Date.now();$("#whoTxt").textContent="Tap again to sign out";setTimeout(paintUser,3000)};
 function paintUser(){
   const u=S.user,on=signedIn();
   $("#av").textContent=on?u.name.trim()[0].toUpperCase():"?";
   $("#whoTxt").textContent=on?(u.role==="student"?u.roll||u.email:u.email):"Sign in";
-  const r=$("#whoRole");r.textContent=on?(u.role==="student"?"IITH":"External"):"Guest";r.className="role "+(on?u.role:"");
+  const r=$("#whoRole");r.textContent=on?(isAdmin()?"Admin":u.role==="student"?"IITH":"External"):"Guest";r.className="role "+(on?u.role:"");
   refreshLocks();
 }
 
@@ -1994,10 +2056,14 @@ function paintUser(){
 $("#goWiz").onclick=()=>{wStep=0;wAns=[];renderWiz();$("#wizSec").scrollIntoView({behavior:"smooth",block:"start"})};
 $("#jFind").onclick=()=>$("#goWiz").click();
 load();if(!S.progress)S.progress={};if(!S.bookings)S.bookings=[];
+if(S.user&&S.user.role==="guest")S.user=null; // old guest sign-ins from before the guest option was removed
+document.querySelectorAll("[data-desk]").forEach(el=>el.textContent=DESK);
 paintUser();renderTicker();renderWiz();
 if(window.THREE){initHero();initThumbs();}
 else document.querySelectorAll("canvas").forEach(c=>c.style.display="none");
-const h0=(location.hash||"").slice(1);if(views.includes(h0)&&h0!=="detail"&&h0!=="train")go(h0);
+// const h0=(location.hash||"").slice(1);if(views.includes(h0)&&h0!=="detail"&&h0!=="train")go(h0);
+const [h0,h1]=(location.hash||"").slice(1).split("/");
+if(h0==="detail"&&MACHINES[h1])go("detail",h1);else if(views.includes(h0)&&h0!=="detail")go(h0);
 </script>
 
 </body></html>

@@ -15,6 +15,10 @@ Student portal for **Comet Center**, the fabrication and prototyping lab at IIT 
 - **Booking:** pick a machine, day and hourly slots.
 - **My passes:** your bookings, training progress and issued passes.
 
+## Changing content (no coding needed)
+
+Machine details, SOP links, videos, prices, admin emails, the UPI ID and desk hours all live in the [`config`](config) folder. Edit them on GitHub in your browser. [`config/README.md`](config/README.md) explains how, step by step. Every change is checked automatically, and a mistake never reaches the live site.
+
 ## Giving feedback
 
 Open an issue on this repo, or send your notes to the lab team. Screenshots help.
