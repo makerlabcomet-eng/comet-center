@@ -1,0 +1,14 @@
+{
+  "name": "comet-center",
+  "private": true,
+  "description": "Comet Center student portal, IIT Hyderabad",
+  "scripts": {
+    "check": "node tools/check-config.js",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-comet \"node --test tests/\"",
+    "emulators": "firebase emulators:start --only auth,firestore --project demo-comet"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "3.0.4",
+    "firebase": "10.14.1"
+  }
+}

@@ -4,20 +4,44 @@ Student portal for **Comet Center**, the fabrication and prototyping lab at IIT 
 
 **Live preview:** https://makerlabcomet-eng.github.io/comet-center/
 
-> This is an early prototype shared for feedback. Sign-in, bookings, passes and training progress are saved only in your own browser, and booked slots from other people are example data. Material rates are placeholders.
+> This is an early version shared for feedback. Material rates and the UPI payment details are placeholders.
 
 ## What it does
 
 - **Find a machine:** a four-question finder recommends the right machine for your job.
-- **Machine bay:** all 15 machines with live 3D models, specs and safety rules.
-- **Training:** short lessons and a quiz for each machine. Passing issues an access pass.
+- **Machine bay:** all 15 machines with live 3D models, specs, safety rules, SOP folders and videos.
 - **Cost estimator:** drop an STL, OBJ or DXF file to estimate time, material and price. The file never leaves your browser.
-- **Booking:** pick a machine, day and hourly slots.
-- **My passes:** your bookings, training progress and issued passes.
+- **Generate your job:** turns an estimate into a PDF job sheet with a UPI payment QR. Students pay at the job desk.
+- **My jobs:** each student's job sheets and their status, live.
+- **Admin:** the job desk for staff: record payments, move jobs through printing, export to Excel, manage staff access.
+- Training/quiz/passes and slot booking are built but switched off for now (commented out in `index.html`).
 
 ## Changing content (no coding needed)
 
-Machine details, SOP links, videos, prices, admin emails, the UPI ID and desk hours all live in the [`config`](config) folder. Edit them on GitHub in your browser. [`config/README.md`](config/README.md) explains how, step by step. Every change is checked automatically, and a mistake never reaches the live site.
+Machine details, SOP links, videos, prices, the UPI ID and desk hours all live in the [`config`](config) folder. Edit them on GitHub in your browser. [`config/README.md`](config/README.md) explains how, step by step. Every change is checked automatically, and a mistake never reaches the live site.
+
+## Backend (Firebase, free Spark plan)
+
+- **Sign-in:** Google accounts through Firebase Authentication. Any `…iith.ac.in` email gets the IITH rate; any other Google account is External.
+- **Database:** Cloud Firestore (`comet-center-iith`, Mumbai). It holds `users`, `jobs` (generated job sheets) and `config/admins` (the staff list).
+- **Who can do what** is decided by [`firestore.rules`](firestore.rules), not by the website. Students see only their own jobs; only staff can mark a job paid or change its status. `makerlab.comet@coe.iith.ac.in` is always an admin and adds TAs from the Admin page.
+- The Firebase web keys in `config/firebase.js` are public by design. The rules protect the data.
+
+> ⚠ **Never upgrade the project to the Blaze (pay-as-you-go) plan or add a billing account.** Everything here runs on the free Spark plan. Cloud Storage and Cloud Functions need Blaze, so the site doesn't use them: students share their files as Google Drive links.
+
+**Deploying rule changes** (lab account): `firebase deploy --only firestore:rules`
+
+**Testing locally:**
+
+```
+npm install
+npm run emulators          # Firebase emulators for sign-in and the database
+npx http-server . -p 8080  # in another terminal
+```
+
+Open http://127.0.0.1:8080/?emulator=1 to use the site against the emulators instead of the live database. Run the security rule tests with `npm run test:rules`.
+
+**Known limit:** the quiz and price checks run in the browser. The job price shown on the sheet is confirmed by staff at the desk before payment.
 
 ## Giving feedback
 

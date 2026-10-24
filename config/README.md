@@ -4,7 +4,8 @@ Everything that changes over time is in this `config` folder. You can edit it on
 
 | File | What's in it |
 |---|---|
-| [`settings.js`](settings.js) | Admin emails, the UPI ID for payments, job desk hours, the IITH email domain, booking hours |
+| [`settings.js`](settings.js) | The UPI ID for payments, job desk hours, the IITH email domain, booking hours |
+| [`firebase.js`](firebase.js) | The connection to the lab's Firebase project. Leave it alone unless the project changes. |
 | [`machines.js`](machines.js) | Every machine: name, specs, rules, safety steps, **SOP folder link**, **videos** |
 | [`pricing.js`](pricing.js) | Material prices per kg, multipliers by job length, consumable costs, machine sizes for the cost estimator |
 
@@ -47,14 +48,7 @@ To add a video, copy a whole `{ youtube: ... },` line and paste it underneath, t
 
 **Mark a machine out of service.** In `machines.js`, change `status: "up",` to `status: "down",`. Use `"busy"` for In use.
 
-**Add an admin (TA).** In `settings.js`:
-
-```js
-admins: [
-  "makerlab.comet@coe.iith.ac.in",
-  "new.ta@iith.ac.in",
-],
-```
+**Add an admin (TA).** You don't edit a file for this. Sign in to the website as `makerlab.comet@coe.iith.ac.in`, open **Admin**, scroll to **Staff access**, type the TA's Google account and click **Add staff**. Remove them the same way when they leave.
 
 **Change a material price.** In `pricing.js`, under `materials`, change the `pricePerKg` number.
 

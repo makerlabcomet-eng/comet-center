@@ -32,8 +32,7 @@ const strList = (f, where, v) => { if (!Array.isArray(v) || v.some(x => !isStr(x
 const S = load("settings.js", "COMET_SETTINGS");
 if (S) {
   const f = "settings.js";
-  if (!Array.isArray(S.admins) || !S.admins.length) err(f, "admins must list at least one email");
-  else S.admins.forEach(e => { if (!isStr(e) || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) err(f, `admins: "${e}" isn't a valid email`) });
+  if (S.admins) warn(f, "admins is no longer used here. Manage staff on the website's Admin page → Staff access.");
   if (!isStr(S.iithDomain) || !/^[a-z0-9.-]+\.[a-z]+$/i.test(S.iithDomain)) err(f, "iithDomain must look like \"iith.ac.in\"");
   const p = S.payment || {};
   if (!isStr(p.upiId) || !p.upiId.includes("@")) err(f, "payment.upiId must look like \"name@bank\"");

@@ -14,23 +14,17 @@
 window.COMET_SETTINGS = {
 
   /* -------------------------------------------------------------------
-     ADMINS
-     Google accounts that can open the Admin page (job desk, payments,
-     job status). One email per line, in "quotes", each followed by a comma.
-     Example:
-       admins: [
-         "makerlab.comet@coe.iith.ac.in",
-         "ta.name@iith.ac.in",
-       ],
+     ADMINS are not set here. Sign in to the website as
+     makerlab.comet@coe.iith.ac.in (always an admin), open Admin, and use
+     "Staff access" to add or remove TAs. The database enforces it.
      ------------------------------------------------------------------- */
-  admins: [
-    "makerlab.comet@coe.iith.ac.in",
-  ],
 
   /* -------------------------------------------------------------------
      IITH ACCOUNTS
      Emails ending in this domain, or any part of it (coe.iith.ac.in,
      cse.iith.ac.in …), count as IITH and get the IITH price.
+     If you ever change this, firestore.rules must change too (ask a
+     developer), or IITH users will be blocked from saving jobs.
      ------------------------------------------------------------------- */
   iithDomain: "iith.ac.in",
 

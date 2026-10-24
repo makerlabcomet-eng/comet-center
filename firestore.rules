@@ -1,0 +1,101 @@
+rules_version = '2';
+
+// Security rules for Comet Center. These are the real access control: the
+// website's own checks are only for a friendly UI. Deploy with:
+//   firebase deploy --only firestore:rules
+// Test with:  npm run test:rules
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helpers ----------
+    function signedIn() { return request.auth != null; }
+    function email() { return request.auth.token.email.lower(); }
+    function verified() { return signedIn() && request.auth.token.email_verified == true; }
+    // IITH = iith.ac.in or any subdomain (coe.iith.ac.in, cse.iith.ac.in …)
+    function isIITH() { return email().matches('.*@([a-z0-9-]+[.])*iith[.]ac[.]in'); }
+    function myRole() { return isIITH() ? 'student' : 'external'; }
+    // The lab account is always an admin. Other admins are listed in config/admins,
+    // which admins edit from the website's Admin page.
+    function isAdmin() {
+      return verified() && (
+        email() == 'makerlab.comet@coe.iith.ac.in' ||
+        (exists(/databases/$(database)/documents/config/admins) &&
+         email() in get(/databases/$(database)/documents/config/admins).data.emails)
+      );
+    }
+    function str(v, max) { return v is string && v.size() <= max; }
+
+    // ---------- users ----------
+    match /users/{uid} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow create: if verified() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['name', 'email', 'role', 'roll', 'createdAt'])
+        && request.resource.data.email == email()
+        && request.resource.data.role == myRole()
+        && str(request.resource.data.name, 80) && request.resource.data.name.size() > 0
+        && str(request.resource.data.roll, 30);
+      allow update: if verified() && request.auth.uid == uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'roll'])
+        && str(request.resource.data.name, 80) && request.resource.data.name.size() > 0
+        && str(request.resource.data.roll, 30);
+    }
+
+    // ---------- jobs (generated from the cost estimator) ----------
+    match /jobs/{jobId} {
+      allow read: if (signedIn() && resource.data.uid == request.auth.uid) || isAdmin();
+      allow create: if verified()
+        && request.resource.data.id == jobId
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'awaiting'
+        && request.resource.data.txn == ''
+        && request.resource.data.user.email == email()
+        && request.resource.data.user.role == myRole()
+        && request.resource.data.total is number
+        && str(request.resource.data.img, 200000)
+        && str(request.resource.data.link, 500)
+        && str(request.resource.data.note, 300);
+      // Only staff change a job: payment, status, shelf.
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'txn', 'verifiedBy', 'verifiedAt', 'shelf', 'log'])
+        && request.resource.data.status in ['awaiting', 'verified', 'printing', 'ready', 'collected', 'cancelled'];
+      allow delete: if false;
+    }
+
+    // ---------- bookings: one document per machine per hour ----------
+    // ID = <machine>_<YYYY-MM-DD>_<hour>, so two people can't book the same slot.
+    // No names or emails here: everyone can read bookings to see free slots.
+    match /bookings/{slotId} {
+      allow read: if true;
+      allow create: if verified()
+        && request.resource.data.keys().hasOnly(['uid', 'role', 'machine', 'date', 'hour', 'start', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.role == myRole()
+        && request.resource.data.hour is int
+        && request.resource.data.hour >= 0 && request.resource.data.hour <= 23
+        && slotId == request.resource.data.machine + '_' + request.resource.data.date + '_' + string(request.resource.data.hour)
+        && request.resource.data.start is timestamp
+        && request.resource.data.start > request.time
+        && request.resource.data.start < request.time + duration.value(15, 'd');
+      // Students cancel their own future slots. Staff can clear any slot.
+      allow delete: if (verified() && resource.data.uid == request.auth.uid && resource.data.start > request.time)
+        || isAdmin();
+      allow update: if false;
+    }
+
+    // ---------- config ----------
+    match /config/admins {
+      allow read, write: if isAdmin();
+    }
+    match /config/{doc} {
+      allow read: if doc != 'admins';
+      allow write: if isAdmin();
+    }
+
+    // Everything else is closed.
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

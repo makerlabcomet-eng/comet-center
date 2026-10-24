@@ -386,7 +386,7 @@ textarea{width:100%;padding:11px 13px;background:var(--ink);border:1px solid var
    <button data-go="home" class="on">Start here</button>
    <button data-go="bay">Machines</button>
    <button data-go="cost">Cost estimator</button>
-   <button data-go="book">Book a slot</button>
+   <!-- Booking switched off for now (kept for later): <button data-go="book">Book a slot</button> -->
    <button data-go="dash">My jobs</button>
    <button data-go="admin" id="navAdmin" class="hide">Admin</button>
   </nav>
@@ -500,7 +500,8 @@ textarea{width:100%;padding:11px 13px;background:var(--ink);border:1px solid var
 </div>
 
 <!-- ============ BOOK ============ -->
-<div id="v-book" class="hide"><section class="wrap" id="book"></section></div>
+<!-- Booking switched off for now (kept for later):
+<div id="v-book" class="hide"><section class="wrap" id="book"></section></div> -->
 
 <!-- ============ DASHBOARD ============ -->
 <div id="v-dash" class="hide"><section class="wrap" id="dash"></section></div>
@@ -534,13 +535,15 @@ textarea{width:100%;padding:11px 13px;background:var(--ink);border:1px solid var
   <!-- Guest option removed: all content is open without sign-in.
   <button class="lopt" data-role="guest"><span class="gl g2">→</span><span><b>Just exploring</b><small>Browse as a guest, no sign-in</small></span></button> -->
  </div>
+ <div class="formerr" id="lerr" style="margin-top:14px"></div>
+ <!-- Shown once, after the first Google sign-in -->
  <form id="lform" class="hide" novalidate>
-  <div class="note" style="margin-bottom:16px"><strong>Preview:</strong> Google sign-in switches on when the site goes live. Type your details for now.</div>
-  <label for="lname">Full name</label><input id="lname" autocomplete="name" placeholder="Ananya Rao">
-  <label for="lemail" id="lemailLbl">Institute email</label><input id="lemail" type="email" autocomplete="email" placeholder="cs22btech11001@iith.ac.in">
-  <div id="lrollWrap"><label for="lroll">Roll number</label><input id="lroll" placeholder="CS22BTECH11001"></div>
-  <div class="formerr" id="lerr"></div>
-  <div class="cta-row"><button class="btn" type="submit">Continue</button><button class="btn ghost" type="button" id="lback">Back</button></div>
+  <div class="note" style="margin-bottom:16px"><strong>One last step.</strong> Check your details. Staff use them to match your job sheet at the desk.</div>
+  <label for="lname">Full name</label><input id="lname" autocomplete="name" maxlength="80" placeholder="Ananya Rao">
+  <label for="lemail">Google account</label><input id="lemail" type="email" disabled>
+  <div id="lrollWrap"><label for="lroll">Roll number</label><input id="lroll" maxlength="30" placeholder="CS22BTECH11001"></div>
+  <div class="formerr" id="lerr2"></div>
+  <div class="cta-row"><button class="btn" type="submit">Save and continue</button></div>
  </form>
  <button class="linkbtn" id="lclose" style="margin-top:18px">Close</button>
 </div></div>
@@ -562,6 +565,9 @@ addEventListener("error",e=>{
 <script src="config/settings.js"></script>
 <script src="config/machines.js"></script>
 <script src="config/pricing.js"></script>
+<script src="config/firebase.js"></script>
+<!-- Firebase sign-in and database (exposes window.Backend) -->
+<script type="module" src="js/backend.js"></script>
 <script>
 /* ============================================================
    SETTINGS, MACHINES AND PRICES
@@ -600,7 +606,6 @@ Object.entries(CP.estimator).forEach(([k,c])=>{
    .forEach(([a,b])=>{if(c[b]!=null)e[a]=c[b]});
   EST[k]=e;
 });
-const ADMINS=(CFG.admins||[]).map(e=>String(e).trim().toLowerCase());
 const IITH_RE=new RegExp("@([a-z0-9-]+\\.)*"+String(CFG.iithDomain||"iith.ac.in").toLowerCase().replace(/\./g,"\\.")+"$");
 const PAY={upi:CFG.payment.upiId,payee:CFG.payment.payeeName,placeholder:CFG.payment.placeholder!==false};
 const DESK=CFG.jobDesk.hours;
@@ -662,39 +667,48 @@ function decide(a){
 /* ============================================================
    STATE
 ============================================================ */
-let S={user:null,progress:{},bookings:[]};
+// S.user comes from Firebase sign-in (see SIGN IN). Only S.progress is kept in this browser.
+let S={user:null,progress:{}};
 const KEY="cometcenter:student:v2";
-function load(){try{const v=localStorage.getItem(KEY);if(v)S=Object.assign(S,JSON.parse(v));}catch(e){}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function load(){try{const v=localStorage.getItem(KEY);if(v)S.progress=JSON.parse(v).progress||{};}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({progress:S.progress}));}catch(e){}}
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const tierName={A:"Self run",B:"Induction first",C:"Staff run only"};
 function prog(k){return S.progress[k]||{lessons:[],passed:false,cert:null}}
 function passed(k){return prog(k).passed}
-function signedIn(){return S.user&&S.user.role!=="guest"}
+function signedIn(){return !!(S.user&&S.user.uid)}
 function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),2400)}
 
 /* ============================================================
    LAB CONFIG  (the values are in the config folder)
 ============================================================ */
-// Admins, IITH domain, payment details, SOPs and videos now come from the config folder
+// IITH domain, payment details, SOPs and videos come from the config folder
 // (see "SETTINGS, MACHINES AND PRICES" near the top of this script).
-const isAdmin=()=>signedIn()&&ADMINS.includes((S.user.email||"").toLowerCase());
+// Admin status comes from Firebase: the lab account, plus the staff list on the Admin page.
+const isAdmin=()=>signedIn()&&!!S.user.isAdmin;
 
 /* ============================================================
-   JOBS  (preview store: this browser only. Swap for Firestore later.)
+   JOBS  (stored in Firestore, kept live in these lists)
 ============================================================ */
 const JOB_ST={awaiting:"Awaiting payment",verified:"Paid · verified",printing:"In progress",ready:"Ready to collect",collected:"Collected",cancelled:"Cancelled"};
 const JOB_FLOW=["awaiting","verified","printing","ready","collected"];
-const JKEY="cometcenter:jobs:v1";
 const JOBS={
-  all(){try{return JSON.parse(localStorage.getItem(JKEY)||"[]")}catch(e){return []}},
-  save(list){try{localStorage.setItem(JKEY,JSON.stringify(list));return true}catch(e){toast("Couldn't save: browser storage is full or blocked");return false}},
-  get(id){return this.all().find(j=>j.id===id)},
-  add(j){const l=this.all();l.unshift(j);return this.save(l)},
-  update(id,patch,logText){const l=this.all(),j=l.find(x=>x.id===id);if(!j)return null;
-    Object.assign(j,patch);j.log=j.log||[];j.log.push({at:Date.now(),by:S.user?S.user.email:"",t:logText});this.save(l);return j}
+  mine:[],all:[],loadedMine:false,loadedAll:false,
+  get(id){return this.all.find(j=>j.id===id)||this.mine.find(j=>j.id===id)},
+  add(j){return Backend.createJob(j)},
+  update(id,patch,logText){return Backend.updateJob(id,patch,{at:Date.now(),by:S.user.email,t:logText})}
 };
+// Plain-language messages for backend errors
+function backendMsg(e){
+  const c=e&&e.code||"";
+  if(c.includes("permission-denied"))return "You don't have permission to do that. Try signing out and in again.";
+  if(c.includes("unavailable")||c.includes("network"))return "Can't reach the server. Check your internet connection and try again.";
+  if(c.includes("popup-closed")||c.includes("cancelled-popup"))return "Sign-in was cancelled.";
+  if(c.includes("popup-blocked"))return "Your browser blocked the sign-in window. Allow pop-ups for this site and try again.";
+  if(c.includes("unauthorized-domain"))return "Sign-in isn't allowed on this web address yet. Lab staff need to add it in Firebase.";
+  return (e&&e.message)||"Something went wrong. Try again.";
+}
 function newJobId(){const d=new Date(),p=n=>String(n).padStart(2,"0");
   return `CMT-${String(d.getFullYear()).slice(2)}${p(d.getMonth()+1)}${p(d.getDate())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`}
 const fmtDT=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
@@ -1029,12 +1043,14 @@ function initViewer(cv,key){
 /* ============================================================
    NAVIGATION
 ============================================================ */
-const views=["home","bay","detail",/*"train",*/"cost","book","dash","admin"];
+const views=["home","bay","detail",/*"train",*/"cost",/*"book",*/"dash","admin"];
 let current="home";
 function go(v,arg){
   if(v==="train"){v="detail"} // training removed for now: send old links to the machine page
+  if(v==="book"){v="cost";arg=arg&&arg.k} // booking switched off for now: send old links to the estimator
   if((v==="dash"/*||v==="train"*/)&&!signedIn()){openLogin(()=>go(v,arg));return}
   if(v==="admin"&&!isAdmin()){if(!signedIn()){openLogin(()=>go(v,arg));return}toast("The admin page is for lab staff only");v="home"}
+  // if(v!=="book")stopSlots(); // booking switched off for now
   current=v;
   views.forEach(x=>$("#v-"+x).classList.toggle("hide",x!==v));
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===v||(v==="detail"||v==="train")&&b.dataset.go==="bay"));
@@ -1045,7 +1061,7 @@ function go(v,arg){
   if(v==="admin")renderAdmin();
   if(v==="bay")renderBay();
   if(v==="cost")openCost(arg);
-  if(v==="book")renderBook(arg);
+  // if(v==="book")renderBook(arg); // booking switched off for now
   try{history.replaceState(null,"","#"+v+(v==="detail"&&typeof arg==="string"?"/"+arg:""))}catch(e){}
 }
 document.addEventListener("click",e=>{
@@ -1159,7 +1175,7 @@ function renderDetail(k){
         ${""/* <button class="btn" data-go="train" data-arg="${A(k)}" style="justify-content:center">${p?"Review the module":"Start training · "+pr.lessons.length+"/"+m.lessons.length+" lessons"}</button> */}
         ${md.sop?`<a class="btn" href="${esc(md.sop)}" target="_blank" rel="noopener" style="justify-content:center">Open the SOP folder</a>`:`<button class="btn" disabled style="justify-content:center">SOP coming soon</button>`}
         ${EST[k]?`<button class="btn ghost" data-go="cost" data-arg="${A(k)}" style="justify-content:center">Estimate a job on this machine</button>`:""}
-        <button class="btn ghost" data-go="book" data-arg="${A({k})}" style="justify-content:center">Book a slot</button>
+        ${""/* Booking switched off for now: <button class="btn ghost" data-go="book" data-arg="${A({k})}" style="justify-content:center">Book a slot</button> */}
         </div>
       </div>
       <div class="panel"><h4>Videos</h4><div class="vids">${md.videos.length?md.videos.map(([id,t,by])=>`<a class="vid" href="https://www.youtube.com/watch?v=${esc(id)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none"><span class="play">▶</span><div><b>${esc(t)}</b><small>YouTube · ${esc(by)}</small></div><span class="linkbtn">Watch</span></a>`).join("")
@@ -1615,7 +1631,7 @@ function updateEstimate(){
      <div class="why2">${fmtR(R.base)} material and consumables × ${R.mult} · ${who}, job ${B.label.toLowerCase()}</div></div>
     <div class="cta-row">
      <button class="btn" id="eJob">Generate your job</button>
-     <button class="btn ghost" data-go="book" data-arg="${A({k:E.k,h:Math.max(1,Math.ceil(R.hours))})}">Book ${Math.max(1,Math.ceil(R.hours))} h on ${m.code}</button>
+     ${""/* Booking switched off for now: <button class="btn ghost" data-go="book" data-arg="${A({k:E.k,h:Math.max(1,Math.ceil(R.hours))})}">Book ${Math.max(1,Math.ceil(R.hours))} h on ${m.code}</button> */}
      <button class="btn ghost" id="eCopy">Copy quote</button>
     </div>
    </div>
@@ -1664,11 +1680,14 @@ $("#jmForm").onsubmit=e=>{e.preventDefault();
   const link=$("#jmLink").value.trim(),err=$("#jmErr");
   if(link&&!/^https:\/\/\S+$/.test(link)){err.textContent="Paste the full share link, starting with https://";$("#jmLink").focus();return}
   if(!window.jspdf||!window.qrcode){err.textContent="The PDF tools didn't load. Check your internet connection and reload the page.";return}
-  const job=snapshotJob(link,$("#jmNote").value.trim());
-  if(!JOBS.add(job))return;
-  $("#jobModal").classList.remove("on");$("#jmForm").reset();
-  try{jobPDF(job).save(job.id+".pdf");toast("Job "+job.id+" created · PDF downloaded")}
-  catch(x){console.error(x);toast("Job saved, but the PDF failed. Download it again from My jobs.")}
+  const job=snapshotJob(link,$("#jmNote").value.trim()),btn=$("#jmForm button[type=submit]");
+  btn.disabled=true;btn.textContent="Saving your job…";
+  JOBS.add(job).then(()=>{
+    $("#jobModal").classList.remove("on");$("#jmForm").reset();
+    try{jobPDF(job).save(job.id+".pdf");toast("Job "+job.id+" created · PDF downloaded")}
+    catch(x){console.error(x);toast("Job saved, but the PDF failed. Download it again from My jobs.")}
+  }).catch(x=>{console.error(x);err.textContent="Couldn't save your job. "+backendMsg(x)})
+    .finally(()=>{btn.disabled=false;btn.textContent="Generate job sheet"});
 };
 // Everything staff need, frozen at the moment the job is generated.
 function snapshotJob(link,note){
@@ -1810,11 +1829,24 @@ let B={k:"a1",day:0,sel:[],want:0};
 const BK=CFG.booking,HOURS=[];for(let h=BK.firstHour;h<=BK.lastHour;h++)HOURS.push(h);
 function dayDate(i){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+i);return d}
 const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-function exampleTaken(k,ds,h){let x=0;const s=k+ds+h;for(let i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))>>>0;return x%5===0||(MACHINES[k].status==="busy"&&x%3===0)}
+// Live slots for the machine and day on screen: {key, byHour: {hour: uid}, loaded}
+let SLOTS={key:"",byHour:{},loaded:false,unsub:null};
+function watchSlots(k,ds){
+  const key=k+"_"+ds;if(SLOTS.key===key&&SLOTS.unsub)return;
+  if(SLOTS.unsub)SLOTS.unsub();SLOTS={key,byHour:{},loaded:false,unsub:null};
+  if(!window.Backend||!Backend.ready)return;
+  SLOTS.unsub=Backend.watchSlots(k,ds,list=>{if(SLOTS.key!==key)return;SLOTS.byHour={};list.forEach(b=>SLOTS.byHour[b.hour]=b.uid);SLOTS.loaded=true;if(current==="book")renderBook()},
+    e=>{console.error(e);toast("Couldn't load bookings. "+backendMsg(e))});
+}
+function stopSlots(){if(SLOTS.unsub)SLOTS.unsub();SLOTS={key:"",byHour:{},loaded:false,unsub:null}}
+// function exampleTaken(k,ds,h){...} // fake bookings from the preview, replaced by Firestore
 function renderBook(arg){
   if(arg&&arg.k){if(arg.k!==B.k)B.sel=[];B.k=arg.k;B.want=arg.h||0}
   const m=MACHINES[B.k],days=[...Array(Math.max(1,BK.daysAhead))].map((_,i)=>dayDate(i)),ds=iso(days[B.day]);
-  const mine=S.bookings.filter(b=>b.k===B.k&&b.day===ds).flatMap(b=>b.hours);
+  watchSlots(B.k,ds);
+  const myUid=signedIn()?S.user.uid:null,mine=HOURS.filter(h=>SLOTS.byHour[h]&&SLOTS.byHour[h]===myUid);
+  const exampleTaken=(k,d,h)=>!!SLOTS.byHour[h]&&SLOTS.byHour[h]!==myUid;
+  B.sel=B.sel.filter(h=>!SLOTS.byHour[h]);
   const nowH=new Date().getHours();
   // const need=m.tier!=="C"&&!passed(B.k); // pass check removed for now
   $("#book").innerHTML=`
@@ -1829,7 +1861,8 @@ function renderBook(arg){
      <div class="days" id="bDays" style="grid-template-columns:repeat(${days.length},minmax(64px,1fr))">${days.map((d,i)=>`<button class="day ${i===B.day?"on":""}" data-i="${i}"><small>${i===0?"Today":d.toLocaleDateString("en-IN",{weekday:"short"})}</small><b>${d.getDate()}</b><small>${d.toLocaleDateString("en-IN",{month:"short"})}</small></button>`).join("")}</div>
      <div class="slots" id="bSlots">${HOURS.map(h=>{const past=B.day===0&&h<=nowH,isMine=mine.includes(h),taken=!isMine&&exampleTaken(B.k,ds,h),sel=B.sel.includes(h);
        return `<button class="slot ${taken?"taken":""} ${isMine?"mine":""} ${sel?"sel":""}" data-h="${h}" ${past||taken||isMine?"disabled":""}><b>${String(h).padStart(2,"0")}:00 – ${String(h+1).padStart(2,"0")}:00</b><small>${isMine?"Your booking":taken?"Booked":past?"Past":sel?"Selected":"Free"}</small></button>`}).join("")}</div>
-     <div class="legend"><span><i></i>Free</span><span><i style="border-color:var(--haz);background:color-mix(in srgb,var(--haz) 20%,transparent)"></i>Selected</span><span><i style="border-color:var(--ta)"></i>Yours</span><span><i style="background:repeating-linear-gradient(135deg,var(--ink2) 0 3px,var(--ink3) 3px 6px)"></i>Booked (example data)</span></div>
+     <div class="legend"><span><i></i>Free</span><span><i style="border-color:var(--haz);background:color-mix(in srgb,var(--haz) 20%,transparent)"></i>Selected</span><span><i style="border-color:var(--ta)"></i>Yours</span><span><i style="background:repeating-linear-gradient(135deg,var(--ink2) 0 3px,var(--ink3) 3px 6px)"></i>Booked</span></div>
+     ${!SLOTS.loaded&&window.Backend&&Backend.ready?`<p style="font-size:12px;color:var(--faint);margin-top:8px">Loading live availability…</p>`:""}
     </div>
     <div class="stack">
      <div class="panel">
@@ -1842,7 +1875,7 @@ function renderBook(arg){
       ${m.tier==="B"?`<div class="note" style="margin-top:12px"><strong>First time on this machine?</strong> Watch its videos first. Staff induct you at your first slot.</div>`:""}
       ${m.tier==="C"?`<div class="note" style="margin-top:12px"><strong>Staff run.</strong> This books a job slot with staff. Bring your file to the front desk.</div>`:""}
       <button class="btn" id="bConfirm" style="width:100%;justify-content:center;margin-top:16px" ${B.sel.length?"":"disabled"}>${signedIn()?"Confirm booking":"Sign in to book"}</button>
-      <p style="font-size:12px;color:var(--faint);margin-top:10px">Bookings are saved on this device until the shared booking calendar is connected.</p>
+      <p style="font-size:12px;color:var(--faint);margin-top:10px">You can cancel from My jobs until the slot starts.</p>
      </div>
      ${EST[B.k]?`<button class="btn ghost" data-go="cost" data-arg="${A(B.k)}" style="justify-content:center">Estimate the job first</button>`:""}
     </div>
@@ -1852,8 +1885,9 @@ function renderBook(arg){
   $("#bSlots").onclick=e=>{const b=e.target.closest(".slot");if(!b||b.disabled)return;const h=+b.dataset.h;B.sel=B.sel.includes(h)?B.sel.filter(x=>x!==h):[...B.sel,h];renderBook()};
   $("#bConfirm").onclick=()=>{
     if(!signedIn()){openLogin(()=>renderBook());return}
-    S.bookings.push({id:Date.now(),k:B.k,day:ds,hours:[...B.sel].sort((a,b)=>a-b)});save();
-    toast(`Booked ${B.sel.length} h on ${m.code}`);B.sel=[];B.want=0;renderBook()};
+    const hrs=[...B.sel].sort((a,b)=>a-b),btn=$("#bConfirm");btn.disabled=true;btn.textContent="Booking…";
+    Backend.book(B.k,ds,hrs).then(()=>{toast(`Booked ${hrs.length} h on ${m.code}`);B.sel=[];B.want=0;renderBook()})
+      .catch(e=>{console.error(e);toast(String(e.code||"").includes("permission")?"Someone just booked one of those hours. Pick another slot.":"Couldn't book. "+backendMsg(e));B.sel=[];renderBook()})};
 }
 
 /* ============================================================
@@ -1893,39 +1927,52 @@ PASSES-DASH-END */
    MY JOBS  (student view)
 ============================================================ */
 const pill=s=>`<span class="pill st-${s}">${JOB_ST[s]}</span>`;
+// My bookings, live from Firestore: [{id, machine, date, hour, start}]
+let MYBK={list:[],loaded:false};
 function bookingsHTML(){
-  const today=iso(dayDate(0));
-  const bk=S.bookings.filter(b=>b.day>=today).sort((a,b)=>a.day<b.day?-1:a.day>b.day?1:a.hours[0]-b.hours[0]);
-  return bk.length?bk.map(b=>{const m=MACHINES[b.k],d=new Date(b.day+"T00:00");return `<div class="brow"><span class="tier t${m.tier}">${m.code}</span><b style="flex:1;min-width:160px">${m.name}</b><span class="mono">${d.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"})} · ${b.hours.map(h=>h+":00").join(", ")}</span><button class="linkbtn" data-cancel="${b.id}">Cancel</button></div>`}).join("")
+  const today=iso(dayDate(0)),groups={};
+  MYBK.list.filter(b=>b.date>=today).forEach(b=>{const g=b.machine+"|"+b.date;(groups[g]=groups[g]||{k:b.machine,day:b.date,hours:[],ids:[]});groups[g].hours.push(b.hour);groups[g].ids.push(b.id)});
+  const bk=Object.values(groups).sort((a,b)=>a.day<b.day?-1:a.day>b.day?1:Math.min(...a.hours)-Math.min(...b.hours));
+  if(!MYBK.loaded)return `<div class="empty">Loading your bookings…</div>`;
+  return bk.length?bk.map(b=>{const m=MACHINES[b.k]||{code:b.k,name:b.k,tier:"A"},d=new Date(b.day+"T00:00");b.hours.sort((x,y)=>x-y);return `<div class="brow"><span class="tier t${m.tier}">${m.code}</span><b style="flex:1;min-width:160px">${m.name}</b><span class="mono">${d.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"})} · ${b.hours.map(h=>h+":00").join(", ")}</span><button class="linkbtn" data-cancel="${b.ids.join(",")}">Cancel</button></div>`}).join("")
     :`<div class="empty">No bookings yet.<br><button class="btn sm" data-go="book" style="margin-top:14px">Book a slot</button></div>`;
 }
 function renderDash(){
-  const u=S.user,mine=JOBS.all().filter(j=>j.user.email===u.email);
+  const u=S.user,mine=JOBS.mine;
   $("#dash").innerHTML=`
    <div class="shead"><span class="tag">${esc(u.role==="student"?(u.roll||"").toUpperCase():u.email)} · ${u.role==="student"?"IITH":"External"}</span>
    <h2>${esc(u.name.split(" ")[0])}'s jobs</h2>
-   <p>${mine.length?`You have ${mine.length} job${mine.length>1?"s":""}. Bring a job sheet to the desk (${esc(DESK)}) to pay and hand it over.`:"No jobs yet. Price your part in the cost estimator, then press Generate your job."}</p></div>
+   <p>${!JOBS.loadedMine?"Loading your jobs…":mine.length?`You have ${mine.length} job${mine.length>1?"s":""}. Bring a job sheet to the desk (${esc(DESK)}) to pay and hand it over.`:"No jobs yet. Price your part in the cost estimator, then press Generate your job."}</p></div>
    <h4 class="tag">Jobs</h4>
    <div class="blist" style="margin-bottom:36px">${mine.length?mine.map(j=>`<div class="brow">
-     <span class="mono" style="color:var(--tx)">${j.id}</span>${pill(j.status)}
+     <span class="mono" style="color:var(--tx)">${esc(j.id)}</span>${pill(j.status)}
      <b style="flex:1;min-width:160px">${j.machine.code} · ${esc(j.machine.name)}<small style="display:block;font-weight:400;color:var(--faint);font-size:12.5px">${esc(j.file)} · ${fmtR(j.total)} · ${fmtDT(j.created)}${j.status==="ready"&&j.shelf?` · collect from ${esc(j.shelf)}`:""}</small></b>
-     <button class="linkbtn" data-pdf="${j.id}">Download job sheet</button></div>`).join("")
-     :`<div class="empty">Your generated jobs appear here with their status.<br><button class="btn sm" data-go="cost" style="margin-top:14px">Open the cost estimator</button></div>`}</div>
+     <button class="linkbtn" data-pdf="${esc(j.id)}">Download job sheet</button></div>`).join("")
+     :`<div class="empty">${JOBS.loadedMine?`Your generated jobs appear here with their status.<br><button class="btn sm" data-go="cost" style="margin-top:14px">Open the cost estimator</button>`:"Loading…"}</div>`}</div>
+   ${""/* Booking switched off for now:
    <h4 class="tag">Upcoming bookings</h4>
-   <div class="blist" style="margin-bottom:36px">${bookingsHTML()}</div>`;
+   <div class="blist" style="margin-bottom:36px">${bookingsHTML()}</div> */}`;
   $("#dash").querySelectorAll("[data-pdf]").forEach(b=>b.onclick=()=>{const j=JOBS.get(b.dataset.pdf);if(j)jobPDF(j).save(j.id+".pdf")});
   $("#dash").querySelectorAll("[data-cancel]").forEach(b=>b.onclick=()=>{
-    if(b.dataset.armed){S.bookings=S.bookings.filter(x=>String(x.id)!==b.dataset.cancel);save();renderDash();toast("Booking cancelled")}
+    if(b.dataset.armed){b.disabled=true;b.textContent="Cancelling…";
+      Backend.cancelBookings(b.dataset.cancel.split(",")).then(()=>toast("Booking cancelled"),e=>{console.error(e);toast(String(e.code||"").includes("permission")?"That slot has already started, so it can't be cancelled.":"Couldn't cancel. "+backendMsg(e));renderDash()})}
     else{b.dataset.armed="1";b.textContent="Tap again to cancel";setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent="Cancel"}},3000)}});
 }
 
 /* ============================================================
-   ADMIN  (lab staff: emails in ADMINS)
+   ADMIN  (lab staff: the lab account + the staff list in Firestore)
 ============================================================ */
-let AD={f:"awaiting",q:"",open:null};
+let AD={f:"awaiting",q:"",open:null,staff:null,pending:false};
+// Live updates re-render the page, but not while staff are typing in it.
+function adminRefresh(){
+  if(current!=="admin")return;
+  const el=document.activeElement;
+  if(el&&el.closest&&el.closest("#admin")&&/INPUT|TEXTAREA/.test(el.tagName)&&el.value){AD.pending=true;return}
+  AD.pending=false;renderAdmin();
+}
 function renderAdmin(){
   if(!isAdmin()){go("home");return}
-  const all=JOBS.all(),cnt={all:all.length};all.forEach(j=>cnt[j.status]=(cnt[j.status]||0)+1);
+  const all=JOBS.all,cnt={all:all.length};all.forEach(j=>cnt[j.status]=(cnt[j.status]||0)+1);
   const q=AD.q.toLowerCase();
   const list=all.filter(j=>(AD.f==="all"||j.status===AD.f)&&(!q||[j.id,j.user.name,j.user.roll,j.user.email,j.machine.code,j.machine.name].join(" ").toLowerCase().includes(q)));
   $("#admin").innerHTML=`
@@ -1938,14 +1985,29 @@ function renderAdmin(){
     <tbody>${list.length?list.map(j=>`
      <tr class="jrow ${AD.open===j.id?"open":""}" data-id="${j.id}"><td class="mono">${j.id}</td><td>${esc(j.user.name)}<small>${esc(j.user.roll||j.user.email)}</small></td><td>${j.machine.code}<small>${esc(j.machine.name)}</small></td><td class="r mono">${fmtR(j.total)}</td><td>${pill(j.status)}</td><td><small style="color:var(--dim)">${fmtDT(j.created)}</small></td></tr>
      ${AD.open===j.id?`<tr class="jdet"><td colspan="6">${jobDetailHTML(j)}</td></tr>`:""}`).join("")
-     :`<tr><td colspan="6"><div class="empty" style="border:0">No jobs ${AD.f==="all"?"yet":"with this status"}${q?" match the search":""}.</div></td></tr>`}</tbody></table></div></div>
-   <p style="font-size:12.5px;color:var(--faint);margin-top:12px">Preview: jobs are stored in this browser only, so you see jobs generated on this computer. Once the backend is connected, every student's job appears here for all admins.</p>`;
+     :`<tr><td colspan="6"><div class="empty" style="border:0">${JOBS.loadedAll?`No jobs ${AD.f==="all"?"yet":"with this status"}${q?" match the search":""}.`:"Loading jobs…"}</div></td></tr>`}</tbody></table></div></div>
+   <p style="font-size:12.5px;color:var(--faint);margin-top:12px">Updates live: new jobs and status changes from other staff appear here by themselves.</p>
+   <div class="panel" style="margin-top:28px;max-width:640px"><h4>Staff access</h4>
+    <p style="font-size:13.5px;color:var(--dim);margin-bottom:12px">These Google accounts can open this page. ${esc(Backend.labAdmin)} always can.</p>
+    <div id="staffList">${AD.staff===null?`<p style="font-size:13px;color:var(--faint)">Loading…</p>`:AD.staff.length?AD.staff.map(e=>`<div class="spec"><span>${esc(e)}</span><button class="linkbtn" data-rm="${esc(e)}">Remove</button></div>`).join(""):`<p style="font-size:13px;color:var(--faint)">No other staff yet.</p>`}</div>
+    <div class="atools" style="margin:14px 0 0"><input id="staffNew" type="email" placeholder="ta.name@iith.ac.in"><button class="btn sm" id="staffAdd">Add staff</button></div>
+    <div class="formerr" id="staffErr" style="margin-top:8px"></div></div>`;
   const a=$("#admin");
   a.querySelectorAll(".kpi").forEach(b=>b.onclick=()=>{AD.f=b.dataset.f;AD.open=null;renderAdmin()});
   const qi=$("#aQ");qi.oninput=()=>{AD.q=qi.value;clearTimeout(renderAdmin.t);renderAdmin.t=setTimeout(()=>{renderAdmin();const n=$("#aQ");n.focus();n.setSelectionRange(n.value.length,n.value.length)},250)};
   $("#aCsv").onclick=()=>downloadCSV(all);
   a.querySelectorAll(".jrow").forEach(r=>r.onclick=()=>{AD.open=AD.open===r.dataset.id?null:r.dataset.id;renderAdmin()});
   if(AD.open)bindJobDetail(AD.open);
+  // staff list
+  if(AD.staff===null)Backend.getAdmins().then(l=>{AD.staff=l;adminRefresh()},e=>{AD.staff=[];$("#staffErr")&&($("#staffErr").textContent="Couldn't load the staff list. "+backendMsg(e))});
+  const saveStaff=(list,msg)=>Backend.setAdmins(list).then(()=>{AD.staff=list;toast(msg);renderAdmin()},e=>{$("#staffErr").textContent="Couldn't save. "+backendMsg(e)});
+  $("#staffAdd").onclick=()=>{const v=$("#staffNew").value.trim().toLowerCase(),err=$("#staffErr");
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){err.textContent="Enter a full Google account email.";return}
+    if(v===Backend.labAdmin||(AD.staff||[]).includes(v)){err.textContent="That account already has access.";return}
+    $("#staffNew").value="";saveStaff([...(AD.staff||[]),v],v+" can now open the Admin page")};
+  a.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{
+    if(b.dataset.armed)saveStaff(AD.staff.filter(e=>e!==b.dataset.rm),b.dataset.rm+" removed");
+    else{b.dataset.armed="1";b.textContent="Tap again to remove";setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent="Remove"}},3000)}});
 }
 function jobDetailHTML(j){
   const i=JOB_FLOW.indexOf(j.status),next=JOB_FLOW[i+1];
@@ -1986,15 +2048,19 @@ function jobDetailHTML(j){
 }
 function bindJobDetail(id){
   const j=JOBS.get(id);if(!j)return;
+  // Save a change, then redraw. The live listener also redraws for other staff.
+  const upd=(btn,patch,logText,msg)=>{btn.disabled=true;
+    JOBS.update(id,patch,logText).then(()=>{toast(msg);if(document.activeElement)document.activeElement.blur();renderAdmin()},
+      e=>{console.error(e);btn.disabled=false;toast("Couldn't save. "+backendMsg(e))})};
   const pay=$("#dPay");if(pay)pay.onclick=e=>{e.stopPropagation();const t=$("#dTxn").value.trim();
     if(!/^[A-Za-z0-9]{6,30}$/.test(t)){$("#dErr").textContent="Enter the transaction ID from the student's UPI app (letters and numbers only).";$("#dTxn").focus();return}
-    JOBS.update(id,{status:"verified",txn:t,verifiedBy:S.user.email,verifiedAt:Date.now()},`Paid and verified · txn ${t}`);toast(id+" marked paid");renderAdmin()};
+    upd(pay,{status:"verified",txn:t,verifiedBy:S.user.email,verifiedAt:Date.now()},`Paid and verified · txn ${t}`,id+" marked paid")};
   const nx=$("#dNext");if(nx)nx.onclick=e=>{e.stopPropagation();const s=nx.dataset.next,patch={status:s};
     if(s==="ready"){const sh=$("#dShelf").value.trim();if(!sh){toast("Enter the pickup shelf first");$("#dShelf").focus();return}patch.shelf=sh}
-    JOBS.update(id,patch,JOB_ST[s]+(patch.shelf?" · "+patch.shelf:""));toast(id+" → "+JOB_ST[s]);renderAdmin()};
+    upd(nx,patch,JOB_ST[s]+(patch.shelf?" · "+patch.shelf:""),id+" → "+JOB_ST[s])};
   const pdf=$("#dPdf");if(pdf)pdf.onclick=e=>{e.stopPropagation();jobPDF(j).save(j.id+".pdf")};
   const cn=$("#dCancel");if(cn)cn.onclick=e=>{e.stopPropagation();
-    if(cn.dataset.armed){JOBS.update(id,{status:"cancelled"},"Cancelled");toast(id+" cancelled");renderAdmin()}
+    if(cn.dataset.armed){upd(cn,{status:"cancelled"},"Cancelled",id+" cancelled")}
     else{cn.dataset.armed="1";cn.textContent="Tap again to cancel";setTimeout(()=>{if(cn.isConnected){delete cn.dataset.armed;cn.textContent="Cancel job"}},3000)}};
   $("#admin").querySelectorAll(".jdet input,.jdet button").forEach(el=>el.addEventListener("click",e=>e.stopPropagation()));
 }
@@ -2011,36 +2077,73 @@ function downloadCSV(list){
 /* ============================================================
    SIGN IN
 ============================================================ */
-let afterLogin=null,lRole=null;
-function openLogin(cb){afterLogin=cb||null;$("#lopts").classList.remove("hide");$("#lform").classList.add("hide");$("#lerr").textContent="";$("#login").classList.add("on")}
+let afterLogin=null;
+const backendOK=()=>!!(window.Backend&&Backend.ready);
+function openLogin(cb){
+  afterLogin=cb||null;$("#lerr").textContent="";
+  $("#lopts").classList.remove("hide");$("#lform").classList.add("hide");$("#login").classList.add("on");
+  if(!backendOK())$("#lerr").textContent=window.Backend&&Backend.error==="not-configured"?"Sign-in isn't switched on yet. Lab staff are setting it up.":"Sign-in is still loading. Check your internet connection and try again in a moment.";
+}
 function closeLogin(){$("#login").classList.remove("on")}
-$("#lopts").onclick=e=>{const b=e.target.closest(".lopt");if(!b)return;lRole=b.dataset.role;
-  if(lRole==="guest"){S.user={role:"guest",name:"Guest"};save();paintUser();closeLogin();toast("Browsing as a guest");return}
-  $("#lopts").classList.add("hide");$("#lform").classList.remove("hide");
-  $("#lemailLbl").textContent=lRole==="student"?"IITH email (any @…iith.ac.in)":"Google account email";
-  $("#lemail").placeholder=lRole==="student"?"cs22btech11001@iith.ac.in":"you@gmail.com";
-  $("#lrollWrap").classList.toggle("hide",lRole!=="student");$("#lname").focus()};
-$("#lemail").addEventListener("input",e=>{if(lRole==="student"){const m=e.target.value.match(/^([^@]+)@/);if(m&&!$("#lroll").dataset.touched)$("#lroll").value=m[1].toUpperCase()}});
-$("#lroll").addEventListener("input",e=>e.target.dataset.touched="1");
-$("#lback").onclick=()=>{$("#lopts").classList.remove("hide");$("#lform").classList.add("hide")};
+$("#lopts").onclick=e=>{const b=e.target.closest(".lopt");if(!b)return;
+  if(!backendOK()){openLogin(afterLogin);return}
+  $("#lerr").textContent="";b.disabled=true;
+  Backend.signIn(b.dataset.role).then(role=>{if(b.dataset.role==="external"&&role==="student")toast("That's an IITH account, so you get the IITH rate")})
+    .catch(err=>{console.warn(err);$("#lerr").textContent=backendMsg(err)}).finally(()=>b.disabled=false)};
 $("#lclose").onclick=closeLogin;
-$("#login").onclick=e=>{if(e.target.id==="login")closeLogin()};
-addEventListener("keydown",e=>{if(e.key==="Escape")closeLogin()});
+$("#login").onclick=e=>{if(e.target.id==="login"&&!(S.user&&S.user.needsProfile))closeLogin()};
+addEventListener("keydown",e=>{if(e.key==="Escape"&&!(S.user&&S.user.needsProfile))closeLogin()});
+// First sign-in: confirm name and roll number, saved to users/{uid}
+function showProfileForm(u){
+  $("#lopts").classList.add("hide");$("#lerr").textContent="";$("#lform").classList.remove("hide");$("#login").classList.add("on");
+  $("#lname").value=u.name||"";$("#lemail").value=u.email;$("#lroll").value=u.roll||"";
+  $("#lrollWrap").classList.toggle("hide",u.role!=="student");$("#lname").focus();
+}
 $("#lform").onsubmit=e=>{e.preventDefault();
-  const n=$("#lname").value.trim(),em=$("#lemail").value.trim().toLowerCase(),err=$("#lerr");
+  const n=$("#lname").value.trim(),roll=S.user.role==="student"?$("#lroll").value.trim().toUpperCase():"",err=$("#lerr2"),btn=$("#lform button[type=submit]");
   if(!n){err.textContent="Enter your name.";$("#lname").focus();return}
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){err.textContent="Enter a valid email address.";$("#lemail").focus();return}
-  if(lRole==="student"&&!IITH_RE.test(em)){err.textContent="IITH sign-in needs an IITH email, such as name@iith.ac.in or name@coe.iith.ac.in. From outside IITH? Go back and choose that option.";$("#lemail").focus();return}
-  if(lRole==="external"&&IITH_RE.test(em)){err.textContent="That's an IITH email. Go back and choose IIT Hyderabad student or staff to get the IITH rate.";$("#lemail").focus();return}
-  S.user={role:lRole,name:n,email:em,roll:lRole==="student"?($("#lroll").value.trim()||em.split("@")[0]).toUpperCase():""};
-  save();paintUser();closeLogin();toast("Signed in as "+n.split(" ")[0]);
-  if(E&&!E.userSet)E.user=lRole==="external"?"external":"student";
-  const cb=afterLogin;afterLogin=null;if(cb)cb();else if(current==="cost")updateEstimate();
+  if(S.user.role==="student"&&!roll){err.textContent="Enter your roll number, or your staff ID.";$("#lroll").focus();return}
+  err.textContent="";btn.disabled=true;
+  Backend.saveProfile({name:n,roll}).catch(x=>{err.textContent="Couldn't save. "+backendMsg(x)}).finally(()=>btn.disabled=false);
 };
+// Live data for the signed-in user. Restarted only when the account changes.
+let UNSUB=[],listenKey="";
+function startUserListeners(){
+  const u=S.user,key=u?u.uid+(u.isAdmin?":a":""):"";if(key===listenKey)return;listenKey=key;
+  UNSUB.forEach(f=>f());UNSUB=[];JOBS.mine=[];JOBS.all=[];JOBS.loadedMine=JOBS.loadedAll=false;MYBK={list:[],loaded:false};AD.staff=null;AD.open=null;AD.q="";
+  if(!u||!backendOK())return;
+  const fail=what=>e=>{console.error(e);toast(`Couldn't load ${what}. `+backendMsg(e))};
+  UNSUB.push(Backend.watchMyJobs(u.uid,l=>{JOBS.mine=l;JOBS.loadedMine=true;if(current==="dash")renderDash()},fail("your jobs")));
+  // Booking switched off for now:
+  // UNSUB.push(Backend.watchMyBookings(u.uid,l=>{MYBK={list:l,loaded:true};if(current==="dash")renderDash()},fail("your bookings")));
+  if(u.isAdmin)UNSUB.push(Backend.watchAllJobs(l=>{JOBS.all=l;JOBS.loadedAll=true;adminRefresh()},fail("jobs")));
+}
+let authKnown=false,bootRoute=null;
+function onAuth(u){
+  const before=S.user;S.user=u;
+  startUserListeners();paintUser();
+  if(u&&!E.userSet)E.user=u.role==="external"?"external":"student";
+  if(u&&u.needsProfile){showProfileForm(u)}
+  else if(u&&$("#login").classList.contains("on")){
+    closeLogin();if(!before||before.needsProfile)toast("Signed in as "+u.name.split(" ")[0]);
+    const cb=afterLogin;afterLogin=null;if(cb)cb();else if(current==="cost")updateEstimate();
+  }
+  if(!u&&(current==="dash"||current==="admin"))go("home");
+  // if(current==="book")renderBook(); // booking switched off for now
+  if(current==="admin"&&!isAdmin())go("home");
+  if(!authKnown){authKnown=true;if(bootRoute){const r=bootRoute;bootRoute=null;go(r)}}
+}
+function initBackend(){
+  if(initBackend.done)return;initBackend.done=true;
+  if(backendOK())Backend.onUser(onAuth);
+  else{authKnown=true;if(bootRoute){const r=bootRoute;bootRoute=null;go(r)}}
+}
+addEventListener("backend-ready",initBackend);
+setTimeout(()=>{if(!initBackend.done)initBackend()},10000); // the module didn't load (offline?)
 let armOut=0;
 $("#who").onclick=()=>{
   if(!signedIn()){openLogin();return}
-  if(Date.now()-armOut<3000){S.user=null;save();paintUser();toast("Signed out");if(current==="dash"||current==="admin")go("home");return}
+  if(Date.now()-armOut<3000){Backend.signOut().then(()=>toast("Signed out"));return}
   armOut=Date.now();$("#whoTxt").textContent="Tap again to sign out";setTimeout(paintUser,3000)};
 function paintUser(){
   const u=S.user,on=signedIn();
@@ -2055,15 +2158,18 @@ function paintUser(){
 ============================================================ */
 $("#goWiz").onclick=()=>{wStep=0;wAns=[];renderWiz();$("#wizSec").scrollIntoView({behavior:"smooth",block:"start"})};
 $("#jFind").onclick=()=>$("#goWiz").click();
-load();if(!S.progress)S.progress={};if(!S.bookings)S.bookings=[];
-if(S.user&&S.user.role==="guest")S.user=null; // old guest sign-ins from before the guest option was removed
+load();if(!S.progress)S.progress={};
+try{localStorage.removeItem("cometcenter:jobs:v1")}catch(e){} // jobs from the browser-only preview
 document.querySelectorAll("[data-desk]").forEach(el=>el.textContent=DESK);
 paintUser();renderTicker();renderWiz();
 if(window.THREE){initHero();initThumbs();}
 else document.querySelectorAll("canvas").forEach(c=>c.style.display="none");
 // const h0=(location.hash||"").slice(1);if(views.includes(h0)&&h0!=="detail"&&h0!=="train")go(h0);
 const [h0,h1]=(location.hash||"").slice(1).split("/");
-if(h0==="detail"&&MACHINES[h1])go("detail",h1);else if(views.includes(h0)&&h0!=="detail")go(h0);
+// My jobs and Admin wait until Firebase says who is signed in
+if(h0==="dash"||h0==="admin")bootRoute=h0;
+else if(h0==="detail"&&MACHINES[h1])go("detail",h1);else if(views.includes(h0)&&h0!=="detail")go(h0);
+if(window.Backend)initBackend(); // the module may have loaded first
 </script>
 
 </body></html>
