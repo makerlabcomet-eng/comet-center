@@ -1477,11 +1477,11 @@ function estimate(){
       const sd=r5(Dm+3),sl=r5(L+10),sv=Math.PI*(sd/2)**2*sl,rem=Math.max(0,sv-V);
       const cut=rem/1000/cfg.mrr[E.mat]+Ar/cfg.fin[E.mat],mins=25+cut*c+(c-1)*5;
       R.hours=mins/60;R.grams=sv/1000*M.d*c;R.stock=[sd,sl];R.axis=ix;
-      R.fits=sd<=cfg.env[0]&&sl<=cfg.env[1];R.fitMsg=R.fits?"Bar fits the chuck and bed":"Bar is bigger than Ø150 × 300 mm. Check with staff";
+      R.fits=sd<=cfg.env[0]&&sl<=cfg.env[1];R.fitMsg=R.fits?"Fits the chuck and turning length":`Bigger than Ø${cfg.env[0]} × ${cfg.env[1]} mm. Check with staff`;
       R.lines.push({l:`${E.mat} bar`,d:`Ø${sd} × ${sl} mm · ${fmtG(R.grams)} × ${fmtR(M.r*1000)}/kg`,a:R.grams*M.r});
       R.lines.push({l:"Insert wear",d:`${Math.round(cut*c)} cutting min × ${fmtR(PRICING.tooling)}/min`,a:cut*c*PRICING.tooling});
       R.extra=`Turned about its longest axis · ${(rem/1000).toFixed(0)} cm³ removed per part`;
-      R.notes.push("Lathe capacity shown here (Ø150 × 300 mm) is a placeholder until confirmed.");
+      R.notes.push(`Checked against Ø${cfg.env[0]} mm turning diameter and ${cfg.env[1]} mm from the chuck jaws to the tailstock. Bar through the spindle is limited to 51 mm. Supervision is required on the lathe.`);
     }
   } else {
     const len=D.len*s,w=D.dims[0]*s,h=D.dims[1]*s,t=E.t;R.dims=[w,h,t];

@@ -73,6 +73,8 @@ window.COMET_PRICING = {
     "Copper": { pricePerKg: 1000, density: 8.96 },
     "Tool steel (D2)": { pricePerKg: 400, density: 7.7 },
     "Delrin (POM)": { pricePerKg: 600, density: 1.41 },
+    "Cast iron": { pricePerKg: 120, density: 7.2 },
+    "Titanium (Ti-6Al-4V)": { pricePerKg: 4000, density: 4.43 },
     "Cast acrylic": { pricePerKg: 350, density: 1.19 },
     "Plywood": { pricePerKg: 80, density: 0.6 },
     "MDF": { pricePerKg: 50, density: 0.75 },
@@ -169,23 +171,24 @@ window.COMET_PRICING = {
     mill: {   // W-01 · CNC milling machine (BFW XTRON 544)
       kind: "mill",
       capacity: [500, 400, 400],   // machine travel X × Y × Z (mm), XTRON 544 SOP
-      materials: ["Aluminium 6061", "Brass", "Mild steel", "Delrin (POM)"],
+      // Only the materials the XTRON 544 SOP lists. Steel and titanium need staff-approved cutting data.
+      materials: ["Aluminium 6061", "Cast iron", "Mild steel", "Titanium (Ti-6Al-4V)"],
       roughingRate: {   // cm³ of material removed per minute
         "Aluminium 6061": 6,
-        "Brass": 4,
+        "Cast iron": 3,
         "Mild steel": 2,
-        "Delrin (POM)": 10,
+        "Titanium (Ti-6Al-4V)": 0.8,
       },
       finishingRate: {   // mm² of surface finished per minute
         "Aluminium 6061": 450,
-        "Brass": 350,
+        "Cast iron": 300,
         "Mild steel": 200,
-        "Delrin (POM)": 600,
+        "Titanium (Ti-6Al-4V)": 100,
       },
     },
-    lathe: {   // W-05 · CNC lathe
+    lathe: {   // W-05 · CNC lathe (BFW NEO 2050)
       kind: "lathe",
-      capacity: [150, 300],   // max bar diameter, max length (mm)
+      capacity: [300, 465],   // max turning diameter, max length from chuck jaws to tailstock (mm), NEO 2050 SOP
       materials: ["Aluminium 6061", "Brass", "Mild steel", "Delrin (POM)"],
       roughingRate: {   // cm³ of material removed per minute
         "Aluminium 6061": 15,
