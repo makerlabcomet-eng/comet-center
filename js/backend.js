@@ -71,6 +71,8 @@ if (!CFG.apiKey && !EMU) {
   };
   // Emulator only: sign in as any email without a Google popup (used by tests).
   if (EMU) B.testSignIn = (email, name) => signInWithCredential(auth, GoogleAuthProvider.credential(JSON.stringify({ sub: "test-" + email, email, email_verified: true, name })));
+  // A short-lived proof of who is signed in, checked by the upload script.
+  B.idToken = () => auth.currentUser ? auth.currentUser.getIdToken() : Promise.reject(new Error("Sign in first."));
   B.signOut = () => signOut(auth);
   B.saveProfile = async ({ name, roll }) => {
     const u = auth.currentUser; if (!u) throw new Error("Sign in first.");

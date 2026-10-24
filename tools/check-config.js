@@ -40,6 +40,11 @@ if (S) {
   if (typeof p.placeholder !== "boolean") err(f, "payment.placeholder must be true or false (no quotes)");
   if (p.placeholder === false && /placeholder|invalid/i.test(p.upiId || "")) err(f, "payment.placeholder is false but upiId is still the placeholder");
   if (!S.jobDesk || !isStr(S.jobDesk.hours) || !S.jobDesk.hours) err(f, "jobDesk.hours is empty");
+  const u = S.uploads;
+  if (u) {
+    if (!isStr(u.url) || (u.url && !/^https:\/\/script\.google\.com\/(a\/macros\/[^/]+|macros)\/s\/[\w-]+\/exec$/.test(u.url))) err(f, "uploads.url must be \"\" or the Apps Script web app link ending in /exec");
+    if (!isNum(u.maxMB) || u.maxMB < 1 || u.maxMB > 35) err(f, "uploads.maxMB must be a number from 1 to 35");
+  }
   const b = S.booking || {};
   if (![b.firstHour, b.lastHour].every(h => Number.isInteger(h) && h >= 0 && h <= 23)) err(f, "booking.firstHour and lastHour must be whole hours from 0 to 23");
   else if (b.firstHour > b.lastHour) err(f, "booking.firstHour is later than lastHour");

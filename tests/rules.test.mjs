@@ -60,6 +60,13 @@ test("jobs: can't create a job already marked paid, or for someone else, or with
   await assertFails(setDoc(doc(external(), "jobs/CMT-1"), job({ uid: "ext", user: { name: "B", email: "someone@gmail.com", role: "student" } })));
   await assertFails(setDoc(doc(anon(), "jobs/CMT-1"), job()));
 });
+test("jobs: students can't attach an upload or mark emails themselves", async () => {
+  await assertFails(setDoc(doc(student(), "jobs/CMT-1"), job({ upload: { fileId: "x" } })));
+  await assertFails(setDoc(doc(student(), "jobs/CMT-1"), job({ emailSent: true })));
+  await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "jobs/CMT-1"), job()));
+  await assertFails(updateDoc(doc(student(), "jobs/CMT-1"), { upload: { fileId: "x" } }));
+  await assertFails(updateDoc(doc(lab(), "jobs/CMT-1"), { upload: { fileId: "x" } }));
+});
 test("jobs: owner and admins can read, others can't", async () => {
   await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "jobs/CMT-1"), job()));
   await assertSucceeds(getDoc(doc(student(), "jobs/CMT-1")));

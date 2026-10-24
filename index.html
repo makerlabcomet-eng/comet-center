@@ -328,6 +328,8 @@ details.rates[open] summary{margin-bottom:10px}
 .lopt .gl{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none;font-family:var(--display);font-weight:900;color:#4285F4;font-size:16px}
 .lopt .gl.g2{background:var(--ink);color:var(--dim);border:1px solid var(--line2)}
 .formerr{color:var(--tc);font-size:13px;margin-block:-6px 12px;min-height:1px}
+.upbar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:12px 0 8px}.upbar i{display:block;height:100%;width:0;background:var(--haz);transition:width .4s}
+.upnote{font-size:12.5px;color:var(--faint)}.upnote b{color:var(--dim);font-weight:600}.upnote.bad{color:var(--tc)}
 .mbox form input{margin-bottom:14px}
 .hide{display:none!important}
 footer{border-top:1px solid var(--line);padding-block:30px 46px;color:var(--faint);font-size:13px}
@@ -527,13 +529,20 @@ textarea{width:100%;padding:11px 13px;background:var(--ink);border:1px solid var
  <p>We'll create a job sheet (PDF) with your estimate and a payment QR. Bring it to the Comet Center desk (<span data-desk>9–10 AM</span>). Staff confirm the price, you pay in front of them, and your job joins the queue.</p>
  <div id="jmSum" class="note" style="margin-bottom:16px"></div>
  <form id="jmForm" novalidate>
-  <label for="jmLink">Link to your file (Google Drive, shared with "anyone with the link")</label>
+  <p class="upnote" id="jmUpNote" hidden style="margin:-4px 0 14px">Your file is uploaded with the job, so staff get it directly. A Google Drive link is only needed for files over the upload limit.</p>
+  <label for="jmLink" id="jmLinkLbl">Link to your file (Google Drive, shared with "anyone with the link")</label>
   <input id="jmLink" type="url" placeholder="https://drive.google.com/file/d/…">
   <label for="jmNote">Notes for staff (optional)</label>
   <input id="jmNote" maxlength="300" placeholder="Colour, deadline, which face is the top…">
   <div class="formerr" id="jmErr"></div>
   <div class="cta-row"><button class="btn" type="submit">Generate job sheet</button><button class="btn ghost" type="button" id="jmCancel">Cancel</button></div>
  </form>
+ <div id="jmProg" hidden>
+  <p style="margin:0"><strong id="jmProgT">Uploading your file…</strong></p>
+  <div class="upbar"><i id="jmBar"></i></div>
+  <p class="upnote" id="jmProgN">Keep this page open until it finishes. You can close this box; the upload carries on.</p>
+  <div class="cta-row" style="margin-top:14px"><button class="btn ghost" type="button" id="jmHide">Close</button></div>
+ </div>
 </div></div>
 
 <div class="modal" id="login" role="dialog" aria-modal="true" aria-labelledby="lgTitle"><div class="mbox">
@@ -619,6 +628,8 @@ Object.entries(CP.estimator).forEach(([k,c])=>{
 const IITH_RE=new RegExp("@([a-z0-9-]+\\.)*"+String(CFG.iithDomain||"iith.ac.in").toLowerCase().replace(/\./g,"\\.")+"$");
 const PAY={upi:CFG.payment.upiId,payee:CFG.payment.payeeName,placeholder:CFG.payment.placeholder!==false};
 const DESK=CFG.jobDesk.hours;
+// File uploads to the lab Drive (config/settings.js → uploads). Off when url is "".
+const UPL=CFG.uploads&&CFG.uploads.url?{url:CFG.uploads.url,maxMB:CFG.uploads.maxMB||30}:null;
 
 /* ============================================================
    WIZARD
@@ -1633,7 +1644,7 @@ function readFile(f){
       let D;if(ext==="stl")D=meshStats(parseSTL(rd.result));
       else if(ext==="obj")D=meshStats(parseOBJ(new TextDecoder().decode(rd.result)));
       else D=parseDXF(new TextDecoder().decode(rd.result));
-      E.data=D;E.name=f.name;E.sample=false;E.units=D.unitHint&&ext==="dxf"?(D.unitHint===25.4?25.4:1):1;
+      E.data=D;E.name=f.name;E.file=f;E.sample=false;E.units=D.unitHint&&ext==="dxf"?(D.unitHint===25.4?25.4:1):1;
       if(NEEDS[EST[E.k].kind]!==D.type){const alt=D.type==="dxf"?"waterjet":"a1";toast(`Switched to ${MACHINES[alt].name} for this file`);selectMachine(alt);E.data=D;E.name=f.name;E.sample=false}
       renderCostForm();updateEstimate();
     }catch(err){showEstError(err.message||"We couldn't read that file.")}};
@@ -1696,22 +1707,35 @@ function startJob(){
   const R=estimate();if(R.err){toast(R.err);return}
   const m=MACHINES[E.k];
   $("#jmSum").innerHTML=`<strong>${m.code} · ${esc(m.name)}</strong><br>${esc(E.name)} · ${E.copies} × ${esc(E.mat)}<br>About ${fmtH(R.hours)} · <strong>${fmtR(R.total)}</strong> estimated`;
-  $("#jmErr").textContent="";$("#jobModal").classList.add("on");$("#jmLink").focus();
+  $("#jmErr").textContent="";$("#jmForm").hidden=false;$("#jmProg").hidden=true;$("#jmProg").dataset.job="";
+  const up=!!(UPL&&E.file);$("#jmUpNote").hidden=!up;
+  $("#jmLinkLbl").textContent=up?`Google Drive link (only if your file is over ${UPL.maxMB} MB once compressed)`:`Link to your file (Google Drive, shared with "anyone with the link")`;
+  $("#jobModal").classList.add("on");if(!up)$("#jmLink").focus();
 }
 $("#jmCancel").onclick=()=>$("#jobModal").classList.remove("on");
 $("#jobModal").onclick=e=>{if(e.target.id==="jobModal")$("#jobModal").classList.remove("on")};
-$("#jmForm").onsubmit=e=>{e.preventDefault();
-  const link=$("#jmLink").value.trim(),err=$("#jmErr");
+$("#jmHide").onclick=()=>$("#jobModal").classList.remove("on");
+$("#jmForm").onsubmit=async e=>{e.preventDefault();
+  const link=$("#jmLink").value.trim(),err=$("#jmErr"),btn=$("#jmForm button[type=submit]");
   if(link&&!/^https:\/\/\S+$/.test(link)){err.textContent="Paste the full share link, starting with https://";$("#jmLink").focus();return}
   if(!window.jspdf||!window.qrcode){err.textContent="The PDF tools didn't load. Check your internet connection and reload the page.";return}
-  const job=snapshotJob(link,$("#jmNote").value.trim()),btn=$("#jmForm button[type=submit]");
-  btn.disabled=true;btn.textContent="Saving your job…";
-  JOBS.add(job).then(()=>{
-    $("#jobModal").classList.remove("on");$("#jmForm").reset();
-    try{jobPDF(job).save(job.id+".pdf");toast("Job "+job.id+" created · PDF downloaded")}
-    catch(x){console.error(x);toast("Job saved, but the PDF failed. Download it again from My jobs.")}
-  }).catch(x=>{console.error(x);err.textContent="Couldn't save your job. "+backendMsg(x)})
-    .finally(()=>{btn.disabled=false;btn.textContent="Generate job sheet"});
+  err.textContent="";btn.disabled=true;
+  const done=()=>{btn.disabled=false;btn.textContent="Generate job sheet"};
+  // Compress first, so a file over the limit is caught before the job is saved
+  let packed=null;const f=UPL&&E.file;
+  if(f){btn.textContent="Preparing your file…";
+    try{packed=await packFile(f)}catch(x){console.error(x);packed=null}
+    if(packed&&packed.blob.size>UPL.maxMB*1048576){
+      if(!link){err.textContent=`Your file is ${fmtMB(packed.blob.size)} even after compression, over the ${UPL.maxMB} MB upload limit. Upload it to Google Drive, share it with "anyone with the link", and paste the link above.`;$("#jmLink").focus();done();return}
+      packed=null}}
+  const job=snapshotJob(link,$("#jmNote").value.trim());
+  btn.textContent="Saving your job…";
+  try{await JOBS.add(job)}catch(x){console.error(x);err.textContent="Couldn't save your job. "+backendMsg(x);done();return}
+  $("#jmForm").reset();done();
+  try{jobPDF(job).save(job.id+".pdf")}catch(x){console.error(x);toast("Job saved, but the PDF failed. Download it again from My jobs.")}
+  if(!packed){$("#jobModal").classList.remove("on");toast("Job "+job.id+" created · PDF downloaded");return}
+  $("#jmForm").hidden=true;$("#jmProg").hidden=false;$("#jmProg").dataset.job=job.id;
+  uploadFile(job.id,f,packed);
 };
 // Everything staff need, frozen at the moment the job is generated.
 function snapshotJob(link,note){
@@ -1729,6 +1753,61 @@ function snapshotJob(link,note){
     dims:R.dims.map(v=>Math.round(v*10)/10),fits:R.fits,fitMsg:R.fitMsg,hours:R.hours,grams:R.grams,extra:R.extra,
     lines:R.lines.map(l=>({l:l.l,d:l.d,a:Math.round(l.a*100)/100})),base:R.base,mult:R.mult,band:B.label,total:Math.round(R.total),
     img,txn:"",shelf:"",log:[{at:Date.now(),by:u.email,t:"Job generated"}]};
+}
+/* ---------- file upload to the lab Drive ----------
+   The file is gzipped in the browser, then sent to the Apps Script in 3 MB
+   parts (tools/apps-script/uploads/Uploads.gs). The script checks the sign-in,
+   saves the file in Drive and writes it onto the job as j.upload. */
+const UP={},UP_PART=3*1024*1024; // part size: a multiple of 3 bytes, so base64 parts join cleanly
+const fmtMB=b=>(b/1048576).toFixed(b<10485760?1:0)+" MB";
+async function packFile(f){
+  if(!window.CompressionStream)return {blob:f,gz:false};
+  return {blob:await new Response(f.stream().pipeThrough(new CompressionStream("gzip"))).blob(),gz:true};
+}
+const toB64=blob=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]||"");r.onerror=()=>no(r.error);r.readAsDataURL(blob)});
+async function sendPart(body){
+  // text/plain keeps it a "simple" request, which Apps Script accepts from other sites
+  for(let tries=1;;tries++){
+    let r;
+    try{r=await (await fetch(UPL.url,{method:"POST",body:JSON.stringify({...body,idToken:await Backend.idToken()})})).json()}
+    catch(x){if(tries>=3)throw new Error("Lost the connection while uploading. Check your internet and retry.");await new Promise(w=>setTimeout(w,2500*tries));continue}
+    if(!r.ok)throw new Error(r.error||"The upload was refused.");
+    return r;
+  }
+}
+async function uploadFile(id,f,packed){
+  if(UP[id]&&UP[id].pct!=null)return;
+  UP[id]={pct:0};upRefresh(id);
+  try{
+    const n=Math.max(1,Math.ceil(packed.blob.size/UP_PART)),session=Math.random().toString(36).slice(2,10).padEnd(6,"0");
+    for(let i=0;i<n;i++){
+      const data=await toB64(packed.blob.slice(i*UP_PART,(i+1)*UP_PART));
+      const r=await sendPart({jobId:id,session,i,n,name:f.name,size:f.size,gz:packed.gz,data});
+      if(i===n-1&&!(r.done&&r.upload))throw new Error("The lab's upload service isn't set up yet. Bring your file to the desk or share a Drive link with staff.");
+      UP[id].pct=Math.round((i+1)/n*100);upRefresh(id);
+    }
+    delete UP[id];toast("File uploaded for "+id);
+  }catch(x){console.error(x);UP[id]={err:x.message||"The upload failed."};toast("File upload failed for "+id+". Retry from My jobs.")}
+  upRefresh(id);
+}
+// Show upload progress in the job box and on My jobs
+function upRefresh(id){
+  const u=UP[id],pr=$("#jmProg");
+  if(pr&&!pr.hidden&&pr.dataset.job===id){
+    $("#jmBar").style.width=(u&&u.pct!=null?u.pct:u&&u.err?0:100)+"%";
+    $("#jmProgT").textContent=!u?"File uploaded. Staff can now download it.":u.err?"The file didn't upload":`Uploading your file… ${u.pct}%`;
+    const n=$("#jmProgN");n.classList.toggle("bad",!!(u&&u.err));
+    n.textContent=!u?"Your job is saved and the job sheet is downloaded.":u.err?u.err+" Your job is saved; retry the upload from My jobs.":"Keep this page open until it finishes. You can close this box; the upload carries on.";
+    if(!u)setTimeout(()=>{if(!UP[id]&&!pr.hidden&&pr.dataset.job===id)$("#jobModal").classList.remove("on")},1800);
+  }
+  if(current==="dash"&&signedIn())renderDash();
+}
+function fileStatusHTML(j){
+  const u=UP[j.id];
+  if(j.upload)return j.fileDeletedAt?"File deleted after 30 days":"✓ File uploaded";
+  if(u&&u.pct!=null)return `Uploading file… ${u.pct}%`;
+  if(!UPL||j.status==="collected"||j.status==="cancelled")return "";
+  return `<span style="color:var(--tc)">${u&&u.err?esc(u.err):"No file uploaded."}</span> <button class="linkbtn" data-attach="${esc(j.id)}">${u&&u.err?"Retry upload":"Upload file"}</button>`;
 }
 function upiLink(j){return `upi://pay?pa=${encodeURIComponent(PAY.upi)}&pn=${encodeURIComponent(PAY.payee)}&am=${j.total}.00&cu=INR&tn=${encodeURIComponent("Comet "+j.id)}`}
 function qrDataURL(text){const q=qrcode(0,"M");q.addData(text);q.make();return q.createDataURL(8,2)}
@@ -1970,13 +2049,27 @@ function renderDash(){
    <h4 class="tag">Jobs</h4>
    <div class="blist" style="margin-bottom:36px">${mine.length?mine.map(j=>`<div class="brow">
      <span class="mono" style="color:var(--tx)">${esc(j.id)}</span>${pill(j.status)}
-     <b style="flex:1;min-width:160px">${j.machine.code} · ${esc(j.machine.name)}<small style="display:block;font-weight:400;color:var(--faint);font-size:12.5px">${esc(j.file)} · ${fmtR(j.total)} · ${fmtDT(j.created)}${j.status==="ready"&&j.shelf?` · collect from ${esc(j.shelf)}`:""}</small></b>
+     <b style="flex:1;min-width:160px">${j.machine.code} · ${esc(j.machine.name)}<small style="display:block;font-weight:400;color:var(--faint);font-size:12.5px">${esc(j.file)} · ${fmtR(j.total)} · ${fmtDT(j.created)}${j.status==="ready"&&j.shelf?` · collect from ${esc(j.shelf)}`:""}</small>
+     ${UPL||j.upload?`<small style="display:block;font-size:12.5px;color:var(--faint);margin-top:2px">${fileStatusHTML(j)}</small>`:""}</b>
      <button class="linkbtn" data-pdf="${esc(j.id)}">Download job sheet</button></div>`).join("")
      :`<div class="empty">${JOBS.loadedMine?`Your generated jobs appear here with their status.<br><button class="btn sm" data-go="cost" style="margin-top:14px">Open the cost estimator</button>`:"Loading…"}</div>`}</div>
    ${""/* Booking switched off for now:
    <h4 class="tag">Upcoming bookings</h4>
    <div class="blist" style="margin-bottom:36px">${bookingsHTML()}</div> */}`;
   $("#dash").querySelectorAll("[data-pdf]").forEach(b=>b.onclick=()=>{const j=JOBS.get(b.dataset.pdf);if(j)jobPDF(j).save(j.id+".pdf")});
+  // Upload (or retry) a job's file: pick it again, since the browser doesn't keep it
+  $("#dash").querySelectorAll("[data-attach]").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.attach,j=JOBS.get(id),inp=document.createElement("input");
+    inp.type="file";inp.accept=".stl,.obj,.dxf";
+    inp.onchange=async()=>{const f=inp.files[0];if(!f)return;
+      if(!/\.(stl|obj|dxf)$/i.test(f.name)){toast("Pick the STL, OBJ or DXF file for this job");return}
+      if(j&&f.name!==j.file&&!confirm(`This job was priced for "${j.file}", but you picked "${f.name}". Upload it anyway?`))return;
+      UP[id]={pct:0};renderDash();
+      let packed;try{packed=await packFile(f)}catch(x){packed={blob:f,gz:false}}
+      delete UP[id];
+      if(packed.blob.size>UPL.maxMB*1048576){UP[id]={err:`The file is ${fmtMB(packed.blob.size)} after compression, over the ${UPL.maxMB} MB limit. Bring it to the desk or share a Drive link with staff.`};renderDash();return}
+      uploadFile(id,f,packed)};
+    inp.click()});
   $("#dash").querySelectorAll("[data-cancel]").forEach(b=>b.onclick=()=>{
     if(b.dataset.armed){b.disabled=true;b.textContent="Cancelling…";
       Backend.cancelBookings(b.dataset.cancel.split(",")).then(()=>toast("Booking cancelled"),e=>{console.error(e);toast(String(e.code||"").includes("permission")?"That slot has already started, so it can't be cancelled.":"Couldn't cancel. "+backendMsg(e));renderDash()})}
@@ -2050,7 +2143,8 @@ function jobDetailHTML(j){
      <div class="spec"><span>Job time</span><b>${fmtH(j.hours)}</b></div>
      <div class="spec"><span>Material</span><b>${fmtG(j.grams)}</b></div>
      <div class="spec"><span>Fit</span><b style="color:${j.fits?"var(--ta)":"var(--tc)"}">${esc(j.fitMsg)}</b></div>
-     <div class="spec"><span>File link</span><b>${j.link?`<a class="linkbtn" href="${esc(j.link)}" target="_blank" rel="noopener">Open file</a>`:"Not given. Ask the student to bring it"}</b></div>
+     <div class="spec"><span>Uploaded file</span><b>${j.upload?(j.fileDeletedAt?"Deleted after 30 days":`<a class="linkbtn" href="https://drive.google.com/uc?export=download&id=${encodeURIComponent(j.upload.fileId)}" target="_blank" rel="noopener">Download</a> · <a class="linkbtn" href="https://drive.google.com/file/d/${encodeURIComponent(j.upload.fileId)}/view" target="_blank" rel="noopener">Open in Drive</a><small style="display:block;font-weight:400;color:var(--faint)">${esc(j.upload.name)} · ${fmtMB(j.upload.size)}${j.upload.gz?" · compressed: extract it first":""}</small>`):"Not uploaded yet"}</b></div>
+     ${j.link||!j.upload?`<div class="spec"><span>File link</span><b>${j.link?`<a class="linkbtn" href="${esc(j.link)}" target="_blank" rel="noopener">Open file</a>`:"Not given. Ask the student to bring it"}</b></div>`:""}
      ${j.note?`<div class="spec"><span>Notes</span><b>${esc(j.note)}</b></div>`:""}</div>
    </div>
    <div class="stack" style="gap:14px">
@@ -2096,7 +2190,7 @@ function bindJobDetail(id){
 }
 function downloadCSV(list){
   const cols=[["Job ID",j=>j.id],["Created",j=>new Date(j.created).toISOString()],["Status",j=>JOB_ST[j.status]],["Name",j=>j.user.name],["Roll number",j=>j.user.roll],["Email",j=>j.user.email],["Type",j=>j.user.role==="student"?"IITH":"External"],
-    ["Machine",j=>j.machine.code+" "+j.machine.name],["File",j=>j.file],["File link",j=>j.link],["Settings",j=>j.settings.map(s=>s.join(": ")).join("; ")],["Job time (h)",j=>j.hours.toFixed(2)],["Material (g)",j=>Math.round(j.grams)],
+    ["Machine",j=>j.machine.code+" "+j.machine.name],["File",j=>j.file],["File link",j=>j.link],["Uploaded file",j=>j.upload&&!j.fileDeletedAt?"https://drive.google.com/file/d/"+j.upload.fileId+"/view":""],["Settings",j=>j.settings.map(s=>s.join(": ")).join("; ")],["Job time (h)",j=>j.hours.toFixed(2)],["Material (g)",j=>Math.round(j.grams)],
     ["Base cost (Rs)",j=>Math.round(j.base)],["Multiplier",j=>j.mult],["Amount (Rs)",j=>j.total],["Transaction ID",j=>j.txn],["Verified by",j=>j.verifiedBy||""],["Verified at",j=>j.verifiedAt?new Date(j.verifiedAt).toISOString():""],["Shelf",j=>j.shelf],["Notes",j=>j.note]];
   const q=v=>{v=String(v??"");return /[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v};
   const csv="﻿"+[cols.map(c=>q(c[0])).join(","),...list.map(j=>cols.map(c=>q(c[1](j))).join(","))].join("\r\n");

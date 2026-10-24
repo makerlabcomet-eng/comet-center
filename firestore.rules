@@ -53,6 +53,8 @@ service cloud.firestore {
         && request.resource.data.txn == ''
         && request.resource.data.user.email == email()
         && request.resource.data.user.role == myRole()
+        // Upload and email fields are written only by the lab's scripts.
+        && !request.resource.data.keys().hasAny(['upload', 'fileDeletedAt', 'emailSent', 'emailedAt'])
         && request.resource.data.total is number
         && str(request.resource.data.img, 200000)
         && str(request.resource.data.link, 500)

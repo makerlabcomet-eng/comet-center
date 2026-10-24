@@ -53,6 +53,23 @@ window.COMET_SETTINGS = {
   },
 
   /* -------------------------------------------------------------------
+     FILE UPLOADS
+     When a student generates a job, their file is uploaded to the lab
+     Google Drive through the "Upload test" Apps Script (see
+     docs/file-uploads.md).
+       url:   the web app link from Apps Script, ending in /exec.
+              Set it to "" to switch uploads off (students then
+              paste a Drive link instead).
+       maxMB: the biggest upload, in MB after compression. STL files
+              shrink 3–5×, so 30 means roughly a 100 MB STL. Keep it
+              at 35 or less (the script's limit).
+     ------------------------------------------------------------------- */
+  uploads: {
+    url: "https://script.google.com/macros/s/AKfycbxngT5_nz8XIkXGftnDqtgE5r6c-sJfCT_PY7iODF4WkI1FSbcoUqI-n_ZwkWX_Fb0l/exec",
+    maxMB: 30,
+  },
+
+  /* -------------------------------------------------------------------
      BOOKING
      firstHour / lastHour: the first and last one-hour slots, 24-hour clock.
                            9 and 20 mean slots from 9:00 to 21:00.

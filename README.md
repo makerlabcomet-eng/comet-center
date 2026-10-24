@@ -27,7 +27,11 @@ Machine details, SOP links, videos, prices, the UPI ID and desk hours all live i
 - **Who can do what** is decided by [`firestore.rules`](firestore.rules), not by the website. Students see only their own jobs; only staff can mark a job paid or change its status. `makerlab.comet@coe.iith.ac.in` is always an admin and adds TAs from the Admin page.
 - The Firebase web keys in `config/firebase.js` are public by design. The rules protect the data.
 
-> ⚠ **Never upgrade the project to the Blaze (pay-as-you-go) plan or add a billing account.** Everything here runs on the free Spark plan. Cloud Storage and Cloud Functions need Blaze, so the site doesn't use them: students share their files as Google Drive links.
+> ⚠ **Never upgrade the project to the Blaze (pay-as-you-go) plan or add a billing account.** Everything here runs on the free Spark plan. Cloud Storage and Cloud Functions need Blaze, so the site doesn't use them. Two free Google Apps Scripts on the lab account do those jobs instead.
+
+**Apps Scripts on the lab account** (set up once, then they run by themselves):
+- **Pickup emails:** emails the student when a job is marked Ready to collect. Setup: [`docs/ready-email.md`](docs/ready-email.md).
+- **File uploads:** saves each job's STL/OBJ/DXF to the lab Drive (`Comet Center upload test / date / job ID / file`) and deletes it 30 days after collection. Setup: [`docs/file-uploads.md`](docs/file-uploads.md).
 
 **Deploying rule changes** (lab account): `firebase deploy --only firestore:rules`
 
