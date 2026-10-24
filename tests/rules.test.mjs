@@ -75,6 +75,14 @@ test("jobs: only admins mark paid; students can't change their own job", async (
   await assertFails(deleteDoc(doc(lab(), "jobs/CMT-1")));
 });
 
+test("jobs: staff queue the pickup email (emailSent false) but can't fake it as sent", async () => {
+  await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "jobs/CMT-1"), job({ status: "printing" })));
+  await assertSucceeds(updateDoc(doc(lab(), "jobs/CMT-1"), { status: "ready", shelf: "B3", emailSent: false }));
+  await assertFails(updateDoc(doc(lab(), "jobs/CMT-1"), { emailSent: true }));
+  await assertFails(updateDoc(doc(lab(), "jobs/CMT-1"), { emailedAt: 5 }));
+  await assertFails(updateDoc(doc(student(), "jobs/CMT-1"), { emailSent: false }));
+});
+
 /* admins */
 test("admins: TAs get access only once listed, and only admins see the list", async () => {
   await assertFails(getDoc(doc(ta(), "config/admins")));
@@ -85,6 +93,12 @@ test("admins: TAs get access only once listed, and only admins see the list", as
   await assertFails(setDoc(doc(student(), "config/admins"), { emails: ["cs22btech11001@iith.ac.in"] }));
   await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "jobs/CMT-1"), job()));
   await assertSucceeds(updateDoc(doc(ta(), "jobs/CMT-1"), { status: "verified", txn: "412345678901" }));
+});
+test("admins: only the lab account can add or remove staff, not other admins", async () => {
+  await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "config/admins"), { emails: ["ta.one@iith.ac.in"] }));
+  await assertFails(setDoc(doc(ta(), "config/admins"), { emails: ["ta.one@iith.ac.in", "friend@iith.ac.in"] }));
+  await assertFails(setDoc(doc(ta(), "config/admins"), { emails: [] }));
+  await assertSucceeds(setDoc(doc(lab(), "config/admins"), { emails: [] }));
 });
 
 /* bookings */

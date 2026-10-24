@@ -24,6 +24,8 @@ service cloud.firestore {
          email() in get(/databases/$(database)/documents/config/admins).data.emails)
       );
     }
+    // Only the lab account can add or remove staff.
+    function isLabAdmin() { return verified() && email() == 'makerlab.comet@coe.iith.ac.in'; }
     function str(v, max) { return v is string && v.size() <= max; }
 
     // ---------- users ----------
@@ -58,7 +60,11 @@ service cloud.firestore {
       // Only staff change a job: payment, status, shelf.
       allow update: if isAdmin()
         && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['status', 'txn', 'verifiedBy', 'verifiedAt', 'shelf', 'log'])
+             .hasOnly(['status', 'txn', 'verifiedBy', 'verifiedAt', 'shelf', 'log', 'emailSent'])
+        // Staff can only clear emailSent (to resend). The email script sets it, and
+        // runs as the lab account through Google's own APIs, outside these rules.
+        && (!('emailSent' in request.resource.data) || request.resource.data.emailSent == false
+            || ('emailSent' in resource.data && resource.data.emailSent == request.resource.data.emailSent))
         && request.resource.data.status in ['awaiting', 'verified', 'printing', 'ready', 'collected', 'cancelled'];
       allow delete: if false;
     }
@@ -86,11 +92,14 @@ service cloud.firestore {
 
     // ---------- config ----------
     match /config/admins {
-      allow read, write: if isAdmin();
+      allow read: if isAdmin();
+      allow write: if isLabAdmin()
+        && request.resource.data.emails is list && request.resource.data.emails.size() <= 50;
     }
+    // Other settings (config/admins is handled above and excluded here).
     match /config/{doc} {
       allow read: if doc != 'admins';
-      allow write: if isAdmin();
+      allow write: if doc != 'admins' && isAdmin();
     }
 
     // Everything else is closed.
