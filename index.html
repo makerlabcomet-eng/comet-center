@@ -718,6 +718,8 @@ const JOB_ST={awaiting:"Awaiting payment",verified:"Paid · verified",printing:"
 const JOB_FLOW=["awaiting","verified","printing","ready","collected"];
 const JOBS={
   mine:[],all:[],loadedMine:false,loadedAll:false,
+  // Admin: all = every open job + the newest recentN jobs. counts = server totals.
+  open:[],recent:[],loadedOpen:false,loadedRecent:false,recentN:100,counts:null,moreBusy:false,
   get(id){return this.all.find(j=>j.id===id)||this.mine.find(j=>j.id===id)},
   add(j){return Backend.createJob(j)},
   update(id,patch,logText){return Backend.updateJob(id,patch,{at:Date.now(),by:S.user.email,t:logText})}
@@ -2092,6 +2094,10 @@ function renderAdmin(){
   const all=JOBS.all,cnt={all:all.length};all.forEach(j=>cnt[j.status]=(cnt[j.status]||0)+1);
   const q=AD.q.toLowerCase();
   const list=all.filter(j=>(AD.f==="all"||j.status===AD.f)&&(!q||[j.id,j.user.name,j.user.roll,j.user.email,j.machine.code,j.machine.name].join(" ").toLowerCase().includes(q)));
+  // Open jobs are always all loaded; finished ones build up, so All jobs and Collected end with "Load older jobs".
+  const shown=cnt[AD.f]||0,total=JOBS.counts&&(AD.f==="all"||AD.f==="collected")?Math.max(JOBS.counts[AD.f],shown):shown;
+  if(JOBS.counts){cnt.all=Math.max(cnt.all,JOBS.counts.all);cnt.collected=Math.max(cnt.collected||0,JOBS.counts.collected)}
+  const more=JOBS.loadedAll&&total>shown?`<div class="atools" style="justify-content:center;margin:12px 0 6px"><button class="btn ghost sm" id="aMore" ${JOBS.moreBusy?"disabled":""}>${JOBS.moreBusy?"Loading…":`Load older jobs`}</button><small style="color:var(--faint)">Showing ${shown} of ${total}${q?". Search only covers the jobs loaded so far":""}</small></div>`:"";
   $("#admin").innerHTML=`
    <div class="shead"><span class="tag">Admin · ${esc(S.user.email)}</span><h2>Job desk</h2>
    <p>Every generated job lands here. At the job desk (${esc(DESK)}), find the student's job ID, take the payment, enter the transaction ID and mark it verified. The next TA plans the print from the verified list.</p></div>
@@ -2102,7 +2108,7 @@ function renderAdmin(){
     <tbody>${list.length?list.map(j=>`
      <tr class="jrow ${AD.open===j.id?"open":""}" data-id="${esc(j.id)}"><td class="mono">${esc(j.id)}</td><td>${esc(j.user.name)}<small>${esc(j.user.roll||j.user.email)}</small></td><td>${esc(j.machine.code)}<small>${esc(j.machine.name)}</small></td><td class="r mono">${fmtR(j.total)}</td><td>${pill(j.status)}</td><td><small style="color:var(--dim)">${fmtDT(j.created)}</small></td></tr>
      ${AD.open===j.id?`<tr class="jdet"><td colspan="6">${jobDetailHTML(j)}</td></tr>`:""}`).join("")
-     :`<tr><td colspan="6"><div class="empty" style="border:0">${JOBS.loadedAll?`No jobs ${AD.f==="all"?"yet":"with this status"}${q?" match the search":""}.`:"Loading jobs…"}</div></td></tr>`}</tbody></table></div></div>
+     :`<tr><td colspan="6"><div class="empty" style="border:0">${JOBS.loadedAll?`No jobs ${AD.f==="all"?"yet":"with this status"}${q?" match the search":""}.`:"Loading jobs…"}</div></td></tr>`}</tbody></table></div>${more}</div>
    <p style="font-size:12.5px;color:var(--faint);margin-top:12px">Updates live: new jobs and status changes from other staff appear here by themselves.</p>
    <div class="panel" style="margin-top:28px;max-width:640px"><h4>Staff access</h4>
     <p style="font-size:13.5px;color:var(--dim);margin-bottom:12px">These Google accounts can open this page. ${esc(Backend.labAdmin)} always can${isLabAdmin()?", and is the only account that can add or remove staff.":". Only that account can add or remove staff."}</p>
@@ -2113,6 +2119,7 @@ function renderAdmin(){
   a.querySelectorAll(".kpi").forEach(b=>b.onclick=()=>{AD.f=b.dataset.f;AD.open=null;renderAdmin()});
   const qi=$("#aQ");qi.oninput=()=>{AD.q=qi.value;clearTimeout(renderAdmin.t);renderAdmin.t=setTimeout(()=>{renderAdmin();const n=$("#aQ");n.focus();n.setSelectionRange(n.value.length,n.value.length)},250)};
   $("#aCsv").onclick=()=>downloadCSV(all);
+  const mb=$("#aMore");if(mb)mb.onclick=()=>{JOBS.recentN+=100;JOBS.moreBusy=true;watchRecent();renderAdmin()};
   a.querySelectorAll(".jrow").forEach(r=>r.onclick=()=>{AD.open=AD.open===r.dataset.id?null:r.dataset.id;renderAdmin()});
   if(AD.open)bindJobDetail(AD.open);
   // staff list
@@ -2235,14 +2242,35 @@ $("#lform").onsubmit=e=>{e.preventDefault();
 let UNSUB=[],listenKey="";
 function startUserListeners(){
   const u=S.user,key=u?u.uid+(u.isAdmin?":a":""):"";if(key===listenKey)return;listenKey=key;
-  UNSUB.forEach(f=>f());UNSUB=[];JOBS.mine=[];JOBS.all=[];JOBS.loadedMine=JOBS.loadedAll=false;MYBK={list:[],loaded:false};AD.staff=null;AD.open=null;AD.q="";
+  UNSUB.forEach(f=>f());UNSUB=[];JOBS.mine=[];JOBS.all=[];JOBS.loadedMine=JOBS.loadedAll=false;
+  Object.assign(JOBS,{open:[],recent:[],loadedOpen:false,loadedRecent:false,recentN:100,counts:null,moreBusy:false});MYBK={list:[],loaded:false};AD.staff=null;AD.open=null;AD.q="";
   if(!u||!backendOK())return;
   const fail=what=>e=>{console.error(e);toast(`Couldn't load ${what}. `+backendMsg(e))};
   UNSUB.push(Backend.watchMyJobs(u.uid,l=>{JOBS.mine=l;JOBS.loadedMine=true;if(current==="dash")renderDash()},fail("your jobs")));
   // Booking switched off for now:
   // UNSUB.push(Backend.watchMyBookings(u.uid,l=>{MYBK={list:l,loaded:true};if(current==="dash")renderDash()},fail("your bookings")));
-  if(u.isAdmin)UNSUB.push(Backend.watchAllJobs(l=>{JOBS.all=l;JOBS.loadedAll=true;adminRefresh()},fail("jobs")));
+  // if(u.isAdmin)UNSUB.push(Backend.watchAllJobs(l=>{JOBS.all=l;JOBS.loadedAll=true;adminRefresh()},fail("jobs")));
+  if(u.isAdmin){
+    UNSUB.push(Backend.watchOpenJobs(l=>{JOBS.open=l;JOBS.loadedOpen=true;mergeJobs()},fail("jobs")));
+    watchRecent();UNSUB.push(()=>{[RECENT,RECENT_OLD].forEach(f=>f&&f());RECENT=RECENT_OLD=null;clearTimeout(countJobs.t)});
+  }
 }
+// The newest JOBS.recentN jobs. On "Load older jobs" the old listener stays until the bigger one arrives.
+let RECENT=null,RECENT_OLD=null;
+function watchRecent(){
+  if(RECENT_OLD)RECENT_OLD();RECENT_OLD=RECENT;let first=true;
+  RECENT=Backend.watchRecentJobs(JOBS.recentN,l=>{
+    if(first){first=false;if(RECENT_OLD)RECENT_OLD();RECENT_OLD=null;JOBS.moreBusy=false}
+    JOBS.recent=l;JOBS.loadedRecent=true;mergeJobs();countJobs();
+  },e=>{console.error(e);JOBS.moreBusy=false;toast("Couldn't load jobs. "+backendMsg(e));adminRefresh()});
+}
+function mergeJobs(){
+  const m=new Map();JOBS.recent.forEach(j=>m.set(j.id,j));JOBS.open.forEach(j=>m.set(j.id,j));
+  JOBS.all=[...m.values()].sort((a,b)=>b.created-a.created);
+  JOBS.loadedAll=JOBS.loadedOpen&&JOBS.loadedRecent;adminRefresh();
+}
+// Server totals for the All jobs and Collected counts, refreshed shortly after changes.
+function countJobs(){clearTimeout(countJobs.t);countJobs.t=setTimeout(()=>Backend.countJobs().then(c=>{if(!RECENT)return;JOBS.counts=c;adminRefresh()},e=>console.warn("count failed",e)),1500)}
 let authKnown=false,bootRoute=null;
 function onAuth(u){
   const before=S.user;S.user=u;

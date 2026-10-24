@@ -9,7 +9,7 @@ import {
 import {
   getFirestore, connectFirestoreEmulator, doc, getDoc, setDoc, updateDoc, deleteDoc,
   collection, query, where, orderBy, limit, onSnapshot, writeBatch, arrayUnion,
-  serverTimestamp, Timestamp,
+  serverTimestamp, Timestamp, getCountFromServer,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const CFG = window.COMET_FIREBASE || {};
@@ -113,8 +113,21 @@ if (!CFG.apiKey && !EMU) {
   B.createJob = job => setDoc(doc(db, "jobs", job.id), { ...toDoc(job), uid: auth.currentUser.uid });
   B.watchMyJobs = (uid, cb, onErr) => onSnapshot(query(collection(db, "jobs"), where("uid", "==", uid)),
     s => cb(s.docs.map(d => fromDoc(d.data())).sort((a, b) => b.created - a.created)), onErr);
-  B.watchAllJobs = (cb, onErr) => onSnapshot(query(collection(db, "jobs"), orderBy("created", "desc"), limit(500)),
+  // Replaced by watchOpenJobs + watchRecentJobs, so open jobs never drop off the Admin list:
+  // B.watchAllJobs = (cb, onErr) => onSnapshot(query(collection(db, "jobs"), orderBy("created", "desc"), limit(500)),
+  //   s => cb(s.docs.map(d => fromDoc(d.data()))), onErr);
+  // Every job still in progress, however old. There are only ever a few dozen.
+  B.watchOpenJobs = (cb, onErr) => onSnapshot(query(collection(db, "jobs"), where("status", "in", ["awaiting", "verified", "printing", "ready"])),
     s => cb(s.docs.map(d => fromDoc(d.data()))), onErr);
+  // The newest n jobs of any status; the Admin page raises n with "Load older jobs".
+  B.watchRecentJobs = (n, cb, onErr) => onSnapshot(query(collection(db, "jobs"), orderBy("created", "desc"), limit(n)),
+    s => cb(s.docs.map(d => fromDoc(d.data()))), onErr);
+  // Totals without downloading the jobs (1 read per 1,000 jobs counted).
+  B.countJobs = async () => {
+    const jobs = collection(db, "jobs");
+    const [all, collected] = await Promise.all([getCountFromServer(jobs), getCountFromServer(query(jobs, where("status", "==", "collected")))]);
+    return { all: all.data().count, collected: collected.data().count };
+  };
   B.updateJob = (id, patch, logEntry) => updateDoc(doc(db, "jobs", id), { ...patch, log: arrayUnion(logEntry) });
 
   /* ---------- bookings ---------- */
